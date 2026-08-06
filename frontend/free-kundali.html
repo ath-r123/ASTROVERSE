@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Free Kundali</title>
+    <link rel="stylesheet" href="free-kundali.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body class="free-kundali-body">
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="#kundali">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+    <main class="kundali-gen-main">
+        <!-- Hero Banner Section -->
+        <section class="free-kundali-hero-section">
+            <h1>Free Janam Kundali Online</h1>
+            <p>Generate your detailed Vedic birth chart instantly to unlock insights about your personality, career, and
+                future roadmap.</p>
+        </section>
+
+        <!-- Main Content Container Grid -->
+        <div class="free-kundali-content-container">
+
+            <!-- Left Column: The Kundali Generation Form -->
+            <section class="free-kundali-form-wrapper">
+                <form action="#" method="POST" class="kundali-gen-form">
+
+                    <h2 class="form-heading">Enter Birth Details</h2>
+
+                    <div class="input-group">
+                        <label for="user_name">Full Name</label>
+                        <input type="text" id="user_name" name="user_name" placeholder="Enter your name" required>
+                    </div>
+
+                    <div class="form-row-grid tri-grid">
+                        <div class="input-group">
+                            <label for="user_gender">Gender</label>
+                            <select id="user_gender" name="user_gender" required>
+                                <option value="" disabled selected>Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="user_dob">Date of Birth</label>
+                            <input type="date" id="user_dob" name="user_dob" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="user_tob">Time of Birth</label>
+                            <input type="time" id="user_tob" name="user_tob" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row-grid duo-grid">
+                        <div class="input-group">
+                            <label for="user_pob">Place of Birth</label>
+                            <input type="text" id="user_pob" name="user_pob" placeholder="City, State, Country"
+                                required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="ayanamsa_system">Ayanamsa System</label>
+                            <select id="ayanamsa_system" name="ayanamsa_system">
+                                <option value="lahiri" selected>Lahiri (Chitra Paksha) - Recommended</option>
+                                <option value="raman">B.V. Raman</option>
+                                <option value="krishnamurti">KP (Krishnamurti)</option>
+                                <option value="sayana">Tropical (Sayana)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="free-kundali-generate-btn">Generate Free Kundali</button>
+                </form>
+            </section>
+
+            <!-- Right/Bottom Column: Educational Information -->
+            <aside class="free-kundali-info-sidebar">
+                <h3>What Your Kundali Reveals</h3>
+                <p>Your Janam Kundali is a cosmic snapshot of the sky at the exact second you were born. A complete
+                    chart includes:</p>
+
+                <ul class="chart-list">
+                    <li><strong>Lagna Chart (Ascendant):</strong> Maps your physical nature, outward ego, and basic life
+                        path.</li>
+                    <li><strong>Navamsha Chart (D9):</strong> Uncovers hidden potentials, inner strength, and marriage
+                        dynamics.</li>
+                    <li><strong>Vimshottari Dasha:</strong> The planetary timeline tracking your past, present, and
+                        future cycles.</li>
+                    <li><strong>Planet Positions:</strong> Precise placements of Sun, Moon, and Rahu/Ketu across the 12
+                        houses.</li>
+                </ul>
+
+                <div class="importance-card">
+                    <h4>💡 Why Time Matters</h4>
+                    <p>An exact birth time ensures accurate calculations for your <strong>Ascendant degree</strong> and
+                        fast-moving <strong>Moon sub-periods (Pratyantar Dashas)</strong>.</p>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <footer class="footer-free-kundali">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

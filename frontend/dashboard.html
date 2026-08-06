@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ASTROVERSE - User Dashboard</title>
+  <link rel="stylesheet" href="header.css">
+  <link rel="stylesheet" href="footer.css">
+</head>
+<body>
+  <main style="padding: 120px 20px; text-align: center;">
+    <h2>Welcome to Your Cosmic Dashboard, <span id="userName">User</span>!</h2>
+    <p>Email: <span id="userEmail"></span></p>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        // Fetches protected route /api/auth/me using stored JWT token
+        const data = await apiFetch('/auth/me');
+        document.getElementById('userName').textContent = data.user.name;
+        document.getElementById('userEmail').textContent = data.user.email;
+      } catch (err) {
+        // Redirect to sign in if invalid or missing token
+        window.location.href = 'sign-in-up.html';
+      }
+    });
+  </script>
+</body>
+</html>

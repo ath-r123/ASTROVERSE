@@ -1,0 +1,53 @@
+footer {
+    background-image: url("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8H0lIVVlzLb9zWfMvSDwWFEWj6UbTj2kiXxvbTdxz9w&s=10");
+    background-size: cover;
+    font-family: 'Georgia', serif;
+    color: white;
+    padding: 30px 20px 10px 20px;
+    border-top: 1px solid rgba(223, 183, 108, 0.2);
+    position: relative;
+}
+
+.footer-container {
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 40px;
+}
+
+.footer-bottom {
+    padding: 20px 10px 0px 10px;
+}
+
+.footer-col {
+    padding: 10px 20px 10px 10px;
+}
+
+.footer-col h3 {
+    color: rgb(255, 255, 255);
+}
+
+.footer-col p {
+    color: rgb(216, 213, 22);
+}
+
+.footer-col ul li {
+    color: gold;
+}
+
+.footer-col ul li a {
+    color: rgb(215, 199, 19);
+}
+
+.footer-col ul li a:hover {
+    color: rgb(255, 255, 255);
+}
+
+.social-links{
+    padding: 15px 0px;
+}
+
+
+.social-links a{
+    padding-right: 10px;
+}

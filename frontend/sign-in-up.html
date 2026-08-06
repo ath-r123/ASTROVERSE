@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in and Sign up</title>
+    <link rel="stylesheet" href="sign-in-up.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body>
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="unified-auth-main">
+        <div class="auth-card-container">
+
+            <!-- Multi-Tab Navigation Controls -->
+            <nav class="auth-nav-tabs" role="tablist">
+                <button class="tab-toggle-btn active" id="tab-user-login" onclick="switchPortalView('user-login')"
+                    role="tab" aria-selected="true">User Login</button>
+                <button class="tab-toggle-btn" id="tab-user-signup" onclick="switchPortalView('user-signup')" role="tab"
+                    aria-selected="false">Create Account</button>
+                <button class="tab-toggle-btn btn-admin-accent" id="tab-admin-login"
+                    onclick="switchPortalView('admin-login')" role="tab" aria-selected="false">Admin Portal</button>
+            </nav>
+
+            <!-- ================= CONTAINER 1: USER LOGIN ================= -->
+            <section class="auth-panel-view active" id="view-user-login">
+                <div class="panel-header">
+                    <h2>Welcome Back</h2>
+                    <p>Log in to access your personal dashboard, tools, and charts.</p>
+                </div>
+
+                <form action="#" method="POST" class="portal-form">
+                    <div class="form-input-wrapper">
+                        <label for="user_email">Email Address</label>
+                        <input type="email" id="user_email" name="user_email" placeholder="name@example.com" required>
+                    </div>
+
+                    <div class="form-input-wrapper">
+                        <div class="label-split-row">
+                            <label for="user_password">Password</label>
+                            <a href="#" class="recovery-anchor">Forgot Password?</a>
+                        </div>
+                        <input type="password" id="user_password" name="user_password" placeholder="••••••••" required>
+                    </div>
+
+                    <div class="form-check-wrapper">
+                        <input type="checkbox" id="user_remember" name="user_remember">
+                        <label for="user_remember">Remember me on this device</label>
+                    </div>
+
+                    <button type="submit" class="submit-action-btn color-user-primary">Sign In</button>
+                </form>
+            </section>
+
+            <!-- ================= CONTAINER 2: USER SIGN UP ================= -->
+            <section class="auth-panel-view" id="view-user-signup">
+                <div class="panel-header">
+                    <h2>Create Account</h2>
+                    <p>Join us to unlock personalized tracking and calculation tools.</p>
+                </div>
+
+                <form action="#" method="POST" class="portal-form">
+                    <div class="form-input-wrapper">
+                        <label for="signup_name">Full Name</label>
+                        <input type="text" id="signup_name" name="signup_name" placeholder="John Doe" required>
+                    </div>
+
+                    <div class="form-input-wrapper">
+                        <label for="signup_email">Email Address</label>
+                        <input type="email" id="signup_email" name="signup_email" placeholder="name@example.com"
+                            required>
+                    </div>
+
+                    <div class="form-input-wrapper">
+                        <label for="signup_password">Password</label>
+                        <input type="password" id="signup_password" name="signup_password"
+                            placeholder="Minimum 8 characters" required>
+                    </div>
+
+                    <div class="form-check-wrapper">
+                        <input type="checkbox" id="signup_terms" name="signup_terms" required>
+                        <label for="signup_terms">I agree to the <a href="#" class="recovery-anchor">Terms of
+                                Service</a> &amp; <a href="#" class="recovery-anchor">Privacy Policy</a></label>
+                    </div>
+
+                    <button type="submit" class="submit-action-btn color-user-dark">Get Started</button>
+                </form>
+            </section>
+
+            <!-- ================= CONTAINER 3: ADMIN LOGIN ================= -->
+            <section class="auth-panel-view" id="view-admin-login">
+                <div class="panel-header admin-border">
+                    <h2>System Administrator Security Access</h2>
+                    <p>Authorized access point for system monitoring, database control, and management functions.</p>
+                </div>
+
+                <form action="#" method="POST" class="portal-form">
+                    <div class="form-input-wrapper">
+                        <label for="admin_id">Admin Security ID / Email</label>
+                        <input type="text" id="admin_id" name="admin_id" placeholder="ADM-XXXXXX" required>
+                    </div>
+
+                    <div class="form-input-wrapper">
+                        <label for="admin_password">Security Password</label>
+                        <input type="password" id="admin_password" name="admin_password" placeholder="••••••••"
+                            required>
+                    </div>
+
+                    <div class="form-input-wrapper">
+                        <label for="admin_token">Two-Factor Auth Token (Optional)</label>
+                        <input type="text" id="admin_token" name="admin_token"
+                            placeholder="Enter 6-digit 2FA token Code">
+                    </div>
+
+                    <button type="submit" class="submit-action-btn color-admin-primary">Access Admin Command
+                        Center</button>
+                </form>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="footer-name-numerology">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

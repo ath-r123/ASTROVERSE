@@ -1,0 +1,356 @@
+/*main content here */
+
+
+.panchang-portal-main {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 80px 20px;
+    color: #2c3e50;
+}
+
+/* Hero Banner Custom Controls Layout */
+.panchang-hero {
+    background-color: #fffbf2;
+    /* Traditional soft golden tint */
+    border: 1px solid #f9e79f;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.panchang-hero h1 {
+    font-size: 2.2rem;
+    color: #d35400;
+    /* Rich sunset orange element */
+    margin: 0 0 8px 0;
+}
+
+.panchang-hero p {
+    color: #7f8c8d;
+    font-size: 1.05rem;
+    max-width: 700px;
+    margin: 0 auto 25px auto;
+    line-height: 1.5;
+}
+
+/* Parameters Bar Filters Layout Grid */
+.panchang-picker-bar {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.picker-group {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.picker-group label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #ba4a00;
+    text-transform: uppercase;
+}
+
+.picker-group input {
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    width: 240px;
+    background-color: #ffffff;
+}
+
+.panchang-update-btn {
+    padding: 11px 24px;
+    background-color: #d35400;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.panchang-update-btn:hover {
+    background-color: #b3391b;
+}
+
+/* Main Responsive Splitting Panels */
+.panchang-grid-layout {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 960px) {
+    .panchang-grid-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Left Primary Panel Core Components */
+.panchang-calendar-header {
+    margin-bottom: 25px;
+    border-left: 4px solid #d35400;
+    padding-left: 15px;
+}
+
+.panchang-calendar-header h2 {
+    font-size: 1.5rem;
+    margin: 0 0 5px 0;
+    color: #1e293b;
+}
+
+.vedic-calendar-year {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+/* The Five Pillars Card Layout Parameters */
+.five-pillars-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.pillar-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.15s ease;
+}
+
+.pillar-card:hover {
+    transform: translateX(4px);
+    border-color: #f5b041;
+}
+
+.pillar-icon {
+    font-size: 2rem;
+    background: #fef5e7;
+    width: 55px;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.pillar-info h3 {
+    margin: 0 0 4px 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #7f8c8d;
+}
+
+.pillar-val {
+    display: block;
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.pillar-duration {
+    display: block;
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+/* Choghadiya Metrics Matrix Board */
+.panchang-section-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 25px;
+}
+
+.panchang-section-card h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.2rem;
+    color: #1e293b;
+}
+
+.panchang-data-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.panchang-data-table th {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.panchang-data-table td {
+    padding: 14px 10px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+/* Row Background Color Overrides based on Astro Quality status */
+.choghadiya-good {
+    background-color: #f4fbf7;
+    color: #14532d;
+    font-weight: 600;
+}
+
+.choghadiya-bad {
+    background-color: #fdf2f2;
+    color: #741b1b;
+}
+
+.choghadiya-neutral {
+    background-color: #f8fafc;
+    color: #334155;
+}
+
+/* Sidebar Modular Widgets Components */
+.panchang-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-self: start;
+}
+
+.sidebar-widget {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 22px;
+}
+
+.sidebar-widget h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+/* Key-Value Pair Parameter Lists */
+.astro-time-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.astro-time-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 0.88rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.astro-time-list li:last-child {
+    border-bottom: none;
+}
+
+.astro-time-list span {
+    color: #64748b;
+}
+
+.astro-time-list strong {
+    color: #1e293b;
+}
+
+/* Muhurata Cards Split Blocks */
+.muhurata-group {
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    background-color: #fafbfc;
+}
+
+.muhurata-group:last-child {
+    margin-bottom: 0;
+}
+
+.muhurata-group h4 {
+    margin: 0 0 4px 0;
+    font-size: 0.9rem;
+}
+
+.time-stamp {
+    margin: 0 0 4px 0;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.muhurata-group small {
+    color: #64748b;
+    font-size: 0.78rem;
+    display: block;
+}
+
+/* Color-coded alert boundaries for tracking auspicious periods */
+.success-border {
+    border-left: 4px solid #22c55e;
+
+    h4 {
+        color: #15803d;
+    }
+}
+
+.alert-border {
+    border-left: 4px solid #ef4444;
+
+    h4 {
+        color: #b91c1c;
+    }
+}
+
+.warning-border {
+    border-left: 4px solid #f59e0b;
+
+    h4 {
+        color: #b45309;
+    }
+}
+
+/* Doshas Parameter lists */
+.dosha-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dosha-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.dosha-list span {
+    color: #475569;
+}
+
+.dosha-active {
+    color: #b91c1c;
+    background-color: #fef2f2;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.78rem;
+}

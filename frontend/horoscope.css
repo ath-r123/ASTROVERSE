@@ -1,0 +1,385 @@
+/*main content here */
+
+
+/* Scope styling rules to safeguard your template layout framework */
+.horoscope-portal-main {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 60px 20px;
+    color: #2c3e50;
+}
+
+/* Hero Banner Layout */
+.horoscope-hero {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.horoscope-hero h1 {
+    font-size: 2.4rem;
+    color: #512da8;
+    /* Rich cosmic indigo/purple signature */
+    margin: 0 0 10px 0;
+}
+
+.horoscope-hero p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+    margin: 0 0 30px 0;
+}
+
+/* Timeline Filtering Buttons UI */
+.horoscope-timeline-tabs {
+    display: inline-flex;
+    background-color: #f1f2f6;
+    padding: 6px;
+    border-radius: 30px;
+    gap: 5px;
+}
+
+.time-tab {
+    padding: 10px 22px;
+    border: none;
+    background: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #64748b;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.time-tab:hover {
+    color: #512da8;
+}
+
+.time-tab.active-today {
+    background-color: #512da8;
+    color: #ffffff;
+    box-shadow: 0 4px 10px rgba(81, 45, 168, 0.2);
+}
+
+/* Zodiac Sign Grid System Selector */
+.zodiac-grid-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 15px;
+    margin-bottom: 5px;
+}
+
+@media (max-width: 1024px) {
+    .zodiac-grid-container {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 680px) {
+    .zodiac-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.zodiac-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.zodiac-card:hover {
+    transform: translateY(-3px);
+    border-color: #b39ddb;
+    box-shadow: 0 5px 15px rgba(81, 45, 168, 0.05);
+}
+
+.zodiac-card.active-sign {
+    border-color: #512da8;
+    background-color: #f3e5f5;
+    box-shadow: 0 0 0 2px #512da8;
+}
+
+.zodiac-glyph {
+    font-size: 1.8rem;
+    color: #673ab7;
+    margin-bottom: 6px;
+}
+
+.zodiac-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e293b;
+}
+
+.zodiac-date {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 3px;
+}
+
+/* Split Main Display Panels Architecture */
+.horoscope-content-grid {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 30px;
+    margin-top: 35px;
+}
+
+@media (max-width: 960px) {
+    .horoscope-content-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Left Panel Core Text Components */
+.reading-meta {
+    margin-bottom: 25px;
+}
+
+.reading-meta h2 {
+    font-size: 1.6rem;
+    margin: 0 0 8px 0;
+    color: #1e293b;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.badge-live {
+    font-size: 0.75rem;
+    background-color: #e11d48;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    animation: pulseAlpha 2s infinite;
+}
+
+@keyframes pulseAlpha {
+    0% {
+        opacity: 0.8;
+    }
+
+    50% {
+        opacity: 0.4;
+    }
+
+    100% {
+        opacity: 0.8;
+    }
+}
+
+.current-transit-info {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.reading-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
+}
+
+.summary-card {
+    border-left: 5px solid #512da8;
+    margin-bottom: 25px;
+}
+
+.summary-card h3 {
+    margin: 0 0 12px 0;
+    color: #512da8;
+    font-size: 1.2rem;
+}
+
+.summary-card p {
+    margin: 0;
+    line-height: 1.6;
+    font-size: 1rem;
+    color: #334155;
+}
+
+/* Aspect Grid Splitting */
+.aspect-readings-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 600px) {
+    .aspect-readings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.aspect-box h4 {
+    margin: 0 0 10px 0;
+    font-size: 1.05rem;
+    color: #1e293b;
+}
+
+.aspect-box p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #475569;
+}
+
+/* Sidebar Modular Widgets Components */
+.metrics-sidebar-right {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    align-self: start;
+}
+
+.sidebar-widget {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 22px;
+}
+
+.sidebar-widget h3 {
+    margin: 0 0 18px 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1e293b;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+/* Horizontal Percent Progress Bars */
+.meter-group {
+    margin-bottom: 14px;
+}
+
+.meter-group:last-child {
+    margin-bottom: 0;
+}
+
+.meter-lbl-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 5px;
+}
+
+.meter-bar-bg {
+    background: #f1f5f9;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.meter-fill {
+    height: 100%;
+    border-radius: 4px;
+}
+
+.color-love {
+    background-color: #ec407a;
+}
+
+.color-career {
+    background-color: #29b6f6;
+}
+
+.color-wealth {
+    background-color: #26a69a;
+}
+
+.color-health {
+    background-color: #ab47bc;
+}
+
+/* Astro Key-Value Parameters Lists */
+.anchor-data-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.anchor-data-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 0.88rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.anchor-data-list li:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.anchor-data-list span {
+    color: #64748b;
+    font-weight: 500;
+}
+
+.anchor-data-list strong {
+    color: #1e293b;
+}
+
+.color-swatch-txt {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.crimson-bg {
+    background-color: #d32f2f;
+}
+
+/* Ephemeris Matrix Table */
+.ephemeris-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.ephemeris-table th {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding-bottom: 8px;
+    font-weight: 700;
+}
+
+.ephemeris-table td {
+    padding: 10px 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f1f5f9;
+    color: #334155;
+}
+
+.ephemeris-table tr:last-child td {
+    border-bottom: none;
+}
+
+.retrograde-text {
+    color: #e67e22;
+    font-weight: 600;
+    font-size: 0.8rem;
+}

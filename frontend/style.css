@@ -1,0 +1,722 @@
+.hero-button {
+    background-color: black;
+    padding: 10px 30px;
+    color: gold;
+    font-size: 30px;
+    border-radius: 10%;
+    margin: 10px;
+    width: 300px;
+    height: 50px;
+}
+
+
+.hero-content h1 {
+    color: gold;
+    left: 15px;
+    padding: 20px 15px;
+}
+
+.hero-content h2 {
+    color: rgb(254, 124, 17);
+    font-size: 30px;
+    padding: 20px 15px;
+}
+
+.hero {
+    background-image: url("https://images.unsplash.com/photo-1528818955841-a7f1425131b5?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c3RhcnJ5JTIwc2t5fGVufDB8fDB8fHww");
+    background-size: cover;
+    background-position: center;
+    margin: 0%;
+    padding: 80px 0 0 0;
+}
+
+.all-hero-btns {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.allbodyexcepthero {
+    background-image: linear-gradient(to bottom, #ffd17495, #ffffff, #fff17495);
+    flex: 1;
+}
+
+.ullist {
+    display: flex;
+    justify-content: space-between;
+    font-size: 19px;
+    padding: 30px;
+}
+
+/*.whychooseus{
+    background-image: linear-gradient(to bottom,#fff67495, #ffffff, #e38109);
+}*/
+
+.h1whychooseus {
+    padding: 5px 20px;
+}
+
+/*.all-astrologer-grid{
+   background-image:linear-gradient(to bottom,#ff840087,#ffffff , #da601470) ; 
+}*/
+
+.astrologer-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* Split multi-card layout format */
+    gap: 50px;
+    padding: 20px 100px;
+}
+
+@media (max-width: 1000px) {
+    .astrologer-grid-wrapper {
+        grid-template-columns: 1fr;
+        /* Fall back gracefully to full cards on medium tablets */
+    }
+}
+
+/* Astrologer Individual Profile Card Box Module */
+.astro-profile-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.astro-profile-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(108, 62, 163, 0.06);
+    border-color: #dcd0eb;
+}
+
+.card-status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.status-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-online {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.status-busy {
+    background-color: #fff7ed;
+    color: #ea580c;
+}
+
+.status-offline {
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
+.experience-tag {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    background-color: #f8fafc;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Body Flex Layout Columns */
+.astro-card-body {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 480px) {
+    .astro-card-body {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+.avatar-container {
+    position: relative;
+}
+
+.astro-avatar-fallback {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #eadaf7;
+    color: #6c3ea3;
+    font-weight: 700;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Metadata details texts configuration block */
+.astro-meta-info {
+    flex: 1;
+}
+
+.astro-name {
+    margin: 0 0 5px 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.astro-specialties {
+    margin: 0 0 4px 0;
+    font-size: 0.9rem;
+    color: #475569;
+    line-height: 1.4;
+}
+
+.astro-languages {
+    margin: 0 0 8px 0;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* Rating Index Matrix Parameters */
+.astro-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.star-rating {
+    background-color: #fef08a;
+    /* Golden Star Accent Background */
+    color: #854d0e;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.total-orders {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+/* Card Layout Action Footer Row */
+.astro-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #f1f5f9;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.price-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.original-price {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-decoration: line-through;
+    line-height: 1;
+}
+
+.current-price {
+    font-size: 1.2rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.promo-free {
+    color: #16a34a;
+}
+
+/* CTA Consulting Multi-Buttons System UI Layouts */
+.action-buttons-group {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.cta-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cta-btn:active {
+    transform: scale(0.98);
+}
+
+/* Button variant semantic status setups */
+.btn-chat {
+    background-color: #ffffff;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+}
+
+.btn-chat:hover {
+    background-color: #eff6ff;
+}
+
+.btn-call {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.btn-call:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-waitlist {
+    background-color: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fdba74;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-waitlist:hover {
+    background-color: #ffedd5;
+}
+
+.btn-offline {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+    width: 100%;
+    justify-content: center;
+    cursor: not-allowed;
+}
+
+/* Special Pulsing Animation framework for Promotional Free entries */
+.promotional-pulse {
+    background-color: #16a34a !important;
+    color: white !important;
+    animation: pulseButton 2s infinite;
+}
+
+.promotional-pulse:hover {
+    background-color: #15803d !important;
+}
+
+@keyframes pulseButton {
+    0% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(22, 163, 74, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+    }
+}
+
+
+.allastrologers-btn {
+    text-align: center;
+}
+
+.viewallastrologers-btn {
+    padding: 10px 10px;
+    font-weight: bold;
+    font-family: 'Times New Roman', Times, serif;
+    background-color: rgba(59, 171, 139, 0.732);
+    color: white;
+    font-weight: bolder;
+    font-size: large;
+    border-radius: 8px;
+    width: 500px;
+    margin-bottom: 40px;
+}
+
+.viewallastrologers-btn:hover {
+    background-color: #059669;
+}
+
+.ai-chat-section {
+    padding: 60px 20px;
+    background-image: linear-gradient(to bottom, #ffffff, #fff4c2, #ffffff);
+}
+
+.ai-chat-box {
+    max-width: 850px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border: 1px solid #f0d28a;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
+.ai-chat-header {
+    background-color: #000000;
+    color: gold;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ai-chat-header h3 {
+    font-size: 1.6rem;
+    margin-bottom: 5px;
+}
+
+.ai-chat-header p {
+    color: #f5e9a9;
+    font-size: 0.95rem;
+}
+
+.ai-status {
+    background-color: #16a34a;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+}
+
+.ai-chat-messages {
+    min-height: 260px;
+    padding: 25px;
+    background-color: #fffdf4;
+}
+
+.chat-message {
+    max-width: 75%;
+    padding: 14px 16px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+.ai-message {
+    background-color: #f8e7b0;
+    color: #3b2a00;
+    border-top-left-radius: 0;
+}
+
+.message-label {
+    display: block;
+    font-weight: bold;
+    color: #9d692e;
+    margin-bottom: 5px;
+}
+
+.chat-suggestions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.chat-suggestions button {
+    border: 1px solid #d6a84f;
+    background-color: #ffffff;
+    color: #9d692e;
+    padding: 9px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.chat-suggestions button:hover {
+    background-color: #d35400;
+    color: #ffffff;
+}
+
+.ai-chat-input-area {
+    display: flex;
+    gap: 12px;
+    padding: 18px 25px;
+    border-top: 1px solid #f0d28a;
+    background-color: #ffffff;
+}
+
+.ai-chat-input {
+    flex: 1;
+    padding: 12px 14px;
+    border: 1px solid #d6a84f;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+.ai-chat-input:focus {
+    outline: none;
+    border-color: #d35400;
+    background-color: #fffaf0;
+}
+
+.ai-send-btn {
+    background-color: #d35400;
+    color: #ffffff;
+    border: none;
+    padding: 0 24px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.ai-send-btn:hover {
+    background-color: #9d692e;
+}
+
+@media (max-width: 600px) {
+    .ai-chat-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .chat-message {
+        max-width: 100%;
+    }
+
+    .ai-chat-input-area {
+        flex-direction: column;
+    }
+
+    .ai-send-btn {
+        padding: 12px;
+    }
+}
+
+.stats {
+    display: flex;
+
+}
+
+.heroullist {
+    display: none;
+    justify-content: space-between;
+    font-size: 22px;
+    left: 10px;
+
+}
+
+.heroullist li h3 {
+    color: rgb(254, 124, 17);
+}
+
+/* .horoscopeplusratingplusfaq{
+   background-image:linear-gradient(to bottom,#fbfbfbfc,#918f8f , #ffffff) ;
+}*/
+
+.daily-horoscope-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    padding: 20px;
+}
+
+.zodiac-card {
+    width: auto;
+    box-sizing: border-box;
+    background-color: rgba(208, 102, 41, 0.521);
+    border-radius: 16px;
+    text-align: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    border: 1px solid black;
+}
+
+.h1-daily-horoscope {
+    text-align: center;
+    color: #7c202095;
+}
+
+.daily-horoscope {
+    padding: 0;
+}
+
+
+/* Base container setup */
+.all-ratings {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Elegant Heading styling */
+.rating-heading {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.rating-heading h2 {
+    font-size: 2.2rem;
+    color: #2d3748;
+    letter-spacing: 1px;
+    position: relative;
+    display: inline-block;
+    margin: 0;
+}
+
+/* Subtle line under heading */
+.rating-heading h2::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(to right, #d023d9, #7b2020);
+    border-radius: 2px;
+}
+
+/* Grid Layout */
+.website-rating-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    padding: 10px 0;
+}
+
+/* Classy, Modern Card Layout */
+.website-rating {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 16px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Smooth lift effect on hover */
+.website-rating:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(208, 35, 217, 0.1);
+    border-color: rgba(208, 35, 217, 0.2);
+}
+
+/* Elegant Soft Gold Stars */
+.website-star-rating {
+    color: #ffb800;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+}
+
+/* Styled testimonial comment */
+.rating-comment {
+    color: #4a5568;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    font-weight: 500;
+    flex-grow: 1;
+    /* Pushes the name to the bottom uniformly */
+}
+
+/* Meta container for Name & Location alignment */
+.rating-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid #f1f5f9;
+    padding-top: 12px;
+    margin-top: 8px;
+}
+
+.rating-name {
+    font-weight: 700;
+    color: #1a202c;
+    font-size: 0.95rem;
+}
+
+.rating-location {
+    color: #a0aec0;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.rating-location::before {
+    content: "•";
+    margin-right: 10px;
+    color: #cbd5e0;
+}
+
+/* Premium Button Styling */
+.rating-button-div {
+    text-align: center;
+    padding: 40px 0 20px;
+}
+
+.rating-button {
+    padding: 12px 60px;
+    border-radius: 30px;
+    background-color: #1a202c;
+    font-weight: 600;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 12px rgba(26, 32, 44, 0.15);
+}
+
+.rating-button:hover {
+    background-color: #d023d9;
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(208, 35, 217, 0.3);
+}
+
+.faq-container {
+    padding: 50px 20px;
+}
+
+.faq-container h2 {
+    font-weight: bolder;
+    font-size: xx-large;
+}
+
+.faq {
+    color: rgb(114, 41, 41);
+    font-weight: bolder;
+    font-size: large;
+}
+
+.faq details {
+    padding: 5px 5px;
+}
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}

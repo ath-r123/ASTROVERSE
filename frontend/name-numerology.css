@@ -1,0 +1,170 @@
+/* main content */
+
+
+
+.numerology-main {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 80px 20px;
+    color: #333;
+}
+
+.nn-hero-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.nn-hero-section h1 {
+    color: #16a085;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.nn-hero-section p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.nn-content-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 900px) {
+    .nn-content-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.nn-form-wrapper {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+}
+
+.form-heading {
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #16a085;
+    color: #16a085;
+}
+
+.form-row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 600px) {
+    .form-row-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    background-color: #fff;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #16a085;
+    outline: none;
+    background-color: #f4fbf9;
+}
+
+.input-tip {
+    display: block;
+    margin-top: 4px;
+    color: #7f8c8d;
+    font-size: 0.8rem;
+}
+
+.nn-calculate-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background-color: #16a085;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.2s;
+}
+
+.nn-calculate-btn:hover {
+    background-color: #117a65;
+}
+
+/* Sidebar Styles */
+.nn-info-sidebar {
+    background: #fdfefe;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px dashed #16a085;
+    align-self: start;
+}
+
+.nn-info-sidebar h3 {
+    color: #117a65;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.number-list {
+    padding-left: 20px;
+    margin-bottom: 25px;
+}
+
+
+.number-list li {
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.master-card {
+    background: #fff9e6;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #f1c40f;
+}
+
+.master-card h4 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    color: #b7950b;
+}
+
+.master-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #7d6608;
+}

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kundali Matching</title>
+    <link rel="stylesheet" href="kundali-matching.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body class="kundali-matching-body">
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="#kundali">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="kundali-matching-main">
+
+        <section class="hero-section-kundali-matching">
+            <h1>Vedic Kundali Matching</h1>
+            <p>Check horoscope compatibility for marriage based on traditional Ashtakoota Milan system.</p>
+        </section>
+
+        <div class="content-container-kundali-matching">
+
+            <section class="form-wrapper-km">
+                <form action="#" method="post" class="matching-form">
+                    <div class="form-grid">
+
+                        <div class="partner-column">
+                            <h2 class="partner-heading groom-color">First Partner (Groom)</h2>
+
+                            <div class="input-group">
+                                <label for="p1_name">Full Name</label>
+                                <input type="text" id="p1_name" name="p1_name" placeholder="Enter name" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="p1_dob">Date of Birth</label>
+                                <input type="date" id="p1_dob" name="p1_dob" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="p1_tob">Time of Birth</label>
+                                <input type="time" id="p1_tob" name="p1_tob" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="p1_pob">Place of Birth</label>
+                                <input type="text" id="p1_pob" name="p1_pob" placeholder="City, State, Country"
+                                    required>
+                            </div>
+                        </div>
+
+                        <div class="partner-column">
+                            <h2 class="partner-heading bride-color">Second Partner (Bride)</h2>
+
+                            <div class="input-group">
+                                <label for="p2_name">Full Name</label>
+                                <input type="text" id="p2_name" name="p2_name" placeholder="Enter name" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="p2_dob">Date of Birth</label>
+                                <input type="date" id="p2_dob" name="p2_dob" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="p2_tob">Time of Birth</label>
+                                <input type="time" id="p2_tob" name="p2_tob" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="p2_pob">Place of Birth</label>
+                                <input type="text" id="p2_pob" name="p2_pob" placeholder="City, State, Country"
+                                    required>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="match-btn-km">Calculate Compatibility</button>
+                </form>
+            </section>
+
+            <aside class="info-sidebar">
+                <h3>How Kundali Matching Works</h3>
+                <p>Vedic astrology uses the <strong>Ashtakoota Milan</strong> system to analyze 8 different parameters
+                    (Kootas) based on the positions of the Moon in both charts:</p>
+
+                <ul class="koota-list">
+                    <li><strong>Varna (1 Point):</strong> Work and spiritual compatibility.</li>
+                    <li><strong>Vashya (2 Points):</strong> Mutual attraction and dominance.</li>
+                    <li><strong>Tara (3 Points):</strong> Health, longevity, and well-being.</li>
+                    <li><strong>Yoni (4 Points):</strong> Physical intimacy and biological compatibility.</li>
+                    <li><strong>Grah Maitri (5 Points):</strong> Psychological harmony and friendship.</li>
+                    <li><strong>Gana (6 Points):</strong> Temperament and behavioral alignment.</li>
+                    <li><strong>Bhakoot (7 Points):</strong> Emotional connection and family growth.</li>
+                    <li><strong>Nadi (8 Points):</strong> Health of future children and genetic match.</li>
+                </ul>
+
+                <div class="score-card">
+                    <h4>Understanding the Score (Out of 36)</h4>
+                    <p><strong>Above 18:</strong> Acceptable and stable match.</p>
+                    <p><strong>Above 25:</strong> Highly recommended, strong harmony.</p>
+                    <p><strong>Below 18:</strong> Not ideal; requires remedy options.</p>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <footer class="footer-kundali-matching">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

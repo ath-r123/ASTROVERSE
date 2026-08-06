@@ -1,0 +1,371 @@
+/* Keep your previous container, heading, and grid CSS intact */
+.astrology-ratings-container {
+    font-family: 'Cinzel', 'Playfair Display', 'Segoe UI', serif;
+    max-width: 1200px;
+    margin: 60px auto;
+    padding: 0 24px;
+    background-color: #0b0813;
+    color: #f3f0ff;
+}
+
+/* Section dividers */
+.astro-section-divider {
+    border: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(208, 35, 217, 0.2), transparent);
+    margin: 60px 0;
+}
+
+/* Form Layout Styling */
+.astro-rating-form-section {
+    max-width: 700px;
+    margin: 0 auto 50px auto;
+}
+
+.astro-form-heading {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.astro-form-heading h2 {
+    font-size: 3rem;
+    color: #af5555;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    margin: 0;
+}
+
+.astro-rating-form {
+    background: linear-gradient(145deg, #130f22, #16102b);
+    border: 1px solid rgba(208, 35, 217, 0.15);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.form-group label {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #8c82ab;
+    font-weight: 500;
+}
+
+/* Form Inputs Styling */
+.astro-rating-form input[type="text"],
+.astro-rating-form textarea {
+    background: rgba(11, 8, 19, 0.6);
+    border: 1px solid rgba(208, 35, 217, 0.25);
+    border-radius: 10px;
+    padding: 14px;
+    color: #f3f0ff;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.astro-rating-form input[type="text"]:focus,
+.astro-rating-form textarea:focus {
+    outline: none;
+    border-color: #f4d068;
+    box-shadow: 0 0 15px rgba(244, 208, 104, 0.15);
+}
+
+/* Interactive Star Rating CSS (Pure CSS Logic) */
+.rating-select-group {
+    align-items: flex-start;
+}
+
+.star-rating-input {
+    display: flex;
+    flex-direction: row-reverse;
+    /* Reverses sequence so sibling CSS selectors work correctly */
+    justify-content: flex-end;
+    gap: 4px;
+}
+
+.star-rating-input input {
+    display: none;
+    /* Hide standard radio buttons */
+}
+
+.star-rating-input label {
+    font-size: 2rem;
+    color: #3b3256;
+    /* Empty star color */
+    cursor: pointer;
+    transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+/* Hover & Checked Actions (highlights current star and all preceding stars) */
+.star-rating-input input:checked~label,
+.star-rating-input label:hover,
+.star-rating-input label:hover~label {
+    color: #f4d068;
+    /* Shimmering Gold */
+    text-shadow: 0 0 10px rgba(244, 208, 104, 0.5);
+}
+
+/* Submit Button Layout */
+.astro-submit-button {
+    padding: 14px 30px;
+    border-radius: 30px;
+    background: linear-gradient(to right, #d023d9, #7b2020);
+    font-weight: 600;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 20px rgba(208, 35, 217, 0.3);
+}
+
+.astro-submit-button:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 25px rgba(208, 35, 217, 0.5);
+    background: linear-gradient(to right, #e23bfb, #962c2c);
+}
+
+/* Responsive adjust for forms */
+@media (max-width: 600px) {
+    .form-row {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    .astro-rating-form {
+        padding: 24px;
+    }
+}
+
+/* (Include your previous CSS underneath here for the Grid Cards & CTA below) */
+
+/* Container Layout */
+.astrology-ratings-container {
+    font-family: 'Cinzel', 'Playfair Display', 'Segoe UI', serif;
+    max-width: 100vw;
+    margin: auto;
+    padding: 100px 24px;
+    background-color: #e1e0e4;
+    /* Deep mystical space background */
+    color: #f3f0ff;
+}
+
+/* Header Styling */
+.astro-rating-heading {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.cosmic-subtitle {
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    color: #8a0092;
+    /* Your signature magenta */
+    font-weight: 600;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.astro-rating-heading h2 {
+    font-size: 3rem;
+    color: #af5555;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    margin: 0;
+}
+
+/* Mystical Star Divider Line */
+.mystical-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.mystical-divider::before,
+.mystical-divider::after {
+    content: '';
+    width: 50px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #d023d9, transparent);
+}
+
+.star-icon {
+    color: #f4d068;
+    /* Celestial Gold */
+    margin: 0 10px;
+    font-size: 0.9rem;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+/* Grid Layout */
+.astro-rating-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 10px 0;
+}
+
+/* Celestial Card Styling */
+.astro-rating-card {
+    background: linear-gradient(145deg, #130f22, #1a1430);
+    border: 1px solid rgba(208, 35, 217, 0.15);
+    /* Soft magenta tint border */
+    border-radius: 16px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+/* Subtle inner ambient glow */
+.astro-rating-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(208, 35, 217, 0.1), transparent 60%);
+    pointer-events: none;
+}
+
+/* Hover Effect: Nebula Glow */
+.astro-rating-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(244, 208, 104, 0.4);
+    /* Shifts to soft gold on hover */
+    box-shadow: 0 12px 40px rgba(208, 35, 217, 0.15),
+        0 0 20px rgba(123, 32, 32, 0.1);
+}
+
+/* Celestial Gold Stars */
+.astro-star-rating {
+    color: #f4d068;
+    /* Shimmering Gold */
+    font-size: 1.15rem;
+    letter-spacing: 3px;
+    text-shadow: 0 0 8px rgba(244, 208, 104, 0.4);
+}
+
+/* Review Text */
+.astro-comment {
+    color: #d1c9ec;
+    font-size: 1.02rem;
+    line-height: 1.6;
+    font-style: italic;
+    font-weight: 300;
+    margin: 0;
+    flex-grow: 1;
+}
+
+/* Card Bottom Metadata */
+.astro-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-top: 1px solid rgba(243, 240, 255, 0.08);
+    padding-top: 16px;
+    margin-top: 8px;
+}
+
+.astro-name {
+    font-weight: 600;
+    color: #f1e7fe;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+.astro-location {
+    color: #8c82ab;
+    font-size: 0.85rem;
+}
+
+.astro-location::before {
+    content: "•";
+    margin-right: 8px;
+    color: rgba(208, 35, 217, 0.4);
+}
+
+/* Cosmic CTA Button */
+.astro-button-div {
+    text-align: center;
+    padding: 50px 0 20px;
+}
+
+.astro-load-button {
+    padding: 14px 36px;
+    border-radius: 30px;
+    background: transparent;
+    font-weight: 600;
+    background-color: #f4d068;
+    color: #0b0813;
+    border: 1px solid #f4d068;
+    cursor: pointer;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(244, 208, 104, 0.1);
+}
+
+.astro-load-button:hover {
+    background-color: rgb(211, 148, 3);
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(244, 208, 104, 0.35);
+}
+
+.btn-sparkle {
+    font-size: 0.8rem;
+    transition: transform 0.3s ease;
+}
+
+.astro-load-button:hover .btn-sparkle {
+    transform: rotate(90deg);
+}
+
+/* Micro-animation for the divider star */
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+        transform: scale(0.9);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}

@@ -1,0 +1,349 @@
+/*main content here */
+
+.astro-directory-main {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    color: #2c3e50;
+}
+
+/* Filter Search Banner Card Layout */
+.directory-filter-hero {
+    background-color: #fcf8f2;
+    /* Traditional warm soft tone matching premium astrosites */
+    border: 1px solid #faebd7;
+    padding: 35px 30px;
+    border-radius: 12px;
+    margin-bottom: 40px;
+}
+
+.directory-filter-hero h1 {
+    font-size: 2.2rem;
+    color: #6c3ea3;
+    /* Premium spiritual deep indigo purple line signature */
+    margin: 0 0 8px 0;
+}
+
+.directory-filter-hero p {
+    color: #64748b;
+    font-size: 1.05rem;
+    margin: 0 0 25px 0;
+}
+
+/* Filters Layout Form Bar Row */
+.filter-control-bar {
+    display: grid;
+    grid-template-columns: 2fr repeat(3, 1fr);
+    gap: 15px;
+}
+
+@media (max-width: 820px) {
+    .filter-control-bar {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+}
+
+.filter-field input,
+.filter-field select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background-color: #ffffff;
+    color: #334155;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease;
+}
+
+.filter-field input:focus,
+.filter-field select:focus {
+    border-color: #6c3ea3;
+    outline: none;
+}
+
+/* Directory Profiles Responsive Grid System */
+.astrologer-grid-wrapper {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* Split multi-card layout format */
+    gap: 25px;
+}
+
+@media (max-width: 1000px) {
+    .astrologer-grid-wrapper {
+        grid-template-columns: 1fr;
+        /* Fall back gracefully to full cards on medium tablets */
+    }
+}
+
+/* Astrologer Individual Profile Card Box Module */
+.astro-profile-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.02);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.astro-profile-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(108, 62, 163, 0.06);
+    border-color: #dcd0eb;
+}
+
+/* Card Top Status Metrics Row */
+.card-status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.status-badge {
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-online {
+    background-color: #ecfdf5;
+    color: #059669;
+}
+
+.status-busy {
+    background-color: #fff7ed;
+    color: #ea580c;
+}
+
+.status-offline {
+    background-color: #f1f5f9;
+    color: #64748b;
+}
+
+.experience-tag {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #475569;
+    background-color: #f8fafc;
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+/* Body Flex Layout Columns */
+.astro-card-body {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 480px) {
+    .astro-card-body {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* Profile Avatar Framework Box */
+.avatar-container {
+    position: relative;
+}
+
+.astro-avatar-fallback {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #eadaf7;
+    color: #6c3ea3;
+    font-weight: 700;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* Metadata details texts configuration block */
+.astro-meta-info {
+    flex: 1;
+}
+
+.astro-name {
+    margin: 0 0 5px 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.astro-specialties {
+    margin: 0 0 4px 0;
+    font-size: 0.9rem;
+    color: #475569;
+    line-height: 1.4;
+}
+
+.astro-languages {
+    margin: 0 0 8px 0;
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+/* Rating Index Matrix Parameters */
+.astro-rating-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.star-rating {
+    background-color: #fef08a;
+    /* Golden Star Accent Background */
+    color: #854d0e;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.total-orders {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+/* Card Layout Action Footer Row */
+.astro-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #f1f5f9;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.price-block {
+    display: flex;
+    flex-direction: column;
+}
+
+.original-price {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    text-decoration: line-through;
+    line-height: 1;
+}
+
+.current-price {
+    font-size: 1.2rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.promo-free {
+    color: #16a34a;
+}
+
+/* CTA Consulting Multi-Buttons System UI Layouts */
+.action-buttons-group {
+    display: flex;
+    gap: 10px;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.cta-btn {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.cta-btn:active {
+    transform: scale(0.98);
+}
+
+/* Button variant semantic status setups */
+.btn-chat {
+    background-color: #ffffff;
+    color: #2563eb;
+    border: 1px solid #2563eb;
+}
+
+.btn-chat:hover {
+    background-color: #eff6ff;
+}
+
+.btn-call {
+    background-color: #2563eb;
+    color: #ffffff;
+}
+
+.btn-call:hover {
+    background-color: #1d4ed8;
+}
+
+.btn-waitlist {
+    background-color: #fff7ed;
+    color: #c2410c;
+    border: 1px solid #fdba74;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-waitlist:hover {
+    background-color: #ffedd5;
+}
+
+.btn-offline {
+    background-color: #f1f5f9;
+    color: #94a3b8;
+    border: 1px solid #e2e8f0;
+    width: 100%;
+    justify-content: center;
+    cursor: not-allowed;
+}
+
+/* Special Pulsing Animation framework for Promotional Free entries */
+.promotional-pulse {
+    background-color: #16a34a !important;
+    color: white !important;
+    animation: pulseButton 2s infinite;
+}
+
+.promotional-pulse:hover {
+    background-color: #15803d !important;
+}
+
+@keyframes pulseButton {
+    0% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 8px rgba(22, 163, 74, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
+    }
+}

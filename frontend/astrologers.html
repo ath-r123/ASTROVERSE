@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astrologers</title>
+    <link rel="stylesheet" href="astrologers.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body>
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="astro-directory-main">
+        <!-- Filter and Search Navigation Banner -->
+        <section class="directory-filter-hero">
+            <h1>Consult Verified Astrologers</h1>
+            <p>Connect instantly with top Vedic experts, numerologists, and tarot readers for real-time guidance.</p>
+
+            <!-- Live Search Filter Controls -->
+            <div class="filter-control-bar">
+                <div class="filter-field search-box">
+                    <input type="text" id="astro_search" placeholder="Search by name or keyword...">
+                </div>
+
+                <div class="filter-field">
+                    <select id="filter_specialty">
+                        <option value="" selected>All Specialities</option>
+                        <option value="vedic">Vedic Astrology</option>
+                        <option value="kp">KP System</option>
+                        <option value="numerology">Numerology</option>
+                        <option value="tarot">Tarot Reading</option>
+                        <option value="vastu">Vastu Shastra</option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <select id="filter_language">
+                        <option value="" selected>All Languages</option>
+                        <option value="english">English</option>
+                        <option value="hindi">Hindi</option>
+                        <option value="marathi">Marathi</option>
+                        <option value="tamil">Tamil</option>
+                    </select>
+                </div>
+
+                <div class="filter-field">
+                    <select id="filter_sort">
+                        <option value="popular" selected>Popularity</option>
+                        <option value="experience">Experience: High to Low</option>
+                        <option value="price_low">Price: Low to High</option>
+                        <option value="rating">User Rating</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Active Astrologer Grid Layout -->
+        <section class="astrologer-grid-wrapper">
+
+            <!-- ================= CARD 1: ONLINE & CALL-READY ================= -->
+            <article class="astro-profile-card">
+                <!-- Profile Status Header badge -->
+                <div class="card-status-header">
+                    <span class="status-badge status-online">● Online</span>
+                    <span class="experience-tag">12 Yrs Exp</span>
+                </div>
+
+                <!-- Core Profile Details Block -->
+                <div class="astro-card-body">
+                    <div class="avatar-container">
+                        <!-- Standard placeholder image icon - Replace src with your database links -->
+                        <div class="astro-avatar-fallback">AS</div>
+                    </div>
+
+                    <div class="astro-meta-info">
+                        <h2 class="astro-name">Acharya Sharma</h2>
+                        <p class="astro-specialties">Vedic, KP System, Prashna Kundali</p>
+                        <p class="astro-languages">🗣️ Hindi, English, Marathi</p>
+
+                        <!-- Review and Ratings Row -->
+                        <div class="astro-rating-row">
+                            <span class="star-rating">★ 4.9</span>
+                            <span class="total-orders">(4,500+ consultations)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price Breakdown and CTA Action Deck -->
+                <div class="astro-card-footer">
+                    <div class="price-block">
+                        <span class="original-price">₹40/min</span>
+                        <strong class="current-price">₹25/min</strong>
+                    </div>
+
+                    <div class="action-buttons-group">
+                        <button class="cta-btn btn-chat" onclick="startSession('chat', '1')">💬 Chat</button>
+                        <button class="cta-btn btn-call" onclick="startSession('call', '1')">📞 Call</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ================= CARD 2: BUSY/ON CALL ================= -->
+            <article class="astro-profile-card">
+                <div class="card-status-header">
+                    <span class="status-badge status-busy">🛑 On Call</span>
+                    <span class="experience-tag">15 Yrs Exp</span>
+                </div>
+
+                <div class="astro-card-body">
+                    <div class="avatar-container">
+                        <div class="astro-avatar-fallback">NM</div>
+                    </div>
+
+                    <div class="astro-meta-info">
+                        <h2 class="astro-name">Numerologist Megha</h2>
+                        <p class="astro-specialties">Name Numerology, Loshu Grid, Vastu</p>
+                        <p class="astro-languages">🗣️ English, Hindi</p>
+
+                        <div class="astro-rating-row">
+                            <span class="star-rating">★ 4.8</span>
+                            <span class="total-orders">(6,200+ consultations)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="astro-card-footer">
+                    <div class="price-block">
+                        <strong class="current-price">₹40/min</strong>
+                    </div>
+
+                    <div class="action-buttons-group">
+                        <button class="cta-btn btn-waitlist" onclick="joinWaitlist('2')">⏳ Join Waitlist</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ================= CARD 3: OFFLINE ================= -->
+            <article class="astro-profile-card">
+                <div class="card-status-header">
+                    <span class="status-badge status-offline">○ Offline</span>
+                    <span class="experience-tag">8 Yrs Exp</span>
+                </div>
+
+                <div class="astro-card-body">
+                    <div class="avatar-container">
+                        <div class="astro-avatar-fallback">TR</div>
+                    </div>
+
+                    <div class="astro-meta-info">
+                        <h2 class="astro-name">Tarot Reader Riya</h2>
+                        <p class="astro-specialties">Tarot Cards, Psychic Reading, Angel Cards</p>
+                        <p class="astro-languages">🗣️ English, Bengali</p>
+
+                        <div class="astro-rating-row">
+                            <span class="star-rating">★ 4.7</span>
+                            <span class="total-orders">(1,800+ consultations)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="astro-card-footer">
+                    <div class="price-block">
+                        <strong class="current-price">₹20/min</strong>
+                    </div>
+
+                    <div class="action-buttons-group">
+                        <button class="cta-btn btn-offline" disabled>Notify When Online</button>
+                    </div>
+                </div>
+            </article>
+
+            <!-- ================= CARD 4: ONLINE & FREE OFFERS ================= -->
+            <article class="astro-profile-card">
+                <div class="card-status-header">
+                    <span class="status-badge status-online">● Online</span>
+                    <span class="experience-tag">20 Yrs Exp</span>
+                </div>
+
+                <div class="astro-card-body">
+                    <div class="avatar-container">
+                        <div class="astro-avatar-fallback">SK</div>
+                    </div>
+
+                    <div class="astro-meta-info">
+                        <h2 class="astro-name">Swami Krishna</h2>
+                        <p class="astro-specialties">Vedic, Ashtakoot Kundali, Gemology</p>
+                        <p class="astro-languages">🗣️ Hindi, English, Sanskrit</p>
+
+                        <div class="astro-rating-row">
+                            <span class="star-rating">★ 5.0</span>
+                            <span class="total-orders">(12,000+ consultations)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="astro-card-footer">
+                    <div class="price-block">
+                        <span class="original-price">₹60/min</span>
+                        <strong class="current-price promo-free">FREE <small
+                                style="font-size:0.75rem; color:#64748b;">(First 5 Min)</small></strong>
+                    </div>
+
+                    <div class="action-buttons-group">
+                        <button class="cta-btn btn-chat promotional-pulse" onclick="startSession('chat', '4')">💬 Chat
+                            Free</button>
+                    </div>
+                </div>
+            </article>
+
+        </section>
+    </main>
+
+    <footer class="footer-horoscope">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,2105 @@
+/**
+ * =====================================================================
+ *  ASTROVERSE — Main Application JavaScript
+ *  Handles all interactive functionality across every page.
+ * =====================================================================
+ */
+
+/* =================================================================
+   SECTION 1 — UTILITY HELPERS
+   ================================================================= */
+
+/**
+ * Reduce a number to a single digit by summing its digits.
+ * Master numbers (11, 22, 33) are preserved when keepMaster=true.
+ */
+const API_BASE_URL = 'http://localhost:5000/api';
+
+async function apiFetch(endpoint, options = {}) {
+    const token = localStorage.getItem('astro_token');
+    const headers = Object.assign({ 'Content-Type': 'application/json' }, options.headers || {});
+    if (token) headers.Authorization = 'Bearer ' + token;
+    const response = await fetch(API_BASE_URL + endpoint, Object.assign({}, options, { headers }));
+    const data = await response.json().catch(function () { return {}; });
+    if (response.status === 401) {
+        localStorage.removeItem('astro_token');
+        localStorage.removeItem('astro_user');
+        syncHeaderAuth();
+        showNotification('Your session has ended. Please sign in again.', 'error');
+    }
+    if (!response.ok) {
+        const error = new Error(data.message || 'Request failed.');
+        error.status = response.status;
+        throw error;
+    }
+    return data;
+}
+
+function getStoredUser() {
+    try { return JSON.parse(localStorage.getItem('astro_user')); } catch (error) { return null; }
+}
+
+function saveSession(data) {
+    localStorage.setItem('astro_token', data.token);
+    localStorage.setItem('astro_user', JSON.stringify(data.user));
+    syncHeaderAuth();
+}
+
+function requireLogin() {
+    if (localStorage.getItem('astro_token')) return true;
+    showNotification('Please sign in to continue.', 'error');
+    window.location.href = 'sign-in-up.html';
+    return false;
+}
+
+async function saveCalculation(type, input, result) {
+    if (!localStorage.getItem('astro_token')) {
+        showNotification('Sign in to save this result to your account.', 'info');
+        return;
+    }
+    try { await apiFetch('/calculations', { method: 'POST', body: JSON.stringify({ type, input, result }) }); }
+    catch (error) { showNotification(error.message, 'error'); }
+}
+
+function syncHeaderAuth() {
+    const user = getStoredUser();
+    const dropdown = Array.from(document.querySelectorAll('.nav-links > .dropdown')).find(function (item) {
+        return item.firstElementChild && item.firstElementChild.textContent.includes('Sign In');
+    });
+    if (!dropdown || !user) return;
+    const menu = dropdown.querySelector('.dropdown-content');
+    if (!menu) return;
+    menu.innerHTML = '';
+    const profile = document.createElement('a');
+    profile.href = 'sign-in-up.html';
+    profile.textContent = 'Profile (' + user.name + ')';
+    const logout = document.createElement('a');
+    logout.href = '#';
+    logout.textContent = 'Logout';
+    logout.addEventListener('click', function (event) {
+        event.preventDefault();
+        localStorage.removeItem('astro_token');
+        localStorage.removeItem('astro_user');
+        window.location.href = 'index.html';
+    });
+    menu.append(profile, logout);
+}
+
+function reduceToSingleDigit(number, keepMaster) {
+    number = Math.abs(Number(number)) || 0;
+    if (keepMaster && [11, 22, 33].includes(number)) {
+        return number;
+    }
+    while (number > 9) {
+        number = String(number)
+            .split('')
+            .reduce((sum, digit) => sum + parseInt(digit, 10), 0);
+        if (keepMaster && [11, 22, 33].includes(number)) {
+            return number;
+        }
+    }
+    return number;
+}
+
+/**
+ * Show a styled alert notification at the top of the page.
+//  * Falls back to browser alert if the container is missing.
+ */
+function showNotification(message, type) {
+    var existingNotification = document.querySelector('.astroverse-notification');
+    if (existingNotification) existingNotification.remove();
+
+    var notificationBar = document.createElement('div');
+    notificationBar.className = 'astroverse-notification';
+    notificationBar.setAttribute('role', type === 'error' ? 'alert' : 'status');
+    notificationBar.setAttribute('aria-live', 'polite');
+    notificationBar.style.cssText =
+        'position:fixed;top:80px;left:50%;transform:translateX(-50%);z-index:9999;' +
+        'padding:16px 32px;border-radius:10px;font-family:Segoe UI,sans-serif;font-weight:600;' +
+        'box-shadow:0 8px 24px rgba(0,0,0,0.18);max-width:90%;text-align:center;' +
+        'animation:slideDown 0.3s ease;';
+
+    if (type === 'success') {
+        notificationBar.style.background = '#ecfdf5';
+        notificationBar.style.color = '#065f46';
+        notificationBar.style.border = '1px solid #a7f3d0';
+    } else if (type === 'error') {
+        notificationBar.style.background = '#fef2f2';
+        notificationBar.style.color = '#991b1b';
+        notificationBar.style.border = '1px solid #fecaca';
+    } else {
+        notificationBar.style.background = '#eff6ff';
+        notificationBar.style.color = '#1e40af';
+        notificationBar.style.border = '1px solid #bfdbfe';
+    }
+
+    notificationBar.textContent = message;
+    document.body.appendChild(notificationBar);
+
+    setTimeout(function () {
+        notificationBar.style.opacity = '0';
+        notificationBar.style.transition = 'opacity 0.4s ease';
+        setTimeout(function () { notificationBar.remove(); }, 400);
+    }, 3500);
+}
+
+
+/* =================================================================
+   SECTION 2 — NAVIGATION (Header / Dropdowns / Mobile Menu)
+   ================================================================= */
+
+function initializeNavigation() {
+    // Add mobile hamburger toggle if not present
+    var navContainer = document.querySelector('.nav-container');
+    var navLinks = document.querySelector('.nav-links');
+
+    if (!navContainer || !navLinks) return;
+
+    // Check if hamburger button already exists
+    if (!document.querySelector('.mobile-menu-toggle')) {
+        var hamburgerButton = document.createElement('button');
+        hamburgerButton.className = 'mobile-menu-toggle';
+        hamburgerButton.setAttribute('aria-label', 'Toggle navigation menu');
+        hamburgerButton.innerHTML = '☰';
+        hamburgerButton.style.cssText =
+            'display:none;background:none;border:none;color:gold;font-size:28px;cursor:pointer;padding:8px;';
+        var logoContainer = navContainer.querySelector('.logo-container');
+        if (logoContainer) {
+            logoContainer.after(hamburgerButton);
+        } else {
+            navContainer.prepend(hamburgerButton);
+        }
+    }
+
+    var mobileToggle = document.querySelector('.mobile-menu-toggle');
+
+    // Show hamburger only on small screens via resize listener
+    function handleMobileLayout() {
+        if (window.innerWidth <= 900) {
+            mobileToggle.style.display = 'block';
+            navLinks.style.display = 'none';
+            navLinks.style.flexDirection = 'column';
+            navLinks.style.position = 'absolute';
+            navLinks.style.top = '100%';
+            navLinks.style.right = '0';
+            navLinks.style.backgroundColor = '#000';
+            navLinks.style.padding = '15px';
+            navLinks.style.borderRadius = '0 0 8px 8px';
+            navLinks.style.zIndex = '1001';
+            navLinks.style.width = '220px';
+            navLinks.style.gap = '12px';
+        } else {
+            mobileToggle.style.display = 'none';
+            navLinks.style.display = 'flex';
+            navLinks.style.position = '';
+            navLinks.style.flexDirection = '';
+            navLinks.style.top = '';
+            navLinks.style.right = '';
+            navLinks.style.backgroundColor = '';
+            navLinks.style.padding = '';
+            navLinks.style.borderRadius = '';
+            navLinks.style.zIndex = '';
+            navLinks.style.width = '';
+            navLinks.style.gap = '';
+        }
+    }
+
+    mobileToggle.addEventListener('click', function () {
+        var isCurrentlyHidden = navLinks.style.display === 'none' || navLinks.style.display === '';
+        navLinks.style.display = isCurrentlyHidden ? 'flex' : 'none';
+    });
+
+    handleMobileLayout();
+    window.addEventListener('resize', handleMobileLayout);
+
+    // Close mobile menu when a link is clicked
+    var allNavLinks = navLinks.querySelectorAll('a');
+    allNavLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+            if (window.innerWidth <= 900) {
+                navLinks.style.display = 'none';
+            }
+        });
+    });
+}
+
+
+/* =================================================================
+   SECTION 3 — ASTROLOGER SIGN IN / SIGN UP (astrologer-sign-in-up.html)
+   ================================================================= */
+
+/**
+ * Toggle between Astrologer Login and Signup tabs.
+ * @param {string} activeMode - Either 'login' or 'signup'
+ */
+function toggleAstroAuth(activeMode) {
+    var tabLogin = document.getElementById('tab-astro-login');
+    var tabSignup = document.getElementById('tab-astro-signup');
+    var viewLogin = document.getElementById('astroLoginFormSection');
+    var viewSignup = document.getElementById('astroSignupFormSection');
+
+    if (!tabLogin || !tabSignup || !viewLogin || !viewSignup) return;
+
+    if (activeMode === 'login') {
+        tabLogin.classList.add('active');
+        tabSignup.classList.remove('active');
+        viewLogin.classList.add('active');
+        viewSignup.classList.remove('active');
+    } else {
+        tabSignup.classList.add('active');
+        tabLogin.classList.remove('active');
+        viewSignup.classList.add('active');
+        viewLogin.classList.remove('active');
+    }
+}
+
+
+/* =================================================================
+   SECTION 4 — USER SIGN IN / SIGN UP (sign-in-up.html)
+   ================================================================= */
+
+/**
+ * Switch between User Login, User Signup, and Admin Login panels.
+ * @param {string} targetView - One of 'user-login', 'user-signup', 'admin-login'
+ */
+function switchPortalView(targetView) {
+    var allTabs = document.querySelectorAll('.tab-toggle-btn');
+    var allPanels = document.querySelectorAll('.auth-panel-view');
+
+    allTabs.forEach(function (tab) {
+        tab.classList.remove('active');
+        tab.setAttribute('aria-selected', 'false');
+    });
+    allPanels.forEach(function (panel) {
+        panel.classList.remove('active');
+    });
+
+    var activeTab = document.getElementById('tab-' + targetView);
+    var activePanel = document.getElementById('view-' + targetView);
+
+    if (activeTab && activePanel) {
+        activeTab.classList.add('active');
+        activeTab.setAttribute('aria-selected', 'true');
+        activePanel.classList.add('active');
+    }
+}
+
+
+/* =================================================================
+   SECTION 5 — ASTROLOGER SESSION ACTIONS (index.html / astrologers.html)
+   ================================================================= */
+
+/**
+ * Start a chat or call session with an astrologer.
+ * @param {string} sessionType - Either 'chat' or 'call'
+ * @param {string} astrologerId - The astrologer's identifier
+ */
+function startSession(sessionType, astrologerId) {
+    var astrologerNames = {
+        '1': 'Acharya Sharma',
+        '2': 'Numerologist Megha',
+        '3': 'Tarot Reader Riya',
+        '4': 'Swami Krishna'
+    };
+
+    var astrologerName = astrologerNames[astrologerId] || 'this astrologer';
+    var sessionLabel = sessionType === 'chat' ? 'Chat' : 'Call';
+
+    showNotification(
+        'Starting ' + sessionLabel + ' session with ' + astrologerName + '… Please wait.',
+        'info'
+    );
+
+    // In a real app, this would redirect to a chat/call room
+    console.log('[ASTROVERSE] Starting ' + sessionType + ' with astrologer #' + astrologerId);
+}
+
+/**
+ * Join the waitlist for a busy astrologer.
+ * @param {string} astrologerId - The astrologer's identifier
+ */
+function joinWaitlist(astrologerId) {
+    showNotification(
+        'You have been added to the waitlist. We will notify you when the astrologer is available.',
+        'success'
+    );
+    console.log('[ASTROVERSE] Joined waitlist for astrologer #' + astrologerId);
+}
+
+
+/* =================================================================
+   SECTION 6 — HOROSCOPE PAGE (horoscope.html)
+   ================================================================= */
+
+/** Complete horoscope data for all 12 zodiac signs */
+async function startSession(sessionType, astrologerId) {
+    if (!requireLogin()) return;
+    try {
+        await apiFetch('/sessions', { method: 'POST', body: JSON.stringify({ type: sessionType, astrologerId }) });
+        showNotification('Your ' + sessionType + ' session has been requested.', 'success');
+    } catch (error) { showNotification(error.message, 'error'); }
+}
+
+async function joinWaitlist(astrologerId) {
+    if (!requireLogin()) return;
+    try {
+        await apiFetch('/sessions/waitlist', { method: 'POST', body: JSON.stringify({ astrologerId }) });
+        showNotification('You have been added to the waitlist.', 'success');
+    } catch (error) { showNotification(error.message, 'error'); }
+}
+
+var zodiacHoroscopeData = {
+    aries: {
+        name: 'Aries',
+        symbol: '♈',
+        rulingPlanet: 'Mars',
+        element: 'Fire',
+        overview: 'The cosmic current alignment pushes you into a highly dynamic zone today. The Moon forms a pleasant sextile with your ruling planet Mars, fueling your mental reservoir with unyielding ambition. It is an extraordinary window to conquer stagnant logistical projects.',
+        love: 'Vulnerability becomes your greatest charm today. Open conversations dissolve old friction. Single signs might feel a sudden attraction toward an analytical Air sign.',
+        career: 'Do not shy away from leadership roles today. A pitch or conceptual proposal you lay down during afternoon transits holds a very high conversion success factor.',
+        health: 'High energy levels could turn into nervous exhaustion if not grounded properly. Swap heavy stimulants for outdoor activity or physical stretches.',
+        finance: 'A minor speculative delay clears up. Keep a close watch on impulse luxury checkouts, as planetary alignments hint at short-term budgetary fluctuations.',
+        romanceIndex: 85,
+        careerDrive: 90,
+        financialInstinct: 60,
+        mentalClarity: 75,
+        luckyNumbers: '7, 14, 22',
+        luckyColour: 'Crimson Red',
+        harmoniousSigns: 'Leo, Sagittarius',
+        challengingSign: 'Capricorn',
+        auspiciousHours: '02:30 PM - 04:00 PM'
+    },
+    taurus: {
+        name: 'Taurus',
+        symbol: '♉',
+        rulingPlanet: 'Venus',
+        element: 'Earth',
+        overview: 'Venus graces your sign with a calming influence today, encouraging you to slow down and savour life\'s simple pleasures. Financial matters look favourable — a pending payment or investment return may finally materialise.',
+        love: 'Romance is in the air. Couples enjoy deepened intimacy, while singles may encounter someone through a shared hobby or creative pursuit.',
+        career: 'Steady progress is your superpower today. Avoid rushing decisions and trust your methodical approach — it will outperform hurried competitors.',
+        health: 'Indulge in nourishing comfort foods but maintain portion control. A gentle yoga session will realign your energy centres beautifully.',
+        finance: 'An excellent day for long-term financial planning. That savings strategy you\'ve been considering? Start it today.',
+        romanceIndex: 92,
+        careerDrive: 70,
+        financialInstinct: 88,
+        mentalClarity: 78,
+        luckyNumbers: '6, 15, 24',
+        luckyColour: 'Emerald Green',
+        harmoniousSigns: 'Virgo, Capricorn',
+        challengingSign: 'Leo',
+        auspiciousHours: '10:00 AM - 12:00 PM'
+    },
+    gemini: {
+        name: 'Gemini',
+        symbol: '♊',
+        rulingPlanet: 'Mercury',
+        element: 'Air',
+        overview: 'Mercury\'s transit through your communication sector amplifies your natural wit. Conversations flow effortlessly, and ideas come in rapid succession. Channel this energy into creative projects or networking.',
+        love: 'Your charm is at its peak. Flirtatious banter could evolve into something meaningful. Be honest about your intentions.',
+        career: 'Multitasking comes naturally today. Juggle multiple projects with finesse, but prioritise the deadline that carries the highest consequence.',
+        health: 'Mental restlessness may cause scattered focus. Meditation or a short walk in nature can restore your equilibrium.',
+        finance: 'Avoid impulsive online shopping. That "limited time offer" can wait until tomorrow when Mercury\'s influence calms.',
+        romanceIndex: 78,
+        careerDrive: 82,
+        financialInstinct: 55,
+        mentalClarity: 90,
+        luckyNumbers: '5, 14, 23',
+        luckyColour: 'Yellow',
+        harmoniousSigns: 'Libra, Aquarius',
+        challengingSign: 'Pisces',
+        auspiciousHours: '03:00 PM - 05:00 PM'
+    },
+    cancer: {
+        name: 'Cancer',
+        symbol: '♋',
+        rulingPlanet: 'Moon',
+        element: 'Water',
+        overview: 'The Moon\'s transit through your family sector brings emotional warmth and nostalgic reflections. Home improvement projects or family gatherings bring unexpected joy today.',
+        love: 'Emotional security matters most. Partnered Cancers deepen their bonds through heartfelt conversations. Singles should trust their intuition about new people.',
+        career: 'Your nurturing leadership style earns recognition. A colleague you mentored may bring good news or a token of gratitude.',
+        health: 'Emotional eating patterns may surface. Comfort is found in warm baths, gentle music, and meaningful conversations.',
+        finance: 'Property or home-related expenses may arise. Budget carefully — the investment will be worthwhile long-term.',
+        romanceIndex: 80,
+        careerDrive: 65,
+        financialInstinct: 72,
+        mentalClarity: 70,
+        luckyNumbers: '2, 11, 20',
+        luckyColour: 'Silver',
+        harmoniousSigns: 'Scorpio, Pisces',
+        challengingSign: 'Aries',
+        auspiciousHours: '06:00 AM - 08:00 AM'
+    },
+    leo: {
+        name: 'Leo',
+        symbol: '♌',
+        rulingPlanet: 'Sun',
+        element: 'Fire',
+        overview: 'The Sun illuminates your creative sector, sparking a burst of artistic inspiration. Today favours self-expression, performance, and romantic gestures. Your natural magnetism is amplified.',
+        love: 'Grand romantic gestures land perfectly. Plan something special for your partner or put yourself out there with confidence.',
+        career: 'Leadership opportunities abound. Your team looks to you for direction — step up with decisiveness and warmth.',
+        health: 'Your vitality is strong. Channel excess energy into physical activities like dancing, swimming, or strength training.',
+        finance: 'Creative ventures could generate unexpected income. That side project or hobby has real monetisation potential.',
+        romanceIndex: 95,
+        careerDrive: 88,
+        financialInstinct: 70,
+        mentalClarity: 82,
+        luckyNumbers: '1, 10, 19',
+        luckyColour: 'Gold',
+        harmoniousSigns: 'Aries, Sagittarius',
+        challengingSign: 'Taurus',
+        auspiciousHours: '11:00 AM - 01:00 PM'
+    },
+    virgo: {
+        name: 'Virgo',
+        symbol: '♍',
+        rulingPlanet: 'Mercury',
+        element: 'Earth',
+        overview: 'Mercury\'s analytical influence sharpens your attention to detail. Today is ideal for auditing finances, organising your workspace, or tackling that backlog of tasks you\'ve been postponing.',
+        love: 'Small, thoughtful gestures speak louder than grand declarations. Show love through acts of service and genuine attentiveness.',
+        career: 'Your meticulous approach catches a critical error before it escalates. Document everything — your thoroughness will be rewarded.',
+        health: 'Digestive sensitivity may be heightened. Opt for probiotic-rich foods, herbal teas, and regular meal timings.',
+        finance: 'A budgeting review reveals areas for optimisation. Redirect saved amounts into an emergency fund or index investment.',
+        romanceIndex: 65,
+        careerDrive: 85,
+        financialInstinct: 80,
+        mentalClarity: 88,
+        luckyNumbers: '6, 15, 27',
+        luckyColour: 'Navy Blue',
+        harmoniousSigns: 'Taurus, Capricorn',
+        challengingSign: 'Sagittarius',
+        auspiciousHours: '09:00 AM - 11:00 AM'
+    },
+    libra: {
+        name: 'Libra',
+        symbol: '♎',
+        rulingPlanet: 'Venus',
+        element: 'Air',
+        overview: 'Venus blesses your social sector, making today excellent for partnerships, negotiations, and diplomatic conversations. Balance is your natural gift — use it to mediate or broker agreements.',
+        love: 'Harmony in relationships is your focus. Address any unresolved tensions with grace. Singles may attract a charming intellectual type.',
+        career: 'Collaborative projects gain momentum. Your ability to see all sides of a situation makes you the ideal mediator in workplace disputes.',
+        health: 'Kidney and lower back areas need attention. Stay hydrated and avoid prolonged sitting without stretching breaks.',
+        finance: 'Joint financial decisions should be made carefully. Consult a trusted advisor before signing any shared agreements.',
+        romanceIndex: 88,
+        careerDrive: 72,
+        financialInstinct: 68,
+        mentalClarity: 85,
+        luckyNumbers: '4, 13, 22',
+        luckyColour: 'Rose Pink',
+        harmoniousSigns: 'Gemini, Aquarius',
+        challengingSign: 'Capricorn',
+        auspiciousHours: '04:00 PM - 06:00 PM'
+    },
+    scorpio: {
+        name: 'Scorpio',
+        symbol: '♏',
+        rulingPlanet: 'Pluto',
+        element: 'Water',
+        overview: 'Pluto\'s transformative energy urges you to release what no longer serves you. Today brings powerful insights into hidden motivations — yours and others\'. Trust your penetrating intuition.',
+        love: 'Deep emotional connections replace surface-level interactions. This is a day for vulnerability and profound intimacy.',
+        career: 'Investigative or research-based tasks yield breakthrough results. Your ability to dig beneath the surface reveals what others miss.',
+        health: 'Emotional processing may be intense. Journaling, therapy, or deep breathing exercises help channel these powerful energies constructively.',
+        finance: 'Hidden financial opportunities surface. A forgotten investment or overlooked refund may appear unexpectedly.',
+        romanceIndex: 82,
+        careerDrive: 80,
+        financialInstinct: 75,
+        mentalClarity: 78,
+        luckyNumbers: '8, 17, 26',
+        luckyColour: 'Deep Maroon',
+        harmoniousSigns: 'Cancer, Pisces',
+        challengingSign: 'Leo',
+        auspiciousHours: '07:00 PM - 09:00 PM'
+    },
+    sagittarius: {
+        name: 'Sagittarius',
+        symbol: '♐',
+        rulingPlanet: 'Jupiter',
+        element: 'Fire',
+        overview: 'Jupiter\'s expansive influence opens doors to learning, travel, and philosophical exploration. Say yes to unexpected invitations — they lead to growth and meaningful connections.',
+        love: 'Adventure fuels your romance today. Plan an exciting outing with your partner or explore a cultural event where new connections await.',
+        career: 'International or cross-cultural projects gain traction. Your optimistic vision inspires colleagues and attracts new opportunities.',
+        health: 'Your adventurous spirit needs physical outlets. Try a new sport, go hiking, or explore a fitness class you\'ve been curious about.',
+        finance: 'Educational investments pay off. That course, certification, or book you\'ve been considering is worth the expenditure today.',
+        romanceIndex: 80,
+        careerDrive: 85,
+        financialInstinct: 60,
+        mentalClarity: 92,
+        luckyNumbers: '3, 12, 21',
+        luckyColour: 'Royal Purple',
+        harmoniousSigns: 'Aries, Leo',
+        challengingSign: 'Virgo',
+        auspiciousHours: '01:00 PM - 03:00 PM'
+    },
+    capricorn: {
+        name: 'Capricorn',
+        symbol: '♑',
+        rulingPlanet: 'Saturn',
+        element: 'Earth',
+        overview: 'Saturn\'s disciplined energy reinforces your already strong work ethic. Today rewards persistence and long-term planning. A career milestone may be closer than you think.',
+        love: 'Stability and loyalty define your romantic interactions. Express appreciation for your partner\'s quiet consistency.',
+        career: 'Professional goals come into sharper focus. Map out your next quarter targets — the cosmic alignment supports strategic planning.',
+        health: 'Joint and bone health benefits from weight-bearing exercise. A structured fitness routine yields compounding benefits.',
+        finance: 'Retirement planning or long-term savings strategies look particularly favourable. Think in decades, not days.',
+        romanceIndex: 60,
+        careerDrive: 95,
+        financialInstinct: 90,
+        mentalClarity: 80,
+        luckyNumbers: '8, 16, 26',
+        luckyColour: 'Charcoal Grey',
+        harmoniousSigns: 'Taurus, Virgo',
+        challengingSign: 'Aries',
+        auspiciousHours: '08:00 AM - 10:00 AM'
+    },
+    aquarius: {
+        name: 'Aquarius',
+        symbol: '♒',
+        rulingPlanet: 'Uranus',
+        element: 'Air',
+        overview: 'Uranus sparks innovation and unconventional thinking. Today favours brainstorming, technology projects, and humanitarian causes. Your unique perspective becomes your greatest asset.',
+        love: 'Intellectual compatibility matters more than ever. Connect with someone who challenges your thinking and shares your vision for the future.',
+        career: 'Tech-forward projects gain momentum. Propose that innovative solution you\'ve been developing — the timing is perfect.',
+        health: 'Ankle and circulation areas need attention. Alternate between sitting and standing, and incorporate cardiovascular exercise.',
+        finance: 'Cryptocurrency or emerging technology investments merit research. Consult experts before committing significant capital.',
+        romanceIndex: 72,
+        careerDrive: 88,
+        financialInstinct: 65,
+        mentalClarity: 95,
+        luckyNumbers: '4, 11, 22',
+        luckyColour: 'Electric Blue',
+        harmoniousSigns: 'Gemini, Libra',
+        challengingSign: 'Scorpio',
+        auspiciousHours: '05:00 PM - 07:00 PM'
+    },
+    pisces: {
+        name: 'Pisces',
+        symbol: '♓',
+        rulingPlanet: 'Neptune',
+        element: 'Water',
+        overview: 'Neptune deepens your already powerful intuition. Creative and spiritual pursuits are favoured. Dreams carry important messages today — keep a journal by your bedside.',
+        love: 'Romantic idealism is beautiful but stay grounded. See your partner (or potential partner) as they truly are, not as you wish them to be.',
+        career: 'Creative and artistic endeavours flourish. Music, writing, healing arts, or any water-related field brings professional satisfaction.',
+        health: 'Sleep quality matters enormously. Create a calming bedtime routine and limit screen time before rest.',
+        finance: 'Generosity is your nature, but set boundaries on lending money. Protect your financial energy as carefully as your emotional one.',
+        romanceIndex: 90,
+        careerDrive: 60,
+        financialInstinct: 55,
+        mentalClarity: 72,
+        luckyNumbers: '7, 16, 25',
+        luckyColour: 'Seafoam Green',
+        harmoniousSigns: 'Cancer, Scorpio',
+        challengingSign: 'Virgo',
+        auspiciousHours: '09:00 PM - 11:00 PM'
+    }
+};
+
+var currentSelectedSign = 'aries';
+
+function initializeHoroscopePage() {
+    var zodiacCards = document.querySelectorAll('.zodiac-card');
+    var timelineTabs = document.querySelectorAll('.time-tab');
+
+    if (zodiacCards.length === 0) return;
+
+    // Zodiac cards already call selectZodiac() through their HTML onclick attribute.
+    // Keeping one handler prevents the reading from being loaded twice per click.
+
+    // Attach click handlers to timeline tabs
+    timelineTabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+            timelineTabs.forEach(function (t) { t.classList.remove('active-today'); });
+            tab.classList.add('active-today');
+            showNotification('Showing ' + tab.textContent.trim() + ' horoscope readings.', 'info');
+        });
+    });
+
+    // Load default sign
+    selectZodiac(currentSelectedSign);
+}
+
+/**
+ * Select a zodiac sign and update the horoscope display.
+ * @param {string} signName - Zodiac sign key (e.g. 'aries', 'taurus')
+ */
+function selectZodiac(signName) {
+    var signData = zodiacHoroscopeData[signName];
+    if (!signData) return;
+
+    currentSelectedSign = signName;
+
+    // Update active card styling
+    var allZodiacCards = document.querySelectorAll('.zodiac-card');
+    allZodiacCards.forEach(function (card) {
+        card.classList.remove('active-sign');
+        var label = card.querySelector('.zodiac-name');
+        if (label && label.textContent.trim().toLowerCase() === signName) {
+            card.classList.add('active-sign');
+        }
+    });
+
+    // Update reading header
+    var readingTitle = document.querySelector('.reading-meta h2');
+    if (readingTitle) {
+        readingTitle.innerHTML = signData.name + ' Daily Overview <span class="badge-live">Live Reading</span>';
+    }
+
+    var transitInfo = document.querySelector('.current-transit-info');
+    if (transitInfo) {
+        transitInfo.innerHTML =
+            'Ruling Planet: <strong>' + signData.rulingPlanet + '</strong> | Element: <strong>' + signData.element + '</strong>';
+    }
+
+    // Update overview
+    var overviewText = document.querySelector('.summary-card p');
+    if (overviewText) overviewText.textContent = signData.overview;
+
+    // Update aspect readings (Love, Career, Health, Finance)
+    var aspectBoxes = document.querySelectorAll('.aspect-box');
+    var aspectKeys = ['love', 'career', 'health', 'finance'];
+    aspectBoxes.forEach(function (box, index) {
+        if (aspectKeys[index]) {
+            var paragraph = box.querySelector('p');
+            if (paragraph) paragraph.textContent = signData[aspectKeys[index]];
+        }
+    });
+
+    // Update sidebar meters
+    updateMeterBar('Romance Index', signData.romanceIndex, '.color-love');
+    updateMeterBar('Career Drive', signData.careerDrive, '.color-career');
+    updateMeterBar('Financial Instinct', signData.financialInstinct, '.color-wealth');
+    updateMeterBar('Mental Clarity', signData.mentalClarity, '.color-health');
+
+    // Update lucky anchors
+    updateAnchorList(signData);
+
+    showNotification('Loaded ' + signData.name + ' horoscope reading.', 'success');
+}
+
+function updateMeterBar(labelText, percentage, colorClass) {
+    var meterGroups = document.querySelectorAll('.meter-group');
+    meterGroups.forEach(function (group) {
+        var labelSpan = group.querySelector('.meter-lbl-row span');
+        if (labelSpan && labelSpan.textContent.trim() === labelText) {
+            var percentageStrong = group.querySelector('.meter-lbl-row strong');
+            if (percentageStrong) percentageStrong.textContent = percentage + '%';
+            var fillBar = group.querySelector('.meter-fill');
+            if (fillBar) fillBar.style.width = percentage + '%';
+        }
+    });
+}
+
+function updateAnchorList(signData) {
+    var anchorItems = document.querySelectorAll('.anchor-data-list li');
+    var anchorData = [
+        { label: 'Lucky Numbers', value: signData.luckyNumbers },
+        { label: 'Lucky Colour', value: signData.luckyColour },
+        { label: 'Ideal Sign Harmony', value: signData.harmoniousSigns },
+        { label: 'Challenging Sign', value: signData.challengingSign },
+        { label: 'Auspicious Hours', value: signData.auspiciousHours }
+    ];
+
+    anchorItems.forEach(function (item, index) {
+        if (anchorData[index]) {
+            var valueElement = item.querySelector('strong');
+            if (valueElement) {
+                if (anchorData[index].label === 'Lucky Colour') {
+                    valueElement.innerHTML =
+                        '<span class="color-swatch-txt"><span class="swatch crimson-bg"></span>' + anchorData[index].value + '</span>';
+                } else {
+                    valueElement.textContent = anchorData[index].value;
+                }
+            }
+        }
+    });
+}
+
+
+/* =================================================================
+   SECTION 7 — AI CHAT ASSISTANT (index.html)
+   ================================================================= */
+
+/** Pre-defined responses for the AI chat assistant */
+var aiChatResponses = {
+    kundali: '🔮 To generate your Free Kundali, navigate to the Free Kundali page and enter your birth details — date, time, and place of birth. Our Vedic engine will calculate your complete birth chart including Lagna, Navamsha, and Vimshottari Dasha positions.',
+    horoscope: '🌟 Visit the Horoscope page to read your daily, weekly, or monthly cosmic predictions. Simply select your zodiac sign from the grid and explore readings for love, career, health, and finances.',
+    compatibility: '💕 Use our Love Compatibility tool to check your relationship dynamics with any partner. Enter both your zodiac signs and we will analyse emotional, physical, and intellectual compatibility across the four elements.',
+    numerology: '🔢 Our Name Numerology Calculator reveals your Expression Number, Soul Urge, and Personality Profile based on the Pythagorean or Chaldean system. You can also discover your Mulank (Root Number) using the Mulank Calculator.',
+    default: '✨ I can help you with Kundali generation, horoscope readings, compatibility analysis, numerology calculations, and Panchang details. Feel free to ask about any of these topics!'
+};
+
+function initializeAIChat() {
+    var chatInput = document.getElementById('chatInput');
+    var sendButton = document.getElementById('sendBtn');
+    var chatMessages = document.getElementById('chatMessages');
+    var suggestionButtons = document.querySelectorAll('.chat-suggestions button');
+
+    if (!chatInput || !sendButton || !chatMessages) return;
+
+    // Handle send button click
+    sendButton.addEventListener('click', function () {
+        processUserMessage(chatInput.value);
+    });
+
+    // Handle Enter key in input
+    chatInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+            processUserMessage(chatInput.value);
+        }
+    });
+
+    // Handle suggestion button clicks
+    suggestionButtons.forEach(function (button) {
+        button.addEventListener('click', function () {
+            processUserMessage(button.textContent.trim());
+        });
+    });
+
+    function processUserMessage(messageText) {
+        messageText = messageText.trim();
+        if (!messageText) return;
+
+        // Append user message to chat
+        var userMessageDiv = document.createElement('div');
+        userMessageDiv.className = 'chat-message user-message';
+        userMessageDiv.style.cssText =
+            'background-color:#e8f4fd;color:#1a365d;border-top-right-radius:0;margin-left:auto;text-align:right;max-width:75%;padding:14px 16px;border-radius:12px;margin-bottom:18px;line-height:1.5;';
+        userMessageDiv.innerHTML = '<span class="message-label" style="color:#2563eb;">You</span><p>' + escapeHTML(messageText) + '</p>';
+        chatMessages.appendChild(userMessageDiv);
+
+        // Clear input
+        chatInput.value = '';
+
+        // Remove suggestion buttons after first interaction
+        var suggestionsContainer = chatMessages.querySelector('.chat-suggestions');
+        if (suggestionsContainer) suggestionsContainer.remove();
+
+        // Generate AI response after a brief delay
+        setTimeout(function () {
+            var responseText = generateAIResponse(messageText);
+
+            var aiMessageDiv = document.createElement('div');
+            aiMessageDiv.className = 'chat-message ai-message';
+            aiMessageDiv.innerHTML = '<span class="message-label">AI</span><p>' + responseText + '</p>';
+            chatMessages.appendChild(aiMessageDiv);
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 800);
+    }
+
+    function generateAIResponse(userMessage) {
+        var lowerMessage = userMessage.toLowerCase();
+
+        if (lowerMessage.includes('kundali') || lowerMessage.includes('birth chart') || lowerMessage.includes('kundli')) {
+            return aiChatResponses.kundali;
+        } else if (lowerMessage.includes('horoscope') || lowerMessage.includes('daily') || lowerMessage.includes('zodiac') || lowerMessage.includes('sign')) {
+            return aiChatResponses.horoscope;
+        } else if (lowerMessage.includes('compatib') || lowerMessage.includes('love') || lowerMessage.includes('relationship') || lowerMessage.includes('partner')) {
+            return aiChatResponses.compatibility;
+        } else if (lowerMessage.includes('numerolog') || lowerMessage.includes('number') || lowerMessage.includes('mulank') || lowerMessage.includes('name')) {
+            return aiChatResponses.numerology;
+        } else if (lowerMessage.includes('panchang') || lowerMessage.includes('muhurat') || lowerMessage.includes('tithi')) {
+            return '🕉️ The Panchang page provides today\'s Vedic calendar data including Tithi, Nakshatra, Yoga, Karana, and auspicious Muhurata timings. Enter your location for personalised calculations.';
+        } else if (lowerMessage.includes('astrologer') || lowerMessage.includes('consult') || lowerMessage.includes('talk')) {
+            return '🧑‍🏫 Visit our Astrologers page to browse verified Vedic experts. You can start a chat or call session directly. Online astrologers are available for instant consultations.';
+        } else {
+            return aiChatResponses.default;
+        }
+    }
+}
+
+function escapeHTML(textString) {
+    var temporaryElement = document.createElement('div');
+    temporaryElement.appendChild(document.createTextNode(textString));
+    return temporaryElement.innerHTML;
+}
+
+// Date inputs use YYYY-MM-DD. Building the date from numbers prevents a
+// timezone from changing the day when the browser reads the input value.
+function parseDateInput(dateValue) {
+    var parts = dateValue.split('-').map(Number);
+    return new Date(parts[0], parts[1] - 1, parts[2]);
+}
+
+
+/* =================================================================
+   SECTION 8 — FREE KUNDALI GENERATOR (free-kundali.html)
+   ================================================================= */
+
+/** Nakshatra data for birth chart calculations */
+var nakshatraNames = [
+    'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra',
+    'Punarvasu', 'Pushya', 'Ashlesha', 'Magha', 'Purva Phalguni', 'Uttara Phalguni',
+    'Hasta', 'Chitra', 'Swati', 'Vishakha', 'Anuradha', 'Jyeshtha',
+    'Mula', 'Purva Ashadha', 'Uttara Ashadha', 'Shravana', 'Dhanishta', 'Shatabhisha',
+    'Purva Bhadrapada', 'Uttara Bhadrapada', 'Revati'
+];
+
+/** Rashi (zodiac sign in Vedic astrology) names */
+var rashiNames = [
+    'Mesha (Aries)', 'Vrishabha (Taurus)', 'Mithuna (Gemini)', 'Karka (Cancer)',
+    'Simha (Leo)', 'Kanya (Virgo)', 'Tula (Libra)', 'Vrischika (Scorpio)',
+    'Dhanu (Sagittarius)', 'Makara (Capricorn)', 'Kumbha (Aquarius)', 'Meena (Pisces)'
+];
+
+var dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+function initializeFreeKundali() {
+    var kundaliForm = document.querySelector('.kundali-gen-form');
+    if (!kundaliForm) return;
+
+    kundaliForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var fullName = document.getElementById('user_name').value.trim();
+        var gender = document.getElementById('user_gender').value;
+        var dateOfBirth = document.getElementById('user_dob').value;
+        var timeOfBirth = document.getElementById('user_tob').value;
+        var placeOfBirth = document.getElementById('user_pob').value.trim();
+        var ayanamsaSystem = document.getElementById('ayanamsa_system').value;
+
+        if (!fullName || !gender || !dateOfBirth || !timeOfBirth || !placeOfBirth) {
+            showNotification('Please fill in all required birth detail fields.', 'error');
+            return;
+        }
+
+        // Result markup uses HTML, so escape values entered by the visitor.
+        fullName = escapeHTML(fullName);
+        placeOfBirth = escapeHTML(placeOfBirth);
+
+        // Parse the birth date
+        var birthDate = parseDateInput(dateOfBirth);
+        var birthDay = birthDate.getDate();
+        var birthMonth = birthDate.getMonth();
+        var birthYear = birthDate.getFullYear();
+
+        // Calculate birth day of the week
+        var dayOfWeekIndex = birthDate.getDay();
+        var dayOfWeekName = dayNames[dayOfWeekIndex];
+
+        // Calculate Vedic Rashi (Moon sign approximation based on birth day)
+        var rashiIndex = Math.floor((birthDay - 1) / 2.5) % 12;
+        var selectedRashi = rashiNames[rashiIndex];
+
+        // Calculate Nakshatra (lunar mansion approximation)
+        var nakshatraIndex = Math.floor((birthDay * 1.125)) % 27;
+        var selectedNakshatra = nakshatraNames[nakshatraIndex];
+
+        // Calculate approximate Ascendant (Lagna) based on time of birth
+        var timeParts = timeOfBirth.split(':');
+        var birthHour = parseInt(timeParts[0], 10);
+        var birthMinute = parseInt(timeParts[1], 10);
+        var totalMinutesFromMidnight = birthHour * 60 + birthMinute;
+        var lagnaIndex = Math.floor(totalMinutesFromMidnight / 120) % 12;
+        var ascendantSign = rashiNames[lagnaIndex];
+
+        // Determine planetary period (Vimshottari Dasha approximation)
+        var dashaCycle = ['Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 'Saturn', 'Mercury'];
+        var currentDashaLord = dashaCycle[birthDay % 9];
+
+        // Build the result display
+        var resultHTML =
+            '<div style="margin-top:30px;padding:30px;background:linear-gradient(135deg,#fff9e6,#ffffff);' +
+            'border:2px solid #e67e22;border-radius:12px;">' +
+            '<h2 style="color:#d35400;margin-bottom:20px;text-align:center;">🔮 ' + fullName + '\'s Janam Kundali</h2>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">' +
+
+            '<div style="padding:15px;background:#fff;border-radius:8px;border-left:4px solid #e67e22;">' +
+            '<h4 style="color:#d35400;margin-bottom:8px;">Personal Details</h4>' +
+            '<p><strong>Name:</strong> ' + fullName + '</p>' +
+            '<p><strong>Gender:</strong> ' + gender.charAt(0).toUpperCase() + gender.slice(1) + '</p>' +
+            '<p><strong>Date of Birth:</strong> ' + birthDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) + '</p>' +
+            '<p><strong>Day:</strong> ' + dayOfWeekName + '</p>' +
+            '<p><strong>Time of Birth:</strong> ' + timeOfBirth + '</p>' +
+            '<p><strong>Place:</strong> ' + placeOfBirth + '</p>' +
+            '<p><strong>Ayanamsa:</strong> ' + ayanamsaSystem.charAt(0).toUpperCase() + ayanamsaSystem.slice(1) + '</p>' +
+            '</div>' +
+
+            '<div style="padding:15px;background:#fff;border-radius:8px;border-left:4px solid #9d692e;">' +
+            '<h4 style="color:#9d692e;margin-bottom:8px;">Vedic Chart Parameters</h4>' +
+            '<p><strong>Lagna (Ascendant):</strong> ' + ascendantSign + '</p>' +
+            '<p><strong>Rashi (Moon Sign):</strong> ' + selectedRashi + '</p>' +
+            '<p><strong>Nakshatra:</strong> ' + selectedNakshatra + '</p>' +
+            '<p><strong>Current Dasha Period:</strong> ' + currentDashaLord + '</p>' +
+            '</div>' +
+
+            '</div>' +
+
+            '<div style="margin-top:20px;padding:15px;background:#f0f9ff;border-radius:8px;border:1px solid #bae6fd;">' +
+            '<h4 style="color:#0369a1;margin-bottom:8px;">💡 Planetary Snapshot</h4>' +
+            '<p>Sun in ' + rashiNames[(birthMonth + 1) % 12] + ' | ' +
+            'Moon in ' + selectedRashi + ' | ' +
+            'Mars in ' + rashiNames[(birthMonth + 4) % 12] + ' | ' +
+            'Mercury in ' + rashiNames[(birthMonth + 2) % 12] + '</p>' +
+            '</div>' +
+
+            '</div>';
+
+        // Insert result after the form
+        var existingResult = kundaliForm.parentElement.querySelector('.kundali-result-container');
+        if (existingResult) existingResult.remove();
+
+        var resultContainer = document.createElement('div');
+        resultContainer.className = 'kundali-result-container';
+        resultContainer.innerHTML = resultHTML;
+        kundaliForm.parentElement.appendChild(resultContainer);
+        saveCalculation('kundali', { name: fullName, gender: gender, dateOfBirth: dateOfBirth, timeOfBirth: timeOfBirth, placeOfBirth: placeOfBirth }, { rashi: selectedRashi, nakshatra: selectedNakshatra, lagna: ascendantSign, dasha: currentDashaLord });
+
+        showNotification('Kundali generated successfully for ' + fullName + '!', 'success');
+
+        // Scroll to result
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+
+/* =================================================================
+   SECTION 9 — KUNDALI MATCHING (kundali-matching.html)
+   ================================================================= */
+
+/** Ashtakoota Milan parameters with max points */
+var ashtakootaParameters = [
+    { name: 'Varna', maxPoints: 1, description: 'Spiritual compatibility' },
+    { name: 'Vashya', maxPoints: 2, description: 'Mutual attraction' },
+    { name: 'Tara', maxPoints: 3, description: 'Health & well-being' },
+    { name: 'Yoni', maxPoints: 4, description: 'Physical compatibility' },
+    { name: 'Grah Maitri', maxPoints: 5, description: 'Mental harmony' },
+    { name: 'Gana', maxPoints: 6, description: 'Temperament alignment' },
+    { name: 'Bhakoot', maxPoints: 7, description: 'Emotional connection' },
+    { name: 'Nadi', maxPoints: 8, description: 'Genetic compatibility' }
+];
+
+function initializeKundaliMatching() {
+    var matchingForm = document.querySelector('.matching-form');
+    if (!matchingForm) return;
+
+    matchingForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var groomName = document.getElementById('p1_name').value.trim();
+        var groomDOB = document.getElementById('p1_dob').value;
+        var groomTOB = document.getElementById('p1_tob').value;
+        var groomPOB = document.getElementById('p1_pob').value.trim();
+
+        var brideName = document.getElementById('p2_name').value.trim();
+        var brideDOB = document.getElementById('p2_dob').value;
+        var brideTOB = document.getElementById('p2_tob').value;
+        var bridePOB = document.getElementById('p2_pob').value.trim();
+
+        if (!groomName || !groomDOB || !groomTOB || !groomPOB || !brideName || !brideDOB || !brideTOB || !bridePOB) {
+            showNotification('Please fill in all required fields for both partners.', 'error');
+            return;
+        }
+
+        // Parse birth dates for scoring
+        var groomDate = parseDateInput(groomDOB);
+        var brideDate = parseDateInput(brideDOB);
+
+        // Calculate Ashtakoota scores based on birth date characteristics
+        var scores = calculateAshtakootaScores(groomDate, brideDate);
+        var totalScore = scores.reduce(function (sum, s) { return sum + s.earned; }, 0);
+        var maxPossible = 36;
+
+        // Determine compatibility verdict
+        var verdictText, verdictColor;
+        if (totalScore >= 25) {
+            verdictText = '🌟 Highly Recommended Match! Exceptional harmony and cosmic alignment.';
+            verdictColor = '#16a34a';
+        } else if (totalScore >= 18) {
+            verdictText = '✅ Acceptable Match. Stable compatibility with minor areas for growth.';
+            verdictColor = '#2563eb';
+        } else {
+            verdictText = '⚠️ Below Threshold. Traditional remedies should be considered before proceeding.';
+            verdictColor = '#ea580c';
+        }
+
+        // Build result HTML
+        var resultHTML =
+            '<div style="margin-top:30px;padding:30px;background:#ffffff;border:2px solid #d35400;border-radius:12px;">' +
+            '<h2 style="color:#d35400;text-align:center;margin-bottom:25px;">🪐 Kundali Matching Result</h2>' +
+            '<div style="text-align:center;margin-bottom:25px;">' +
+            '<div style="display:inline-block;padding:20px 40px;background:linear-gradient(135deg,#fff4e6,#fff);border-radius:50%;border:4px solid ' + verdictColor + ';">' +
+            '<div style="font-size:2.5rem;font-weight:bold;color:' + verdictColor + ';">' + totalScore + '/' + maxPossible + '</div>' +
+            '<div style="font-size:0.9rem;color:#666;">Ashtakoota Score</div>' +
+            '</div>' +
+            '</div>' +
+            '<p style="text-align:center;font-weight:600;color:' + verdictColor + ';font-size:1.1rem;margin-bottom:20px;">' + verdictText + '</p>' +
+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">';
+
+        scores.forEach(function (scoreItem) {
+            var percentage = (scoreItem.earned / scoreItem.maxPoints) * 100;
+            var barColor = percentage >= 70 ? '#16a34a' : percentage >= 40 ? '#e67e22' : '#ea580c';
+            resultHTML +=
+                '<div style="padding:12px;background:#fafafa;border-radius:8px;">' +
+                '<div style="display:flex;justify-content:space-between;margin-bottom:6px;">' +
+                '<strong style="color:#333;">' + scoreItem.name + '</strong>' +
+                '<span style="color:#666;">' + scoreItem.earned + '/' + scoreItem.maxPoints + '</span>' +
+                '</div>' +
+                '<div style="background:#e2e8f0;height:8px;border-radius:4px;">' +
+                '<div style="background:' + barColor + ';height:100%;width:' + percentage + '%;border-radius:4px;"></div>' +
+                '</div>' +
+                '<small style="color:#94a3b8;">' + scoreItem.description + '</small>' +
+                '</div>';
+        });
+
+        resultHTML += '</div></div>';
+
+        var existingResult = matchingForm.parentElement.querySelector('.matching-result-container');
+        if (existingResult) existingResult.remove();
+
+        var resultContainer = document.createElement('div');
+        resultContainer.className = 'matching-result-container';
+        resultContainer.innerHTML = resultHTML;
+        matchingForm.parentElement.appendChild(resultContainer);
+        saveCalculation('matching', { groomName: groomName, groomDOB: groomDOB, brideName: brideName, brideDOB: brideDOB }, { totalScore: totalScore, maxScore: maxPossible, scores: scores });
+
+        showNotification('Matching complete! Total score: ' + totalScore + '/36', 'success');
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+function calculateAshtakootaScores(groomDate, brideDate) {
+    var groomDay = groomDate.getDate();
+    var brideDay = brideDate.getDate();
+    var groomMonth = groomDate.getMonth();
+    var brideMonth = brideDate.getMonth();
+    var yearDiff = Math.abs(groomDate.getFullYear() - brideDate.getFullYear());
+
+    return [
+        { name: 'Varna', maxPoints: 1, earned: (groomMonth + brideMonth) % 3 === 0 ? 1 : 0 },
+        { name: 'Vashya', maxPoints: 2, earned: Math.abs(groomDay - brideDay) % 5 === 0 ? 2 : Math.abs(groomDay - brideDay) % 3 === 0 ? 1 : 0 },
+        { name: 'Tara', maxPoints: 3, earned: (groomDay + brideDay) % 9 < 3 ? 3 : (groomDay + brideDay) % 9 < 6 ? 2 : (groomDay + brideDay) % 9 < 8 ? 1 : 0 },
+        { name: 'Yoni', maxPoints: 4, earned: Math.abs(groomDay - brideDay) % 7 < 2 ? 4 : Math.abs(groomDay - brideDay) % 4 === 0 ? 3 : Math.abs(groomMonth - brideMonth) % 3 === 0 ? 2 : 1 },
+        { name: 'Grah Maitri', maxPoints: 5, earned: (groomMonth * brideMonth) % 7 < 2 ? 5 : (groomMonth + brideMonth) % 5 < 2 ? 4 : (groomDay * brideDay) % 6 < 3 ? 3 : 2 },
+        { name: 'Gana', maxPoints: 6, earned: yearDiff % 3 === 0 ? 6 : yearDiff % 2 === 0 ? 4 : (groomDay + brideDay) % 4 === 0 ? 3 : 2 },
+        { name: 'Bhakoot', maxPoints: 7, earned: (groomMonth + brideMonth) % 4 === 0 ? 7 : (groomDay + brideDay) % 5 < 2 ? 5 : Math.abs(groomDay - brideDay) % 6 < 3 ? 3 : 1 },
+        { name: 'Nadi', maxPoints: 8, earned: (groomMonth + brideMonth + groomDay + brideDay) % 3 === 0 ? 8 : (groomDay + brideDay) % 5 < 3 ? 6 : (groomMonth + brideMonth) % 3 === 0 ? 4 : 2 }
+    ];
+}
+
+
+/* =================================================================
+   SECTION 10 — COMPATIBILITY CALCULATOR (compatibility.html)
+   ================================================================= */
+
+/** Zodiac element mappings and compatibility matrix */
+var zodiacElementMap = {
+    aries: 'Fire', taurus: 'Earth', gemini: 'Air', cancer: 'Water',
+    leo: 'Fire', virgo: 'Earth', libra: 'Air', scorpio: 'Water',
+    sagittarius: 'Fire', capricorn: 'Earth', aquarius: 'Air', pisces: 'Water'
+};
+
+var zodiacCompatibilityMatrix = {
+    'Fire-Fire': { score: 85, label: 'Explosive Passion' },
+    'Fire-Earth': { score: 55, label: 'Grounding Challenge' },
+    'Fire-Air': { score: 90, label: 'Mutually Fueling' },
+    'Fire-Water': { score: 45, label: 'Steam & Tension' },
+    'Earth-Earth': { score: 80, label: 'Rock Solid Bond' },
+    'Earth-Air': { score: 50, label: 'Different Languages' },
+    'Earth-Water': { score: 88, label: 'Nurturing Growth' },
+    'Air-Air': { score: 82, label: 'Intellectual Spark' },
+    'Air-Water': { score: 40, label: 'Head vs Heart' },
+    'Water-Water': { score: 92, label: 'Deep Soul Fusion' }
+};
+
+// Returns the same key for Fire/Air and Air/Fire.
+function getElementPairKey(firstElement, secondElement) {
+    var elementOrder = ['Fire', 'Earth', 'Air', 'Water'];
+    return elementOrder.indexOf(firstElement) <= elementOrder.indexOf(secondElement)
+        ? firstElement + '-' + secondElement
+        : secondElement + '-' + firstElement;
+}
+
+function initializeCompatibility() {
+    var compatForm = document.querySelector('.compatibility-form');
+    if (!compatForm) return;
+
+    compatForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var userName = document.getElementById('user_name').value.trim();
+        var userSign = document.getElementById('user_sign').value;
+        var userGender = document.getElementById('user_gender').value;
+
+        var partnerName = document.getElementById('partner_name').value.trim();
+        var partnerSign = document.getElementById('partner_sign').value;
+        var partnerGender = document.getElementById('partner_gender').value;
+
+        if (!userName || !userSign || !partnerName || !partnerSign) {
+            showNotification('Please fill in all required fields for both partners.', 'error');
+            return;
+        }
+
+        userName = escapeHTML(userName);
+        partnerName = escapeHTML(partnerName);
+
+        var userElement = zodiacElementMap[userSign];
+        var partnerElement = zodiacElementMap[partnerSign];
+        var elementPair = getElementPairKey(userElement, partnerElement);
+        var compatibilityResult = zodiacCompatibilityMatrix[elementPair] || { score: 60, label: 'Moderate Connection' };
+
+        // Determine romantic verdict
+        var romanticVerdict;
+        if (compatibilityResult.score >= 85) {
+            romanticVerdict = '💝 A cosmic soul match! Your signs share a profound natural harmony that deepens with time.';
+        } else if (compatibilityResult.score >= 70) {
+            romanticVerdict = '💖 Strong potential! With mutual respect and understanding, this bond grows into something beautiful.';
+        } else if (compatibilityResult.score >= 50) {
+            romanticVerdict = '💗 A dynamic pairing. Your differences create tension but also powerful growth opportunities.';
+        } else {
+            romanticVerdict = '💔 Challenging but not impossible. Opposites can attract, but this relationship requires conscious effort from both sides.';
+        }
+
+        var resultHTML =
+            '<div style="margin-top:30px;padding:30px;background:#ffffff;border:2px solid #9b59b6;border-radius:12px;">' +
+            '<h2 style="color:#9b59b6;text-align:center;margin-bottom:20px;">💕 Compatibility Result</h2>' +
+            '<div style="text-align:center;margin-bottom:25px;">' +
+            '<div style="display:inline-block;padding:20px 40px;background:linear-gradient(135deg,#f5e6ff,#fff);border-radius:50%;border:4px solid #9b59b6;">' +
+            '<div style="font-size:2.5rem;font-weight:bold;color:#9b59b6;">' + compatibilityResult.score + '%</div>' +
+            '<div style="font-size:0.9rem;color:#666;">Compatibility Score</div>' +
+            '</div>' +
+            '</div>' +
+            '<p style="text-align:center;font-size:1.1rem;font-weight:600;color:#7b2d8e;margin-bottom:15px;">' + compatibilityResult.label + '</p>' +
+            '<p style="text-align:center;color:#555;line-height:1.7;margin-bottom:20px;">' + romanticVerdict + '</p>' +
+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;">' +
+            '<div style="padding:15px;background:#f8f0fc;border-radius:8px;text-align:center;">' +
+            '<h4 style="color:#9b59b6;">' + userName + '</h4>' +
+            '<p><strong>Element:</strong> ' + userElement + '</p>' +
+            '<p><strong>Sign:</strong> ' + userSign.charAt(0).toUpperCase() + userSign.slice(1) + '</p>' +
+            '</div>' +
+            '<div style="padding:15px;background:#fce4f0;border-radius:8px;text-align:center;">' +
+            '<h4 style="color:#ec407a;">' + partnerName + '</h4>' +
+            '<p><strong>Element:</strong> ' + partnerElement + '</p>' +
+            '<p><strong>Sign:</strong> ' + partnerSign.charAt(0).toUpperCase() + partnerSign.slice(1) + '</p>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+
+        var existingResult = compatForm.parentElement.querySelector('.compat-result-container');
+        if (existingResult) existingResult.remove();
+
+        var resultContainer = document.createElement('div');
+        resultContainer.className = 'compat-result-container';
+        resultContainer.innerHTML = resultHTML;
+        compatForm.parentElement.appendChild(resultContainer);
+        saveCalculation('compatibility', { userName: userName, userSign: userSign, partnerName: partnerName, partnerSign: partnerSign }, compatibilityResult);
+
+        showNotification('Compatibility calculated! Score: ' + compatibilityResult.score + '%', 'success');
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+
+/* =================================================================
+   SECTION 11 — FRIENDSHIP CALCULATOR (friendship-calculator.html)
+   ================================================================= */
+
+function initializeFriendshipCalculator() {
+    var friendForm = document.getElementById('friendForm');
+    if (!friendForm) return;
+
+    friendForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var yourName = document.getElementById('your_name').value.trim();
+        var friendName = document.getElementById('friend_name').value.trim();
+        var friendshipType = document.getElementById('friendship_type').value;
+
+        if (!yourName || !friendName) {
+            showNotification('Please enter both names to calculate your friendship score.', 'error');
+            return;
+        }
+
+        var safeYourName = escapeHTML(yourName);
+        var safeFriendName = escapeHTML(friendName);
+
+        // Calculate friendship score based on name character patterns
+        var combinedNameString = (yourName + friendName).toLowerCase();
+        var characterSum = 0;
+        for (var i = 0; i < combinedNameString.length; i++) {
+            characterSum += combinedNameString.charCodeAt(i);
+        }
+
+        var baseFriendshipScore = (characterSum % 31) + 70; // Range: 70-100
+
+        // Adjust score based on friendship type
+        var typeBonus = 0;
+        var typeLabel = '';
+        switch (friendshipType) {
+            case 'besties':
+                typeBonus = 5;
+                typeLabel = 'Best Friends Forever (BFF)';
+                break;
+            case 'childhood':
+                typeBonus = 4;
+                typeLabel = 'Childhood Buddies';
+                break;
+            case 'college':
+                typeBonus = 3;
+                typeLabel = 'School/College Crew';
+                break;
+            case 'workplace':
+                typeBonus = 2;
+                typeLabel = 'Work Colleagues';
+                break;
+            case 'new':
+                typeBonus = 0;
+                typeLabel = 'New Acquaintance';
+                break;
+            default:
+                typeLabel = 'Friends';
+        }
+
+        var finalScore = Math.min(baseFriendshipScore + typeBonus, 100);
+
+        // Determine friendship tier
+        var tierLabel, tierEmoji, tierColor;
+        if (finalScore >= 95) {
+            tierEmoji = '👑'; tierLabel = 'Soul Bonded Twins'; tierColor = '#d4ac0d';
+        } else if (finalScore >= 90) {
+            tierEmoji = '🌟'; tierLabel = 'Best Friends Forever'; tierColor = '#16a34a';
+        } else if (finalScore >= 80) {
+            tierEmoji = '🤝'; tierLabel = 'Inseparable Duo'; tierColor = '#2563eb';
+        } else if (finalScore >= 70) {
+            tierEmoji = '😊'; tierLabel = 'Solid Bond'; tierColor = '#2980b9';
+        } else {
+            tierEmoji = '💫'; tierLabel = 'Growing Connection'; tierColor = '#8e44ad';
+        }
+
+        // Breakdown scores
+        var trustFactor = Math.min(Math.floor(finalScore * 0.95 + (characterSum % 5)), 100);
+        var funChaos = Math.min(Math.floor(finalScore * 0.90 + (characterSum % 8)), 100);
+        var loyaltyQuotient = Math.min(Math.floor(finalScore * 0.98 + (characterSum % 3)), 100);
+
+        var resultHTML =
+            '<div style="margin-top:30px;padding:30px;background:#ffffff;border:2px solid #2980b9;border-radius:12px;">' +
+            '<h2 style="color:#2980b9;text-align:center;margin-bottom:20px;">🤝 Friendship Score</h2>' +
+            '<div style="text-align:center;margin-bottom:20px;">' +
+            '<div style="display:inline-block;padding:20px 40px;background:linear-gradient(135deg,#e8f4fd,#fff);border-radius:50%;border:4px solid ' + tierColor + ';">' +
+            '<div style="font-size:2.5rem;">' + tierEmoji + '</div>' +
+            '<div style="font-size:2.5rem;font-weight:bold;color:' + tierColor + ';">' + finalScore + '%</div>' +
+            '<div style="font-size:0.9rem;color:#666;">Friendship Score</div>' +
+            '</div>' +
+            '</div>' +
+            '<p style="text-align:center;font-weight:600;color:' + tierColor + ';font-size:1.1rem;margin-bottom:20px;">' + tierLabel + '</p>' +
+            '<p style="text-align:center;color:#666;margin-bottom:20px;">' + safeYourName + ' & ' + safeFriendName + ' — ' + typeLabel + '</p>' +
+
+            '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;">' +
+            buildFriendshipMeter('Trust Factor', trustFactor, '#2980b9') +
+            buildFriendshipMeter('Fun & Chaos', funChaos, '#27ae60') +
+            buildFriendshipMeter('Loyalty', loyaltyQuotient, '#8e44ad') +
+            '</div>' +
+            '</div>';
+
+        var existingResult = friendForm.parentElement.querySelector('.friend-result-container');
+        if (existingResult) existingResult.remove();
+
+        var resultContainer = document.createElement('div');
+        resultContainer.className = 'friend-result-container';
+        resultContainer.innerHTML = resultHTML;
+        friendForm.parentElement.appendChild(resultContainer);
+        saveCalculation('friendship', { yourName: yourName, friendName: friendName, friendshipType: friendshipType }, { score: finalScore, tier: tierLabel });
+
+        showNotification('Friendship score calculated! You scored ' + finalScore + '%!', 'success');
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+function buildFriendshipMeter(label, score, color) {
+    return (
+        '<div style="padding:15px;background:#f8fafc;border-radius:8px;text-align:center;">' +
+        '<strong style="color:' + color + ';">' + label + '</strong>' +
+        '<div style="font-size:1.8rem;font-weight:bold;color:' + color + ';margin:8px 0;">' + score + '%</div>' +
+        '<div style="background:#e2e8f0;height:8px;border-radius:4px;">' +
+        '<div style="background:' + color + ';height:100%;width:' + score + '%;border-radius:4px;"></div>' +
+        '</div>' +
+        '</div>'
+    );
+}
+
+
+/* =================================================================
+   SECTION 12 — MULANK CALCULATOR (mulank-calculator.html)
+   ================================================================= */
+
+/** Planet-to-Mulank mapping in Vedic Numerology */
+var mulankPlanetMapping = {
+    1: { planet: 'Sun', title: 'The Leader', traits: 'Confident, ambitious, independent, and natural-born authority. You radiate warmth and inspire others with your courage.' },
+    2: { planet: 'Moon', title: 'The Creative', traits: 'Imaginative, sensitive, diplomatic, and deeply intuitive. You possess a rich inner world and strong emotional intelligence.' },
+    3: { planet: 'Jupiter', title: 'The Guru', traits: 'Wise, optimistic, generous, and spiritually inclined. You are a natural teacher who uplifts those around you.' },
+    4: { planet: 'Rahu', title: 'The Rebel', traits: 'Innovative, unconventional, restless, and progressive. You challenge the status quo and forge new paths.' },
+    5: { planet: 'Mercury', title: 'The Trader', traits: 'Versatile, communicative, analytical, and quick-witted. You thrive in social settings and business negotiations.' },
+    6: { planet: 'Venus', title: 'The Artist', traits: 'Harmonious, charming, creative, and pleasure-seeking. You bring beauty and balance to everything you touch.' },
+    7: { planet: 'Ketu', title: 'The Mystic', traits: 'Introspective, philosophical, spiritual, and deeply perceptive. You seek truth beyond the material world.' },
+    8: { planet: 'Saturn', title: 'The Judge', traits: 'Disciplined, patient, karmic, and results-driven. You understand that great achievements require sustained effort.' },
+    9: { planet: 'Mars', title: 'The Warrior', traits: 'Courageous, passionate, energetic, and protective. You fight for正义正义正义 and never back down from a challenge.' }
+};
+
+function initializeMulankCalculator() {
+    var mulankForm = document.getElementById('mulankForm');
+    if (!mulankForm) return;
+
+    mulankForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var userName = document.getElementById('user_name').value.trim();
+        var birthDateValue = document.getElementById('birth_date').value;
+        var showPlanetaryDetails = document.getElementById('ruling_planet_display').value;
+
+        if (!birthDateValue) {
+            showNotification('Please enter your date of birth.', 'error');
+            return;
+        }
+
+        // Parse birth date and extract day
+        var birthDateObj = parseDateInput(birthDateValue);
+        var birthDay = birthDateObj.getDate();
+
+        // Calculate Mulank: sum digits of birth day
+        var mulankNumber = reduceToSingleDigit(birthDay, true);
+        var planetInfo = mulankPlanetMapping[mulankNumber];
+
+        var displayLabel = userName ? escapeHTML(userName) + '\'s' : 'Your';
+
+        var resultHTML =
+            '<div style="margin-top:30px;padding:30px;background:#ffffff;border:2px solid #d4ac0d;border-radius:12px;">' +
+            '<h2 style="color:#b7950b;text-align:center;margin-bottom:20px;">🔮 ' + displayLabel + ' Mulank Result</h2>' +
+            '<div style="text-align:center;margin-bottom:25px;">' +
+            '<div style="display:inline-block;padding:20px 40px;background:linear-gradient(135deg,#fef9e7,#fff);border-radius:50%;border:4px solid #d4ac0d;">' +
+            '<div style="font-size:3rem;font-weight:bold;color:#b7950b;">' + mulankNumber + '</div>' +
+            '<div style="font-size:0.9rem;color:#666;">Your Root Number</div>' +
+            '</div>' +
+            '</div>' +
+            '<p style="text-align:center;color:#666;margin-bottom:15px;">Birth Day: ' + birthDay + ' → ' + birthDay.toString().split('').join(' + ') + ' = <strong>' + mulankNumber + '</strong></p>';
+
+        if (showPlanetaryDetails === 'yes' && planetInfo) {
+            resultHTML +=
+                '<div style="padding:20px;background:#fef9e7;border-radius:8px;border-left:4px solid #d4ac0d;">' +
+                '<h3 style="color:#b7950b;margin-bottom:8px;">' + planetInfo.planet + ' — ' + planetInfo.title + '</h3>' +
+                '<p style="color:#555;line-height:1.6;">' + planetInfo.traits + '</p>' +
+                '</div>';
+        }
+
+        resultHTML += '</div>';
+
+        var existingResult = mulankForm.parentElement.querySelector('.mulank-result-container');
+        if (existingResult) existingResult.remove();
+
+        var resultContainer = document.createElement('div');
+        resultContainer.className = 'mulank-result-container';
+        resultContainer.innerHTML = resultHTML;
+        mulankForm.parentElement.appendChild(resultContainer);
+        saveCalculation('mulank', { name: userName, birthDate: birthDateValue }, { number: mulankNumber, planet: planetInfo && planetInfo.planet });
+
+        showNotification('Mulank calculated! Your root number is ' + mulankNumber + '.', 'success');
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+
+/* =================================================================
+   SECTION 13 — NAME NUMEROLOGY (name-numerology.html)
+   ================================================================= */
+
+/** Pythagorean numerology letter-to-number mapping */
+var pythagoreanLetterValues = {
+    a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9,
+    j: 1, k: 2, l: 3, m: 4, n: 5, o: 6, p: 7, q: 8, r: 9,
+    s: 1, t: 2, u: 3, v: 4, w: 5, x: 6, y: 7, z: 8
+};
+
+/** Chaldean numerology letter-to-number mapping (no 9 — considered sacred) */
+var chaldeanLetterValues = {
+    a: 1, b: 2, c: 3, d: 4, e: 5, f: 8, g: 3, h: 8, i: 1,
+    j: 1, k: 2, l: 3, m: 4, n: 5, o: 7, p: 8, q: 1, r: 2,
+    s: 3, t: 4, u: 6, v: 6, w: 6, x: 5, y: 1, z: 7
+};
+
+/** Vowel letters for Soul Urge calculation */
+var vowelCharacters = ['a', 'e', 'i', 'o', 'u'];
+
+function initializeNameNumerology() {
+    var numerologyForm = document.querySelector('.numerology-form');
+    if (!numerologyForm) return;
+
+    numerologyForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        var fullName = document.getElementById('user_full_name').value.trim();
+        var currentDateOfBirth = document.getElementById('user_dob').value;
+        var calculationSystem = document.getElementById('system_preference').value;
+
+        if (!fullName || !currentDateOfBirth) {
+            showNotification('Please enter your full name and date of birth.', 'error');
+            return;
+        }
+
+        var letterValueMap = calculationSystem === 'chaldean' ? chaldeanLetterValues : pythagoreanLetterValues;
+        var systemLabel = calculationSystem === 'chaldean' ? 'Chaldean (Ancient)' : 'Pythagorean (Modern)';
+
+        // Calculate Expression / Destiny Number (sum of all letters)
+        var expressionNumber = calculateNameSum(fullName, letterValueMap, true);
+
+        // Calculate Soul Urge Number (sum of vowel letters only)
+        var soulUrgeNumber = calculateVowelSum(fullName, letterValueMap, true);
+
+        // Calculate Personality Number (sum of consonant letters only)
+        var personalityNumber = calculateConsonantSum(fullName, letterValueMap, true);
+
+        // Calculate Life Path Number (from date of birth)
+        var birthDateObj = parseDateInput(currentDateOfBirth);
+        var lifePathNumber = reduceToSingleDigit(
+            birthDateObj.getFullYear() + (birthDateObj.getMonth() + 1) + birthDateObj.getDate(),
+            true
+        );
+
+        var displayName = fullName.split(' ')[0];
+        var safeDisplayName = escapeHTML(displayName);
+
+        var resultHTML =
+            '<div style="margin-top:30px;padding:30px;background:#ffffff;border:2px solid #16a085;border-radius:12px;">' +
+            '<h2 style="color:#16a085;text-align:center;margin-bottom:5px;">🔢 ' + safeDisplayName + '\'s Numerology Profile</h2>' +
+            '<p style="text-align:center;color:#666;margin-bottom:25px;">Calculation System: ' + systemLabel + '</p>' +
+
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">' +
+
+            buildNumerologyCard('Expression / Destiny', expressionNumber, 'Defines your core talents and cosmic life targets. This is the number the universe assigned you.', '#16a085') +
+            buildNumerologyCard('Soul Urge / Heart\'s Desire', soulUrgeNumber, 'Uncovers your deepest cravings and authentic motivations — what truly drives you from within.', '#9b59b6') +
+            buildNumerologyCard('Personality Profile', personalityNumber, 'Displays the exterior mask you showcase to society — first impressions and social energy.', '#2980b9') +
+            buildNumerologyCard('Life Path Foundation', lifePathNumber, 'Your ultimate life roadmap and career trajectory — the journey your soul chose.', '#d35400') +
+
+            '</div>' +
+
+            '<div style="margin-top:20px;padding:15px;background:#fff9e6;border-radius:8px;border-left:4px solid #f1c40f;">' +
+            '<h4 style="color:#b7950b;margin-bottom:6px;">⚠️ Master Numbers</h4>' +
+            '<p style="font-size:0.85rem;color:#7d6608;">If any calculation yields <strong>11, 22, or 33</strong>, it is not reduced to a single digit. These are master numbers carrying deep spiritual significance and higher purpose.</p>' +
+            '</div>' +
+            '</div>';
+
+        var existingResult = numerologyForm.parentElement.querySelector('.numerology-result-container');
+        if (existingResult) existingResult.remove();
+
+        var resultContainer = document.createElement('div');
+        resultContainer.className = 'numerology-result-container';
+        resultContainer.innerHTML = resultHTML;
+        numerologyForm.parentElement.appendChild(resultContainer);
+        saveCalculation('numerology', { fullName: fullName, dateOfBirth: currentDateOfBirth, system: calculationSystem }, { expressionNumber: expressionNumber, soulUrgeNumber: soulUrgeNumber, personalityNumber: personalityNumber, lifePathNumber: lifePathNumber });
+
+        showNotification('Numerology profile calculated for ' + displayName + '!', 'success');
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+}
+
+function calculateNameSum(fullName, letterValueMap, keepMaster) {
+    var totalSum = 0;
+    var cleanName = fullName.toLowerCase().replace(/[^a-z]/g, '');
+    for (var i = 0; i < cleanName.length; i++) {
+        totalSum += letterValueMap[cleanName[i]] || 0;
+    }
+    return reduceToSingleDigit(totalSum, keepMaster);
+}
+
+function calculateVowelSum(fullName, letterValueMap, keepMaster) {
+    var totalSum = 0;
+    var cleanName = fullName.toLowerCase().replace(/[^a-z]/g, '');
+    for (var i = 0; i < cleanName.length; i++) {
+        if (vowelCharacters.includes(cleanName[i])) {
+            totalSum += letterValueMap[cleanName[i]] || 0;
+        }
+    }
+    return reduceToSingleDigit(totalSum, keepMaster);
+}
+
+function calculateConsonantSum(fullName, letterValueMap, keepMaster) {
+    var totalSum = 0;
+    var cleanName = fullName.toLowerCase().replace(/[^a-z]/g, '');
+    for (var i = 0; i < cleanName.length; i++) {
+        if (!vowelCharacters.includes(cleanName[i])) {
+            totalSum += letterValueMap[cleanName[i]] || 0;
+        }
+    }
+    return reduceToSingleDigit(totalSum, keepMaster);
+}
+
+function buildNumerologyCard(title, number, description, color) {
+    return (
+        '<div style="padding:20px;background:#fafafa;border-radius:10px;border-top:4px solid ' + color + ';">' +
+        '<h4 style="color:' + color + ';margin-bottom:8px;">' + title + '</h4>' +
+        '<div style="font-size:2rem;font-weight:bold;color:' + color + ';margin-bottom:8px;">' + number + '</div>' +
+        '<p style="font-size:0.85rem;color:#666;line-height:1.5;">' + description + '</p>' +
+        '</div>'
+    );
+}
+
+
+/* =================================================================
+   SECTION 14 — PANCHANG (panchang.html)
+   ================================================================= */
+
+/** Choghadiya timing data for daytime */
+var choghadiyaDayTimings = [
+    { time: '06:00 AM - 07:30 AM', name: 'Amrit', quality: 'Auspicious', type: 'good' },
+    { time: '07:30 AM - 09:00 AM', name: 'Kala', quality: 'Inauspicious', type: 'bad' },
+    { time: '09:00 AM - 10:30 AM', name: 'Shubh', quality: 'Good Fortune', type: 'good' },
+    { time: '10:30 AM - 12:00 PM', name: 'Char', quality: 'Neutral (Movement)', type: 'neutral' },
+    { time: '12:00 PM - 01:30 PM', name: 'Labh', quality: 'Gain', type: 'good' },
+    { time: '01:30 PM - 03:00 PM', name: 'Amrit', quality: 'Excellent', type: 'good' },
+    { time: '03:00 PM - 04:30 PM', name: 'Kaal', quality: 'Inauspicious', type: 'bad' },
+    { time: '04:30 PM - 06:00 PM', name: 'Shubh', quality: 'Good Fortune', type: 'good' }
+];
+
+var tithiNames = [
+    'Pratipada', 'Dwitiya', 'Tritiya', 'Chaturthi', 'Panchami',
+    'Shashthi', 'Saptami', 'Ashtami', 'Navami', 'Dashami',
+    'Ekadashi', 'Dwadashi', 'Trayodashi', 'Chaturdashi', 'Purnima/Amavasya'
+];
+
+var nakshatraNamesPanchang = [
+    'Ashwini', 'Bharani', 'Krittika', 'Rohini', 'Mrigashira', 'Ardra',
+    'Punarvasu', 'Pushya', 'Ashlesha', 'Magha', 'Purva Phalguni',
+    'Uttara Phalguni', 'Hasta', 'Chitra', 'Swati', 'Vishakha',
+    'Anuradha', 'Jyeshtha', 'Mula', 'Purva Ashadha', 'Uttara Ashadha',
+    'Shravana', 'Dhanishta', 'Shatabhisha', 'Purva Bhadrapada',
+    'Uttara Bhadrapada', 'Revati'
+];
+
+function initializePanchang() {
+    var refreshButton = document.querySelector('.panchang-update-btn');
+    if (!refreshButton) return;
+
+    refreshButton.addEventListener('click', function () {
+        var selectedDate = document.getElementById('panchang_date');
+        var selectedLocation = document.getElementById('panchang_location');
+
+        if (!selectedDate || !selectedLocation) return;
+
+        var dateObj = parseDateInput(selectedDate.value);
+        var dayOfMonth = dateObj.getDate();
+        var monthOfYear = dateObj.getMonth();
+
+        // Update Tithi
+        var tithiIndex = dayOfMonth % tithiNames.length;
+        var tithiPaksha = dayOfMonth <= 15 ? 'Shukla Paksha' : 'Krishna Paksha';
+        updatePillarValue(0, tithiPaksha + ', ' + tithiNames[tithiIndex]);
+
+        // Update Vaar (weekday)
+        var dayNamesPanchang = ['Ravivar (Sunday)', 'Somvar (Monday)', 'Mangalvar (Tuesday)', 'Budhvar (Wednesday)', 'Guruvar (Thursday)', 'Shukravar (Friday)', 'Shanivar (Saturday)'];
+        var weekdayIndex = dateObj.getDay();
+        var rulingPlanetNames = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
+        updatePillarValue(1, dayNamesPanchang[weekdayIndex]);
+        updatePillarDuration(1, 'Ruling Planet: ' + rulingPlanetNames[weekdayIndex]);
+
+        // Update Nakshatra
+        var nakshatraIndex = (dayOfMonth + monthOfYear) % nakshatraNamesPanchang.length;
+        updatePillarValue(2, nakshatraNamesPanchang[nakshatraIndex]);
+
+        // Update Yoga
+        var yogaNames = ['Ayushman', 'Saubhagya', 'Shobhana', 'Atiganda', 'Sukarma', 'Dhriti', 'Shula', 'Ganda', 'Vriddhi', 'Dhruva', 'Vyaghata', 'Harshana'];
+        var yogaIndex = (dayOfMonth * 2 + monthOfYear) % yogaNames.length;
+        updatePillarValue(3, yogaNames[yogaIndex]);
+
+        // Update Karana
+        var karanaNames = ['Bava', 'Balava', 'Kaulava', 'Taitila', 'Garaja', 'Vanija', 'Vishti'];
+        var karanaIndex = dayOfMonth % karanaNames.length;
+        updatePillarValue(4, karanaNames[karanaIndex] + ' (First), ' + karanaNames[(karanaIndex + 1) % karanaNames.length] + ' (Second)');
+
+        // Update Choghadiya table
+        updateChoghadiyaTable(dayOfMonth);
+
+        // Update Samvat years
+        var indianYear = dateObj.getFullYear() + 57;
+        var vikramYear = dateObj.getFullYear() + 78;
+        var samvatHeader = document.querySelector('.vedic-calendar-year');
+        if (samvatHeader) {
+            samvatHeader.innerHTML =
+                'Shaka Samvat: <strong>' + indianYear + '</strong> | Vikram Samvat: <strong>' + vikramYear + '</strong> | Ayana: <strong>' + (monthOfYear >= 5 && monthOfYear <= 11 ? 'Dakshinayana' : 'Uttarayana') + '</strong> | Ritu: <strong>' + getSeasonName(monthOfYear) + '</strong>';
+        }
+
+        showNotification('Panchang data refreshed for ' + selectedLocation.value + '.', 'success');
+    });
+}
+
+function updatePillarValue(pillarIndex, newValue) {
+    var pillarCards = document.querySelectorAll('.pillar-card');
+    if (pillarCards[pillarIndex]) {
+        var valueElement = pillarCards[pillarIndex].querySelector('.pillar-val');
+        if (valueElement) valueElement.textContent = newValue;
+    }
+}
+
+function updatePillarDuration(pillarIndex, newDuration) {
+    var pillarCards = document.querySelectorAll('.pillar-card');
+    if (pillarCards[pillarIndex]) {
+        var durationElement = pillarCards[pillarIndex].querySelector('.pillar-duration');
+        if (durationElement) durationElement.textContent = newDuration;
+    }
+}
+
+function updateChoghadiyaTable(dayOfMonth) {
+    var tableBody = document.querySelector('.panchang-data-table tbody');
+    if (!tableBody) return;
+
+    var shiftedIndex = dayOfMonth % choghadiyaDayTimings.length;
+    var displayTimings = [];
+
+    for (var i = 0; i < Math.min(5, choghadiyaDayTimings.length); i++) {
+        displayTimings.push(choghadiyaDayTimings[(shiftedIndex + i) % choghadiyaDayTimings.length]);
+    }
+
+    var tableHTML = '';
+    displayTimings.forEach(function (timing) {
+        var rowClass = 'choghadiya-' + timing.type;
+        tableHTML +=
+            '<tr class="' + rowClass + '">' +
+            '<td>' + timing.time + '</td>' +
+            '<td>' + timing.name + '</td>' +
+            '<td>' + timing.quality + '</td>' +
+            '</tr>';
+    });
+
+    tableBody.innerHTML = tableHTML;
+}
+
+function getSeasonName(monthIndex) {
+    var seasons = [
+        'Shishira (Late Winter)', 'Vasant (Spring)', 'Grishma (Summer)',
+        'Varsha (Monsoon)', 'Sharad (Autumn)', 'Hemanta (Pre-Winter)'
+    ];
+    return seasons[Math.floor(monthIndex / 2)] || 'Varsha (Monsoon)';
+}
+
+
+/* =================================================================
+   SECTION 15 — RATING / REVIEW SYSTEM (rating.html + index.html)
+   ================================================================= */
+
+/** Stored reviews for the rating display */
+var userReviews = [
+    { name: 'Priya Sharma', location: 'Mumbai', stars: 5, comment: 'The Kundali reading was incredibly accurate. It revealed personality traits that resonated deeply with my life experiences.' },
+    { name: 'Rahul Verma', location: 'Delhi', stars: 5, comment: 'Amazing prediction! Everything aligned exactly as predicted. The compatibility report helped me understand my relationship better.' },
+    { name: 'Anjali Patel', location: 'Ahmedabad', stars: 4, comment: 'Very insightful horoscope readings. The Panchang feature is a great addition for daily planning.' },
+    { name: 'Vikram Singh', location: 'Jaipur', stars: 5, comment: 'The numerology calculator opened my eyes to hidden patterns in my name. Highly recommended for anyone curious about Vedic numerology.' },
+    { name: 'Meera Nair', location: 'Kochi', stars: 5, comment: 'I consulted with Swami Krishna through the platform and received profound guidance. The free first 5 minutes are a wonderful offer!' },
+    { name: 'Arjun Reddy', location: 'Hyderabad', stars: 4, comment: 'Beautiful interface and accurate astrological calculations. The AI chat assistant is surprisingly helpful for quick questions.' },
+    { name: 'Sneha Gupta', location: 'Lucknow', stars: 5, comment: 'The Kundali matching report was detailed and easy to understand. My family was impressed with the thorough analysis.' },
+    { name: 'Karthik Menon', location: 'Bangalore', stars: 5, comment: 'Best astrology platform I have used. The horoscope readings feel personal and the daily Panchang is my morning ritual now.' }
+];
+
+var visibleReviewCount = 4;
+
+function initializeRatingForm() {
+    var ratingForm = document.querySelector('.astro-rating-form');
+    if (!ratingForm) return;
+
+    ratingForm.addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        var reviewerName = document.getElementById('astro-name').value.trim();
+        var reviewerLocation = document.getElementById('astro-location').value.trim();
+        var selectedRating = document.querySelector('input[name="cosmic-stars"]:checked');
+        var reviewComment = document.getElementById('astro-comment').value.trim();
+
+        if (!reviewerName || !reviewerLocation || !selectedRating || !reviewComment) {
+            showNotification('Please fill in all fields and select a star rating.', 'error');
+            return;
+        }
+
+        var ratingValue = parseInt(selectedRating.value, 10);
+
+        if (!localStorage.getItem('astro_token')) {
+            showNotification('Please sign in before submitting a review.', 'error');
+            return;
+        }
+
+        try {
+            await apiFetch('/reviews', { method: 'POST', body: JSON.stringify({ rating: ratingValue, comment: reviewComment, location: reviewerLocation }) });
+        } catch (error) {
+            showNotification(error.message, 'error');
+            return;
+        }
+
+        // Add new review to the beginning of the array
+        userReviews.unshift({
+            name: reviewerName,
+            location: reviewerLocation,
+            stars: ratingValue,
+            comment: reviewComment
+        });
+
+        // Re-render the review grid
+        visibleReviewCount = 4;
+        renderReviewGrid();
+
+        // Clear the form
+        ratingForm.reset();
+
+        showNotification('Thank you, ' + reviewerName + '! Your ' + ratingValue + '-star review has been submitted.', 'success');
+    });
+}
+
+function renderReviewGrid() {
+    var reviewGrid = document.querySelector('.astro-rating-grid');
+    if (!reviewGrid) return;
+
+    var gridHTML = '';
+    var reviewsToShow = userReviews.slice(0, visibleReviewCount);
+
+    reviewsToShow.forEach(function (review) {
+        var starsString = '';
+        for (var i = 0; i < review.stars; i++) starsString += '★';
+        for (var j = review.stars; j < 5; j++) starsString += '☆';
+
+        gridHTML +=
+            '<div class="astro-rating-card">' +
+            '<div class="astro-star-rating">' + starsString + '</div>' +
+            '<p class="astro-comment">"' + escapeHTML(review.comment) + '"</p>' +
+            '<div class="astro-meta">' +
+            '<span class="astro-name">' + escapeHTML(review.name) + '</span>' +
+            '<span class="astro-location">' + escapeHTML(review.location) + '</span>' +
+            '</div>' +
+            '</div>';
+    });
+
+    reviewGrid.innerHTML = gridHTML;
+
+    var loadMoreButton = document.querySelector('.astro-load-button');
+    if (loadMoreButton) {
+        loadMoreButton.hidden = visibleReviewCount >= userReviews.length;
+    }
+}
+
+function initializeLoadMoreReviews() {
+    var loadMoreButton = document.querySelector('.astro-load-button');
+    if (!loadMoreButton) return;
+
+    loadMoreButton.addEventListener('click', function () {
+        visibleReviewCount = Math.min(visibleReviewCount + 4, userReviews.length);
+        renderReviewGrid();
+    });
+}
+
+/** Also render reviews on the homepage */
+function initializeHomepageReviews() {
+    var homepageReviewGrid = document.querySelector('.website-rating-grid');
+    if (!homepageReviewGrid) return;
+
+    var homepageHTML = '';
+    var reviewsForHome = userReviews.slice(0, 4);
+
+    reviewsForHome.forEach(function (review) {
+        var starsString = '';
+        for (var i = 0; i < review.stars; i++) starsString += '★';
+
+        homepageHTML +=
+            '<div class="website-rating">' +
+            '<div class="website-star-rating">' + starsString + '</div>' +
+            '<div class="rating-comment">"' + escapeHTML(review.comment) + '"</div>' +
+            '<div class="rating-meta">' +
+            '<span class="rating-name">' + escapeHTML(review.name) + '</span>' +
+            '<span class="rating-location">' + escapeHTML(review.location) + '</span>' +
+            '</div>' +
+            '</div>';
+    });
+
+    homepageReviewGrid.innerHTML = homepageHTML;
+}
+
+
+/* =================================================================
+   SECTION 16 — ASTROLOGER SEARCH & FILTER (astrologers.html)
+   ================================================================= */
+
+function renderAstrologerCards(astrologers) {
+    var existingCard = document.querySelector('.astro-profile-card');
+    var container = existingCard && existingCard.parentElement;
+    if (!container) return;
+    container.innerHTML = '';
+    astrologers.forEach(function (astrologer) {
+        var card = document.createElement('article');
+        card.className = 'astro-profile-card';
+        var name = escapeHTML(astrologer.user && astrologer.user.name || 'Astrologer');
+        var specialties = escapeHTML((astrologer.specialties || []).join(', '));
+        var languages = escapeHTML((astrologer.languages || []).join(', '));
+        card.innerHTML = '<div class="card-status-header"><span class="status-badge status-' + astrologer.status + '">' + astrologer.status + '</span><span class="experience-tag">' + astrologer.experience + ' Yrs Exp</span></div>' +
+            '<div class="astro-card-body"><div class="astro-meta-info"><h2 class="astro-name">' + name + '</h2><p class="astro-specialties">' + specialties + '</p><p class="astro-languages">' + languages + '</p></div></div>' +
+            '<div class="astro-card-footer"><div class="price-block"><strong class="current-price">₹' + astrologer.pricePerMinute + '/min</strong></div><div class="action-buttons-group"><button class="cta-btn btn-chat">Chat</button><button class="cta-btn btn-call">Call</button></div></div>';
+        card.querySelector('.btn-chat').addEventListener('click', function () { startSession('chat', astrologer._id); });
+        card.querySelector('.btn-call').addEventListener('click', function () { startSession('call', astrologer._id); });
+        container.appendChild(card);
+    });
+}
+
+function initializeAstrologerFilters() {
+    var searchInput = document.getElementById('astro_search');
+    var specialtyFilter = document.getElementById('filter_specialty');
+    var languageFilter = document.getElementById('filter_language');
+    var sortFilter = document.getElementById('filter_sort');
+
+    if (!searchInput) return;
+
+    apiFetch('/astrologers').then(function (data) {
+        renderAstrologerCards(data.astrologers || []);
+        filterAstrologerCards();
+    }).catch(function (error) {
+        showNotification('Could not load live astrologers: ' + error.message, 'error');
+    });
+
+    function filterAstrologerCards() {
+        var searchQuery = searchInput.value.toLowerCase();
+        var selectedSpecialty = specialtyFilter ? specialtyFilter.value : '';
+        var selectedLanguage = languageFilter ? languageFilter.value : '';
+
+        var allProfileCards = Array.from(document.querySelectorAll('.astro-profile-card'));
+
+        allProfileCards.forEach(function (card) {
+            var astrologerName = (card.querySelector('.astro-name') || {}).textContent || '';
+            var astrologerSpecialties = (card.querySelector('.astro-specialties') || {}).textContent || '';
+            var astrologerLanguages = (card.querySelector('.astro-languages') || {}).textContent || '';
+
+            var combinedText = (astrologerName + ' ' + astrologerSpecialties + ' ' + astrologerLanguages).toLowerCase();
+
+            var matchesSearch = !searchQuery || combinedText.includes(searchQuery);
+            var matchesSpecialty = !selectedSpecialty || combinedText.includes(selectedSpecialty.toLowerCase());
+            var matchesLanguage = !selectedLanguage || astrologerLanguages.toLowerCase().includes(selectedLanguage.toLowerCase());
+
+            card.style.display = (matchesSearch && matchesSpecialty && matchesLanguage) ? '' : 'none';
+        });
+
+        if (!sortFilter || sortFilter.value === 'popular') return;
+
+        var cardContainer = allProfileCards[0] && allProfileCards[0].parentElement;
+        if (!cardContainer) return;
+
+        allProfileCards.sort(function (firstCard, secondCard) {
+            var firstText = firstCard.textContent;
+            var secondText = secondCard.textContent;
+            var firstRating = Number((firstText.match(/★\s*([\d.]+)/) || [0, 0])[1]);
+            var secondRating = Number((secondText.match(/★\s*([\d.]+)/) || [0, 0])[1]);
+            var firstPrice = Number((firstText.match(/₹(\d+)\/min/) || [0, 0])[1]);
+            var secondPrice = Number((secondText.match(/₹(\d+)\/min/) || [0, 0])[1]);
+            var firstExperience = Number((firstText.match(/(\d+)\s*Yrs Exp/) || [0, 0])[1]);
+            var secondExperience = Number((secondText.match(/(\d+)\s*Yrs Exp/) || [0, 0])[1]);
+
+            if (sortFilter.value === 'rating') return secondRating - firstRating;
+            if (sortFilter.value === 'price_low') return firstPrice - secondPrice;
+            if (sortFilter.value === 'experience') return secondExperience - firstExperience;
+            return 0;
+        });
+
+        allProfileCards.forEach(function (card) {
+            cardContainer.appendChild(card);
+        });
+    }
+
+    searchInput.addEventListener('input', filterAstrologerCards);
+    if (specialtyFilter) specialtyFilter.addEventListener('change', filterAstrologerCards);
+    if (languageFilter) languageFilter.addEventListener('change', filterAstrologerCards);
+    if (sortFilter) sortFilter.addEventListener('change', filterAstrologerCards);
+}
+
+
+/* =================================================================
+   SECTION 17 — UNIVERSAL FORM VALIDATION
+   ================================================================= */
+
+/** Prevent all forms from submitting to a server (since we have no backend) */
+function initializeFormGuards() {
+    var allForms = document.querySelectorAll('form');
+    allForms.forEach(function (form) {
+        // Only attach to forms that don't already have a submit handler
+        // (forms with our custom handlers already call event.preventDefault())
+        if (!form.hasAttribute('data-astroverse-handled')) {
+            form.addEventListener('submit', function (event) {
+                // If the form doesn't have an action or the action is '#', prevent default
+                var formAction = form.getAttribute('action');
+                if (!formAction || formAction === '#' || formAction === '') {
+                    event.preventDefault();
+                }
+            });
+        }
+    });
+}
+
+
+/* =================================================================
+   SECTION 18 — SMOOTH SCROLL TO SECTIONS
+   ================================================================= */
+
+/*
+ * Account forms are part of this front-end demo. They validate data in the
+ * browser and explain clearly that no real account is created yet.
+ */
+function initializeDemoForms() {
+    var demoForms = document.querySelectorAll('.portal-form, .astro-auth-form');
+
+    demoForms.forEach(function (form) {
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            if (!form.checkValidity()) {
+                form.reportValidity();
+                return;
+            }
+            try {
+                var panel = form.closest('.auth-panel-view, .astro-form-wrapper');
+                var data;
+                if (panel && panel.id === 'view-user-signup') {
+                    data = await apiFetch('/auth/register', { method: 'POST', body: JSON.stringify({ name: document.getElementById('signup_name').value.trim(), email: document.getElementById('signup_email').value.trim(), password: document.getElementById('signup_password').value, role: 'user' }) });
+                    saveSession(data);
+                    showNotification('Account created successfully.', 'success');
+                } else if (panel && panel.id === 'view-user-login') {
+                    data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email: document.getElementById('user_email').value.trim(), password: document.getElementById('user_password').value }) });
+                    saveSession(data);
+                    showNotification('Signed in successfully.', 'success');
+                } else if (panel && panel.id === 'view-admin-login') {
+                    data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email: document.getElementById('admin_id').value.trim(), password: document.getElementById('admin_password').value }) });
+                    if (data.user.role !== 'admin') throw new Error('This account is not an administrator account.');
+                    saveSession(data);
+                    showNotification('Admin access granted.', 'success');
+                } else if (panel && panel.id === 'astroLoginFormSection') {
+                    data = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ email: document.getElementById('astro_login_id').value.trim(), password: document.getElementById('astro_login_password').value }) });
+                    if (data.user.role !== 'astrologer') throw new Error('This account is not registered as an astrologer.');
+                    saveSession(data);
+                    showNotification('Signed in successfully.', 'success');
+                } else if (panel && panel.id === 'astroSignupFormSection') {
+                    var user = getStoredUser();
+                    if (!user || user.role !== 'astrologer') throw new Error('Create and sign in to an astrologer account before submitting your profile.');
+                    await apiFetch('/astrologers/profile', { method: 'POST', body: JSON.stringify({ specialties: [document.getElementById('astro_primary_skill').value], languages: document.getElementById('astro_languages').value.split(',').map(function (item) { return item.trim(); }).filter(Boolean), experience: Number(document.getElementById('astro_experience').value), bio: document.getElementById('astro_bio').value.trim() }) });
+                    showNotification('Astrologer profile submitted for approval.', 'success');
+                }
+            } catch (error) { showNotification(error.message, 'error'); }
+        });
+    });
+}
+
+function initializeSmoothScroll() {
+    var anchorLinks = document.querySelectorAll('a[href^="#"]');
+    anchorLinks.forEach(function (link) {
+        link.addEventListener('click', function (event) {
+            var targetId = link.getAttribute('href');
+            if (targetId === '#' || targetId.length <= 1) return;
+
+            var targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                event.preventDefault();
+                targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+    });
+}
+
+
+/* =================================================================
+   SECTION 19 — INJECT NOTIFICATION ANIMATION CSS
+   ================================================================= */
+
+function injectGlobalStyles() {
+    if (document.getElementById('astroverse-global-styles')) return;
+
+    var styleSheet = document.createElement('style');
+    styleSheet.id = 'astroverse-global-styles';
+    styleSheet.textContent =
+        '@keyframes slideDown { from { transform: translateX(-50%) translateY(-20px); opacity: 0; } to { transform: translateX(-50%) translateY(0); opacity: 1; } }' +
+        '@media (max-width: 900px) { .mobile-menu-toggle { display: block !important; } }';
+    document.head.appendChild(styleSheet);
+}
+
+
+/* =================================================================
+   SECTION 20 — MAIN INITIALIZATION (Runs on every page)
+   ================================================================= */
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Inject global utility styles
+    injectGlobalStyles();
+
+    // Initialize navigation (hamburger menu, mobile layout)
+    initializeNavigation();
+    syncHeaderAuth();
+
+    // Prevent raw form submissions
+    initializeFormGuards();
+    initializeDemoForms();
+
+    // Smooth scrolling for anchor links
+    initializeSmoothScroll();
+
+    // === Page-Specific Initializers ===
+    // Each initializer checks if the relevant DOM elements exist before activating.
+
+    // Astrologer Sign In/Up tabs
+    initializeAstrologerAuth();
+
+    // User Sign In/Up/Admin tabs
+    initializeUserAuth();
+
+    // Horoscope page (zodiac selection, timeline tabs)
+    initializeHoroscopePage();
+
+    // AI Chat Assistant
+    initializeAIChat();
+
+    // Free Kundali generator
+    initializeFreeKundali();
+
+    // Kundali Matching calculator
+    initializeKundaliMatching();
+
+    // Love Compatibility calculator
+    initializeCompatibility();
+
+    // Friendship Calculator
+    initializeFriendshipCalculator();
+
+    // Mulank (Root Number) Calculator
+    initializeMulankCalculator();
+
+    // Name Numerology calculator
+    initializeNameNumerology();
+
+    // Panchang page (date/location refresh)
+    initializePanchang();
+
+    // Rating/Review form
+    initializeRatingForm();
+    initializeLoadMoreReviews();
+    renderReviewGrid();
+
+    // Homepage reviews display
+    initializeHomepageReviews();
+
+    // Astrologer search and filter
+    initializeAstrologerFilters();
+
+    console.log('[ASTROVERSE] All modules initialized successfully. ✨');
+});
+
+/** Initialize Astrologer Auth if the page has the relevant elements */
+function initializeAstrologerAuth() {
+    var tabLogin = document.getElementById('tab-astro-login');
+    if (tabLogin) {
+        // The toggleAstroAuth function is already called via onclick in HTML
+        console.log('[ASTROVERSE] Astrologer auth module detected.');
+    }
+}
+
+/** Initialize User Auth if the page has the relevant elements */
+function initializeUserAuth() {
+    var tabUserLogin = document.getElementById('tab-user-login');
+    if (tabUserLogin) {
+        // The switchPortalView function is already called via onclick in HTML
+        console.log('[ASTROVERSE] User auth module detected.');
+    }
+}
+// Successful login, sign-up, and account-creation handlers store their session
+// under these existing keys. Send the user to the home page immediately after.
+(() => {
+  const nativeSetItem = Storage.prototype.setItem;
+
+  Storage.prototype.setItem = function (key, value) {
+    nativeSetItem.call(this, key, value);
+
+    if (this === localStorage && (key === 'astro_user' || key === 'astro_admin')) {
+      window.location.href = 'index.html';
+    }
+  };
+})();

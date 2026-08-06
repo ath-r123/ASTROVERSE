@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>mulank-calculator</title>
+    <link rel="stylesheet" href="mulank-calculator.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body>
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="mulank-main">
+        <!-- Hero Banner Section -->
+        <section class="mc-hero-section">
+            <h1>Free Mulank Calculator</h1>
+            <p>Discover your Vedic Root Number (Mulank) to unveil your dominant personality traits, lucky days, and core
+                character frequencies.</p>
+        </section>
+
+        <!-- Main Content Container Grid -->
+        <div class="mc-content-container">
+
+            <!-- Left Column: The Mulank Calculation Form -->
+            <section class="mc-form-wrapper">
+                <form action="#" method="POST" class="mulank-form" id="mulankForm">
+
+                    <h2 class="form-heading">Calculate Your Root Number</h2>
+
+                    <div class="input-group">
+                        <label for="user_name">Your Name (Optional)</label>
+                        <input type="text" id="user_name" name="user_name" placeholder="Enter your name">
+                    </div>
+
+                    <div class="form-grid">
+                        <!-- Date of Birth selection -->
+                        <div class="input-group">
+                            <label for="birth_date">Date of Birth</label>
+                            <input type="date" id="birth_date" name="birth_date" required>
+                        </div>
+
+                        <!-- Planet System Context Preference -->
+                        <div class="input-group">
+                            <label for="ruling_planet_display">Include Ruling Planet Details?</label>
+                            <select id="ruling_planet_display" name="ruling_planet_display">
+                                <option value="yes" selected>Yes, show planetary lord</option>
+                                <option value="no">No, show basic traits only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="calculate-mulank-btn">🔮 Calculate My Mulank</button>
+                </form>
+            </section>
+
+            <!-- Right/Bottom Column: Educational/Vedic Information -->
+            <aside class="mc-info-sidebar">
+                <h3>What is a Mulank?</h3>
+                <p>In Vedic Numerology (Ank Jyotish), your <strong>Mulank</strong> is the single-digit sum of your exact
+                    birth date. It rules your basic behavior patterns and initial reactions to life:</p>
+
+                <ul class="mulank-features-list">
+                    <li><strong>The Calculation:</strong> If you are born on the 24th, your Mulank is 2 + 4 =
+                        <strong>6</strong>.</li>
+                    <li><strong>The Core Identity:</strong> Unlike your Destiny Number (Bhagyank), Mulank represents
+                        your internal self and innate desires.</li>
+                    <li><strong>Planetary Alignment:</strong> Every Mulank from 1 to 9 is strictly governed by a
+                        specific celestial planet or deity.</li>
+                </ul>
+
+                <div class="vedic-card">
+                    <h4>✨ Quick Guide (1 to 9)</h4>
+                    <p><strong>1:</strong> Sun (Leader) | <strong>2:</strong> Moon (Creative) | <strong>3:</strong>
+                        Jupiter (Guru) | <strong>4:</strong> Rahu (Rebel) | <strong>5:</strong> Mercury (Trader) |
+                        <strong>6:</strong> Venus (Artist) | <strong>7:</strong> Ketu (Mystic) | <strong>8:</strong>
+                        Saturn (Judge) | <strong>9:</strong> Mars (Warrior).</p>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <footer class="footer-name-numerology">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

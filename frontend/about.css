@@ -1,0 +1,160 @@
+/*main content here */
+/* about page middle content */
+
+.about-main {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    color: #333;
+    background-image: linear-gradient(to bottom, #fff4b8, #ffffff, #f5d08a);
+    padding: 90px 20px 50px 20px;
+}
+
+.about-hero-section {
+    text-align: center;
+    margin-bottom: 45px;
+}
+
+.about-hero-section h1 {
+    color: #d35400;
+    font-size: 2.4rem;
+    margin-bottom: 12px;
+}
+
+.about-hero-section p {
+    color: #555;
+    font-size: 1.1rem;
+    max-width: 750px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.about-intro-section {
+    max-width: 1100px;
+    margin: 0 auto 45px auto;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    align-items: stretch;
+}
+
+.about-intro-text,
+.about-intro-card,
+.about-service-card,
+.about-why-box,
+.about-closing-section {
+    background-color: #ffffff;
+    border: 1px solid #f0d28a;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.about-intro-text {
+    padding: 30px;
+}
+
+.about-intro-text h2,
+.about-services-section h2,
+.about-why-section h2,
+.about-closing-section h2 {
+    color: #9d692e;
+    margin-bottom: 15px;
+}
+
+.about-intro-text p {
+    line-height: 1.7;
+    margin-bottom: 14px;
+    font-size: 1rem;
+}
+
+.about-intro-card {
+    padding: 30px;
+    border-left: 5px solid #d35400;
+}
+
+.about-intro-card h3 {
+    color: #d35400;
+    margin-bottom: 12px;
+}
+
+.about-intro-card p {
+    line-height: 1.6;
+}
+
+.about-services-section,
+.about-why-section {
+    max-width: 1100px;
+    margin: 0 auto 45px auto;
+}
+
+.about-services-section h2,
+.about-why-section h2 {
+    text-align: center;
+    font-size: 2rem;
+}
+
+.about-services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 22px;
+}
+
+.about-service-card {
+    padding: 24px;
+    text-align: center;
+}
+
+.about-service-card h3 {
+    color: #d35400;
+    margin-bottom: 10px;
+}
+
+.about-service-card p {
+    color: #555;
+    line-height: 1.5;
+}
+
+.about-why-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 22px;
+}
+
+.about-why-box {
+    padding: 24px;
+    border-top: 4px solid #f1c40f;
+}
+
+.about-why-box h3 {
+    color: #9d692e;
+    margin-bottom: 10px;
+}
+
+.about-why-box p {
+    line-height: 1.5;
+    color: #555;
+}
+
+.about-closing-section {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    text-align: center;
+}
+
+.about-closing-section p {
+    line-height: 1.7;
+    color: #555;
+}
+
+@media (max-width: 768px) {
+    .about-intro-section {
+        grid-template-columns: 1fr;
+    }
+
+    .about-main {
+        padding: 80px 15px 40px 15px;
+    }
+
+    .about-hero-section h1 {
+        font-size: 2rem;
+    }
+}

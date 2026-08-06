@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>name-numerology</title>
+    <link rel="stylesheet" href="name-numerology.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body>
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="numerology-main">
+        <!-- Hero Banner Section -->
+        <section class="nn-hero-section">
+            <h1>Name Numerology Calculator</h1>
+            <p>Discover your personal destiny number, soul urge, and inner expressions hidden inside your name.</p>
+        </section>
+
+        <!-- Main Content Container Grid -->
+        <div class="nn-content-container">
+
+            <!-- Left Column: The Individual Numerology Form -->
+            <section class="nn-form-wrapper">
+                <form action="#" method="POST" class="numerology-form">
+
+                    <h2 class="form-heading">Enter Your Birth Profile</h2>
+
+                    <div class="input-group">
+                        <label for="user_full_name">Full Name (As given at birth)</label>
+                        <input type="text" id="user_full_name" name="user_full_name"
+                            placeholder="First, middle, and last name" required>
+                        <small class="input-tip">Do not include titles like Mr., Ms., or Dr.</small>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="user_current_name">Current Name (Optional)</label>
+                        <input type="text" id="user_current_name" name="user_current_name"
+                            placeholder="Name you use daily or after marriage">
+                    </div>
+
+                    <div class="form-row-grid">
+                        <div class="input-group">
+                            <label for="user_dob">Date of Birth</label>
+                            <input type="date" id="user_dob" name="user_dob" required>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="system_preference">Calculation System</label>
+                            <select id="system_preference" name="system_preference">
+                                <option value="pythagorean">Pythagorean (Modern)</option>
+                                <option value="chaldean">Chaldean (Ancient)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="nn-calculate-btn">Reveal My Numbers</button>
+                </form>
+            </section>
+
+            <!-- Right/Bottom Column: Educational Information -->
+            <aside class="nn-info-sidebar">
+                <h3>Your Core Numbers Explained</h3>
+                <p>Every letter in your name carries a distinct cosmic frequency. This calculator computes four primary
+                    pillars:</p>
+
+                <ul class="number-list">
+                    <li><strong>Expression / Destiny:</strong> Calculated from your full name. It defines your core
+                        talents and cosmic targets.</li>
+                    <li><strong>Soul Urge / Heart's Desire:</strong> Calculated from vowels. It uncovers your private
+                        cravings and authentic motivations.</li>
+                    <li><strong>Personality Profile:</strong> Calculated from consonants. It displays the exterior mask
+                        you showcase to society.</li>
+                    <li><strong>Life Path Foundation:</strong> Calculated from your birthday. It blueprints your
+                        ultimate roadmap and career trajectory.</li>
+                </ul>
+
+                <div class="master-card">
+                    <h4>⚠️ Master Numbers</h4>
+                    <p>If your calculation sums reach <strong>11, 22, or 33</strong>, they are not reduced to single
+                        digits. These carry deep spiritual duties.</p>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <footer class="footer-name-numerology">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

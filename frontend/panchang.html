@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panchang</title>
+    <link rel="stylesheet" href="panchang.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body>
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="panchang-portal-main">
+        <!-- Hero Banner & Parameters Picker Section -->
+        <section class="panchang-hero">
+            <h1>Daily Vedic Panchang</h1>
+            <p>Access precise astronomical calculations, Muhuratas, planetary transits, and auspicious timings
+                calculated for your coordinates.</p>
+
+            <!-- Location & Date Tracker Control Row -->
+            <div class="panchang-picker-bar">
+                <div class="picker-group">
+                    <label for="panchang_date">Select Date</label>
+                    <input type="date" id="panchang_date" name="panchang_date" value="2026-07-03">
+                </div>
+                <div class="picker-group">
+                    <label for="panchang_location">Location / City</label>
+                    <input type="text" id="panchang_location" name="panchang_location"
+                        value="Mumbai, Maharashtra, India">
+                </div>
+                <button class="panchang-update-btn">🔄 Refresh Data</button>
+            </div>
+        </section>
+
+        <!-- Main Content Architecture Grid -->
+        <div class="panchang-grid-layout">
+
+            <!-- ================= LEFT COLUMN: SEMANTIC PANCHANG METRICS ================= -->
+            <div class="panchang-main-column">
+
+                <!-- Quick Date & Samvat Header Info -->
+                <header class="panchang-calendar-header">
+                    <h2>Panchang Parameters Overview</h2>
+                    <p class="vedic-calendar-year">Shaka Samvat: <strong>1948</strong> | Vikram Samvat:
+                        <strong>2083</strong> | Ayana: <strong>Dakshinayana</strong> | Ritu: <strong>Varsha
+                            (Monsoon)</strong></p>
+                </header>
+
+                <!-- Grid: The Five Pillars of Vedic Time -->
+                <section class="five-pillars-grid">
+                    <!-- 1. Tithi -->
+                    <div class="pillar-card">
+                        <div class="pillar-icon">🌙</div>
+                        <div class="pillar-info">
+                            <h3>Tithi (Lunar Day)</h3>
+                            <strong class="pillar-val">Krishna Paksha, Chaturthi</strong>
+                            <span class="pillar-duration">Ends: 08:42 PM, Jul 03</span>
+                        </div>
+                    </div>
+                    <!-- 2. Vaar -->
+                    <div class="pillar-card">
+                        <div class="pillar-icon">☀️</div>
+                        <div class="pillar-info">
+                            <h3>Vaar (Weekday)</h3>
+                            <strong class="pillar-val">Shukravar (Friday)</strong>
+                            <span class="pillar-duration">Ruling Planet: Venus (Shukra)</span>
+                        </div>
+                    </div>
+                    <!-- 3. Nakshatra -->
+                    <div class="pillar-card">
+                        <div class="pillar-icon">⭐</div>
+                        <div class="pillar-info">
+                            <h3>Nakshatra (Lunar Mansion)</h3>
+                            <strong class="pillar-val">Shravana</strong>
+                            <span class="pillar-duration">Ends: 11:15 AM, Jul 04</span>
+                        </div>
+                    </div>
+                    <!-- 4. Yoga -->
+                    <div class="pillar-card">
+                        <div class="pillar-icon">🌀</div>
+                        <div class="pillar-info">
+                            <h3>Yoga (Luni-Solar Angle)</h3>
+                            <strong class="pillar-val">Ayushman</strong>
+                            <span class="pillar-duration">Ends: 04:30 PM, Jul 03</span>
+                        </div>
+                    </div>
+                    <!-- 5. Karana -->
+                    <div class="pillar-card">
+                        <div class="pillar-icon">⚖️</div>
+                        <div class="pillar-info">
+                            <h3>Karana (Half Tithi)</h3>
+                            <strong class="pillar-val">Bava (First), Balava (Second)</strong>
+                            <span class="pillar-duration">Balava begins at 09:12 AM</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Dynamic Section: Detailed Auspicious Choghadiya Muhurata Matrix -->
+                <section class="panchang-section-card table-card">
+                    <h3>☀️ Day Choghadiya Timings</h3>
+                    <table class="panchang-data-table">
+                        <thead>
+                            <tr>
+                                <th>Time Interval</th>
+                                <th>Choghadiya</th>
+                                <th>Nature / Quality</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="choghadiya-good">
+                                <td>06:00 AM - 07:30 AM</td>
+                                <td>Amrit</td>
+                                <td>Excellent (Auspicious)</td>
+                            </tr>
+                            <tr class="choghadiya-bad">
+                                <td>07:30 AM - 09:00 AM</td>
+                                <td>Kala</td>
+                                <td>Inauspicious (Loss)</td>
+                            </tr>
+                            <tr class="choghadiya-good">
+                                <td>09:00 AM - 10:30 AM</td>
+                                <td>Shubh</td>
+                                <td>Excellent (Good Fortune)</td>
+                            </tr>
+                            <tr class="choghadiya-neutral">
+                                <td>10:30 AM - 12:00 PM</td>
+                                <td>Char</td>
+                                <td>Neutral (Movement)</td>
+                            </tr>
+                            <tr class="choghadiya-good">
+                                <td>12:00 PM - 01:30 PM</td>
+                                <td>Labh</td>
+                                <td>Gain (Auspicious)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+            </div>
+
+            <!-- ================= RIGHT COLUMN: TIMING WIDGETS & EPHEMERIS ================= -->
+            <aside class="panchang-sidebar">
+
+                <!-- Sun & Moon Calculations Widget -->
+                <div class="sidebar-widget sun-moon-card">
+                    <h3>Solar & Lunar Calendar</h3>
+                    <ul class="astro-time-list">
+                        <li><span>🌅 Sunrise</span><strong>05:48 AM</strong></li>
+                        <li><span>🌇 Sunset</span><strong>07:12 PM</strong></li>
+                        <li><span>🌙 Moonrise</span><strong>09:54 PM</strong></li>
+                        <li><span>📉 Moonset</span><strong>08:18 AM</strong></li>
+                        <li><span>☀️ Sun Sign</span><strong>Mithuna (Gemini)</strong></li>
+                        <li><span>🌕 Moon Sign</span><strong>Makara (Capricorn)</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Auspicious vs Inauspicious Muhurata Timings Widget -->
+                <div class="sidebar-widget muhurata-card">
+                    <h3>Muhurata Timings</h3>
+
+                    <div class="muhurata-group success-border">
+                        <h4>Abhijit Muhurat (Auspicious)</h4>
+                        <p class="time-stamp">11:54 AM - 12:46 PM</p>
+                        <small>Ideal for starting new ventures and investments.</small>
+                    </div>
+
+                    <div class="muhurata-group alert-border">
+                        <h4>Rahu Kaal (Inauspicious)</h4>
+                        <p class="time-stamp">10:30 AM - 12:00 PM</p>
+                        <small>Avoid initiating travel, contracts, or rituals.</small>
+                    </div>
+
+                    <div class="muhurata-group warning-border">
+                        <h4>Yamaganda Kaal (Inauspicious)</h4>
+                        <p class="time-stamp">03:30 PM - 05:00 PM</p>
+                        <small>Activities performed yield negative or delayed returns.</small>
+                    </div>
+                </div>
+
+                <!-- Inauspicious Planetary Doshas Widget -->
+                <div class="sidebar-widget dosha-card">
+                    <h3>Inauspicious Transits</h3>
+                    <ul class="dosha-list">
+                        <li><span>Gulikai Kalam</span><strong>07:30 AM - 09:00 AM</strong></li>
+                        <li><span>Dur Muhurtam</span><strong>08:24 AM - 09:16 AM</strong></li>
+                        <li><span>Bhadra Dosha</span><strong class="dosha-active">Active (08:42 PM onwards)</strong>
+                        </li>
+                    </ul>
+                </div>
+
+            </aside>
+
+        </div>
+    </main>
+
+    <footer class="footer-horoscope">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

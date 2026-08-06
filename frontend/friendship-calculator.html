@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>friendship-calculator</title>
+    <link rel="stylesheet" href="friendship-calculator.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body>
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="friend-calc-main">
+        <!-- Hero Banner Section -->
+        <section class="fc-hero-section">
+            <h1>Free Friendship Calculator</h1>
+            <p>Test your friendship bond! Enter your name and your friend's name to measure your compatibility score and
+                cosmic synergy.</p>
+        </section>
+
+        <!-- Main Content Container Grid -->
+        <div class="fc-content-container">
+
+            <!-- Left Column: The Friendship Calculator Form -->
+            <section class="fc-form-wrapper">
+                <form action="#" method="POST" class="friend-calc-form" id="friendForm">
+
+                    <h2 class="form-heading">Calculate Your Friendship Bond</h2>
+
+                    <div class="form-grid">
+                        <!-- Your Name -->
+                        <div class="input-group">
+                            <label for="your_name">Your Name</label>
+                            <input type="text" id="your_name" name="your_name" placeholder="Enter your name" required>
+                        </div>
+
+                        <!-- Friend's Name -->
+                        <div class="input-group">
+                            <label for="friend_name">Friend's Name</label>
+                            <input type="text" id="friend_name" name="friend_name" placeholder="Enter friend's name"
+                                required>
+                        </div>
+                    </div>
+
+                    <!-- Friendship Type Dropdown -->
+                    <div class="input-group full-width">
+                        <label for="friendship_type">Friendship Dynamic (Optional)</label>
+                        <select id="friendship_type" name="friendship_type">
+                            <option value="" disabled selected>Select dynamic</option>
+                            <option value="besties">Best Friends Forever (BFF)</option>
+                            <option value="childhood">Childhood Buddies</option>
+                            <option value="college">School / College Crew</option>
+                            <option value="workplace">Work Colleagues</option>
+                            <option value="new">New Acquaintance</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="calculate-friend-btn">🤝 Calculate Friendship Score</button>
+                </form>
+            </section>
+
+            <!-- Right/Bottom Column: Educational/Fun Information -->
+            <aside class="fc-info-sidebar">
+                <h3>The Pillars of a Strong Bond</h3>
+                <p>Our fun friendship meter checks the energetic resonance between name patterns, measuring three core
+                    dynamics:</p>
+
+                <ul class="friend-features-list">
+                    <li><strong>Trust Factor:</strong> Your mutual reliance quotient and emotional safety net value.
+                    </li>
+                    <li><strong>Fun & Chaos:</strong> Your shared sense of humor, inside joke index, and adventure
+                        level.</li>
+                    <li><strong>Loyalty Quotient:</strong> The structural strength of your bond through thick and thin.
+                    </li>
+                </ul>
+
+                <div class="buddy-card">
+                    <h4>⭐ Friendship Philosophy</h4>
+                    <p>True friendship is defined by a billion tiny moments, shared laughter, and quiet support. Use
+                        this calculator to bring a quick smile to your best friend's face!</p>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+
+    <footer class="footer-kundali-matching">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

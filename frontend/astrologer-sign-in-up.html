@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Astrologer Signin and Signup</title>
+    <link rel="stylesheet" href="astrologer-sign-in-up.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body>
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="astro-auth-main">
+        <!-- Top introduction section to set a professional tone -->
+        <section class="astro-intro">
+            <h1>Astrologer Partner Portal</h1>
+            <p>Log in to your consultant dashboard or apply to join our global network of verified Vedic experts.</p>
+        </section>
+
+        <div class="astro-auth-container">
+            <!-- Toggle Tabs specifically for Astrologers -->
+            <div class="astro-tabs">
+                <button class="astro-tab-btn active" id="tab-astro-login" onclick="toggleAstroAuth('login')">Astrologer
+                    Login</button>
+                <button class="astro-tab-btn" id="tab-astro-signup" onclick="toggleAstroAuth('signup')">Join as
+                    Astrologer</button>
+            </div>
+
+            <!-- ================= ASTROLOGER LOGIN FORM ================= -->
+            <section class="astro-form-wrapper active" id="astroLoginFormSection">
+                <div class="form-header-box">
+                    <h2>Consultant Sign In</h2>
+                    <p>Access your active consultations, customer chats, and wallet payouts.</p>
+                </div>
+
+                <form action="#" method="POST" class="astro-auth-form">
+                    <div class="astro-input-group">
+                        <label for="astro_login_id">Verified Email or Astrologer ID</label>
+                        <input type="text" id="astro_login_id" name="astro_login_id"
+                            placeholder="ASTRO-108 or email@example.com" required>
+                    </div>
+
+                    <div class="astro-input-group">
+                        <div class="astro-label-row">
+                            <label for="astro_login_password">Password</label>
+                            <a href="#" class="astro-link">Forgot password?</a>
+                        </div>
+                        <input type="password" id="astro_login_password" name="astro_login_password"
+                            placeholder="••••••••" required>
+                    </div>
+
+                    <div class="astro-checkbox-group">
+                        <input type="checkbox" id="astro_remember" name="astro_remember">
+                        <label for="astro_remember">Keep me logged in on this device</label>
+                    </div>
+
+                    <button type="submit" class="astro-submit-btn btn-primary-color">Secure Dashboard Login</button>
+                </form>
+            </section>
+
+            <!-- ================= ASTROLOGER SIGN UP / APPLICATION FORM ================= -->
+            <section class="astro-form-wrapper" id="astroSignupFormSection">
+                <div class="form-header-box">
+                    <h2>Onboarding Application</h2>
+                    <p>Complete the profile verification form below. Our vetting team will review your application
+                        within 48 hours.</p>
+                </div>
+
+                <form action="#" method="POST" class="astro-auth-form" enctype="multipart/form-data">
+
+                    <!-- Primary Information Group -->
+                    <fieldset class="form-step-section">
+                        <legend>1. Personal Details</legend>
+                        <div class="astro-form-grid">
+                            <div class="astro-input-group">
+                                <label for="astro_name">Full Professional Name</label>
+                                <input type="text" id="astro_name" name="astro_name" placeholder="e.g., Acharya Sharma"
+                                    required>
+                            </div>
+                            <div class="astro-input-group">
+                                <label for="astro_email">Professional Email</label>
+                                <input type="email" id="astro_email" name="astro_email" placeholder="name@domain.com"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="astro-form-grid">
+                            <div class="astro-input-group">
+                                <label for="astro_phone">Contact Number (With Country Code)</label>
+                                <input type="tel" id="astro_phone" name="astro_phone" placeholder="+91 98765 43210"
+                                    required>
+                            </div>
+                            <div class="astro-input-group">
+                                <label for="astro_languages">Languages Spoken</label>
+                                <input type="text" id="astro_languages" name="astro_languages"
+                                    placeholder="e.g., Hindi, English, Bengali" required>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Professional Astrological Expertise Group -->
+                    <fieldset class="form-step-section">
+                        <legend>2. Core Astrological Expertise</legend>
+                        <div class="astro-form-grid">
+                            <div class="astro-input-group">
+                                <label for="astro_experience">Years of Active Experience</label>
+                                <input type="number" id="astro_experience" name="astro_experience" min="1" max="60"
+                                    placeholder="e.g., 8" required>
+                            </div>
+                            <div class="astro-input-group">
+                                <label for="astro_primary_skill">Primary Modality</label>
+                                <select id="astro_primary_skill" name="astro_primary_skill" required>
+                                    <option value="" disabled selected>Select main specialization</option>
+                                    <option value="vedic">Vedic Astrology (Jyotish)</option>
+                                    <option value="kp">KP System</option>
+                                    <option value="numerology">Numerology (Ank Jyotish)</option>
+                                    <option value="palmistry">Palmistry (Hasta Rekha)</option>
+                                    <option value="tarot">Tarot Card Reading</option>
+                                    <option value="vaastu">Vastu Shastra</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="astro-input-group">
+                            <label for="astro_bio">Short Professional Bio (Displayed to Clients)</label>
+                            <textarea id="astro_bio" name="astro_bio" rows="3"
+                                placeholder="Briefly describe your lineage, methodology, and consulting approach..."
+                                required></textarea>
+                        </div>
+                    </fieldset>
+
+                    <!-- Documents and Verification Uploads -->
+                    <fieldset class="form-step-section">
+                        <legend>3. Verification & Certifications</legend>
+                        <div class="astro-input-group">
+                            <label for="astro_cert">Upload Astrology Certificate / ID Proof <span
+                                    class="required-tag">*</span></label>
+                            <input type="file" id="astro_cert" name="astro_cert" accept=".pdf,.jpg,.jpeg,.png" required>
+                            <small class="file-hint">Accepted formats: PDF, JPG, PNG (Max 5MB)</small>
+                        </div>
+                    </fieldset>
+
+                    <div class="astro-checkbox-group">
+                        <input type="checkbox" id="astro_terms" name="astro_terms" required>
+                        <label for="astro_terms">I certify that all details provided are accurate and I agree to the <a
+                                href="#" class="astro-link">Astrologer Code of Conduct</a>.</label>
+                    </div>
+
+                    <button type="submit" class="astro-submit-btn btn-secondary-color">Submit Application</button>
+                </form>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="footer-name-numerology">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

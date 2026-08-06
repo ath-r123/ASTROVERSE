@@ -1,0 +1,159 @@
+/* main content here */
+.compatibility-main {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    margin: 40px auto;
+    padding: 0 20px;
+    color: #333;
+}
+
+.compatibility-hero-section {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 80px 0 0 0;
+}
+
+.compatibility-hero-section h1 {
+    color: #f694d3;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.compatibility-hero-section p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.compatibility-content-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 900px) {
+    .compatibility-content-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.compatibility-form-wrapper {
+    background-color: #ffffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+}
+
+.compatibility-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 600px) {
+    .compatibility-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.partner-heading {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+}
+
+.individual-one {
+    border-bottom: 3px solid #9b59b6;
+    color: #9b59b6;
+}
+
+.individual-two {
+    border-bottom: 3px solid #ec407a;
+    color: #ec407a;
+}
+
+.input-group {
+    margin-bottom: 18px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    background-color: #ffffff;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #b65992;
+    outline: none;
+    background-color: #fbf7fc;
+}
+
+.compatibility-check-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background-color: #9b59b6;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.compatibility-check-btn:hover {
+    background-color: #8e44ad;
+}
+
+.compatibility-info-sidebar {
+    background: #fdfefe;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px dashed #e67e22;
+}
+
+.compatibility-info-sidebar h3 {
+    color: #8e44ad;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.compatibility-element-list {
+    padding-left: 20px;
+    margin-bottom: 25px;
+}
+
+.compatibility-element-list li {
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.compatibility-aspect-card {
+    background: #f4f6f7;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.compatibility-aspect-card h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #34495e;
+}
+
+.compatibility-aspect-card p {
+    margin: 5px 0;
+    font-size: 0.85rem;
+}

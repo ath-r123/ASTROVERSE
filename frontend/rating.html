@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rating</title>
+    <link rel="stylesheet" href="rating.css">
+    <link rel="stylesheet" href="header.css">
+    <link rel="stylesheet" href="footer.css">
+</head>
+
+<body>
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="astrology-ratings-container">
+
+        <section class="astro-rating-form-section">
+            <div class="astro-form-heading">
+                <span class="cosmic-subtitle">Leave Your Mark</span>
+                <h2>Share Your Cosmic Experience</h2>
+                <div class="mystical-divider"><span class="star-icon">✦</span></div>
+            </div>
+
+            <form class="astro-rating-form" onsubmit="event.preventDefault();">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="astro-name">Your Name</label>
+                        <input type="text" id="astro-name" placeholder="e.g., Rahul" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="astro-location">Your City/Location</label>
+                        <input type="text" id="astro-location" placeholder="e.g., Delhi" required>
+                    </div>
+                </div>
+
+                <div class="form-group rating-select-group">
+                    <label>Your Cosmic Rating</label>
+                    <div class="star-rating-input">
+                        <input type="radio" id="star5" name="cosmic-stars" value="5" required><label for="star5"
+                            title="5 stars">★</label>
+                        <input type="radio" id="star4" name="cosmic-stars" value="4"><label for="star4"
+                            title="4 stars">★</label>
+                        <input type="radio" id="star3" name="cosmic-stars" value="3"><label for="star3"
+                            title="3 stars">★</label>
+                        <input type="radio" id="star2" name="cosmic-stars" value="2"><label for="star2"
+                            title="2 stars">★</label>
+                        <input type="radio" id="star1" name="cosmic-stars" value="1"><label for="star1"
+                            title="1 star">★</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="astro-comment">Your Review / Experience</label>
+                    <textarea id="astro-comment" rows="4" placeholder="How accurately did the stars align for you?..."
+                        required></textarea>
+                </div>
+
+                <button type="submit" class="astro-submit-button">
+                    <span>Submit to the Universe</span>
+                    <span class="btn-sparkle">✦</span>
+                </button>
+            </form>
+        </section>
+
+        <hr class="astro-section-divider">
+
+        <section class="astro-reviews-display-section">
+            <div class="astro-rating-heading">
+                <span class="cosmic-subtitle">Cosmic Testimonials</span>
+                <h2>What the Stars Revealed</h2>
+                <div class="mystical-divider"><span class="star-icon">✦</span></div>
+            </div>
+
+            <div class="astro-rating-grid">
+                <div class="astro-rating-card">
+                    <div class="astro-star-rating">★★★★★</div>
+                    <p class="astro-comment">"Amazing prediction... Everything aligned exactly as predicted. Highly
+                        accurate reading!"</p>
+                    <div class="astro-meta">
+                        <span class="astro-name">Rahul</span>
+                        <span class="astro-location">Delhi</span>
+                    </div>
+                </div>
+                <div class="astro-rating-card">
+                    <div class="astro-star-rating">★★★★★</div>
+                    <p class="astro-comment">"Amazing prediction... Everything aligned exactly as predicted. Highly
+                        accurate reading!"</p>
+                    <div class="astro-meta">
+                        <span class="astro-name">Rahul</span>
+                        <span class="astro-location">Delhi</span>
+                    </div>
+                </div>
+                <div class="astro-rating-card">
+                    <div class="astro-star-rating">★★★★★</div>
+                    <p class="astro-comment">"Amazing prediction... Everything aligned exactly as predicted. Highly
+                        accurate reading!"</p>
+                    <div class="astro-meta">
+                        <span class="astro-name">Rahul</span>
+                        <span class="astro-location">Delhi</span>
+                    </div>
+                </div>
+                <div class="astro-rating-card">
+                    <div class="astro-star-rating">★★★★★</div>
+                    <p class="astro-comment">"Amazing prediction... Everything aligned exactly as predicted. Highly
+                        accurate reading!"</p>
+                    <div class="astro-meta">
+                        <span class="astro-name">Rahul</span>
+                        <span class="astro-location">Delhi</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="astro-button-div">
+                <button class="astro-load-button">
+                    <span>Explore More Readings</span>
+                    <span class="btn-sparkle">✦</span>
+                </button>
+            </div>
+        </section>
+    </main>
+
+
+    <footer class="footer-rating">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

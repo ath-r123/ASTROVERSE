@@ -1,0 +1,170 @@
+/* main content */
+
+.kundali-gen-main {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 80px 20px;
+    color: #333;
+}
+
+.free-kundali-hero-section {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.free-kundali-hero-section h1 {
+    color: #e67e22;
+    font-size: 2.2rem;
+    margin-bottom: 10px;
+}
+
+.free-kundali-hero-section p {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.free-kundali-content-container {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+@media (max-width: 900px) {
+    .free-kundali-content-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.free-kundali-form-wrapper {
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f0f0f0;
+}
+
+.form-heading {
+    font-size: 1.4rem;
+    margin-top: 0;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #e67e22;
+    color: #e67e22;
+}
+
+.form-row-grid {
+    display: grid;
+    gap: 20px;
+    margin-bottom: 5px;
+}
+
+.tri-grid {
+    grid-template-columns: 1fr 1.2fr 1.2fr;
+}
+
+.duo-grid {
+    grid-template-columns: 1.5fr 1fr;
+}
+
+@media (max-width: 650px) {
+
+    .tri-grid,
+    .duo-grid {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    background-color: #fff;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #e67e22;
+    outline: none;
+    background-color: #fffbf7;
+}
+
+.free-kundali-generate-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    background-color: #e67e22;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.2s;
+}
+
+.generate-btn:hover {
+    background-color: #d35400;
+}
+
+/* Sidebar Styles */
+.free-kundali-info-sidebar {
+    background: #fdfefe;
+    padding: 25px;
+    border-radius: 8px;
+    border: 1px dashed #e67e22;
+    align-self: start;
+}
+
+.free-kundali-info-sidebar h3 {
+    color: #d35400;
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.chart-list {
+    padding-left: 20px;
+    margin-bottom: 25px;
+}
+
+.chart-list li {
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.importance-card {
+    background: #fff9e6;
+    padding: 15px;
+    border-radius: 6px;
+    border-left: 4px solid #f1c40f;
+}
+
+.importance-card h4 {
+    margin-top: 0;
+    margin-bottom: 6px;
+    color: #b7950b;
+}
+
+.importance-card p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #7d6608;
+}

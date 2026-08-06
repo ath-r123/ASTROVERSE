@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kundali Matching</title>
+    <link rel="stylesheet" href="compatibility.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body class="compatibility-body">
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="compatibility-main">
+        <section class="compatibility-hero-section">
+            <h1>Love & Relationship Compatibility</h1>
+            <p>Discover your relationship dynamics using Zodiac signs, elements, and personality alignment.</p>
+        </section>
+
+        <!-- Main Content Container Grid -->
+        <div class="compatibility-content-container">
+
+            <!-- Left Column: The Compatibility Form -->
+            <section class="compatibility-form-wrapper">
+                <form action="#" method="POST" class="compatibility-form">
+                    <div class="compatibility-form-grid">
+
+                        <!-- Individual 1 Column -->
+                        <div class="partner-column">
+                            <h2 class="partner-heading individual-one">Your Details</h2>
+
+                            <div class="input-group">
+                                <label for="user_name">Your Name</label>
+                                <input type="text" id="user_name" name="user_name" placeholder="Enter your name"
+                                    required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="user_sign">Zodiac Sign</label>
+                                <select id="user_sign" name="user_sign" required>
+                                    <option value="" disabled selected>Select Sign</option>
+                                    <option value="aries">Aries (Mar 21 - Apr 19)</option>
+                                    <option value="taurus">Taurus (Apr 20 - May 20)</option>
+                                    <option value="gemini">Gemini (May 21 - Jun 20)</option>
+                                    <option value="cancer">Cancer (Jun 21 - Jul 22)</option>
+                                    <option value="leo">Leo (Jul 23 - Aug 22)</option>
+                                    <option value="virgo">Virgo (Aug 23 - Sep 22)</option>
+                                    <option value="libra">Libra (Sep 23 - Oct 22)</option>
+                                    <option value="scorpio">Scorpio (Oct 23 - Nov 21)</option>
+                                    <option value="sagittarius">Sagittarius (Nov 22 - Dec 21)</option>
+                                    <option value="capricorn">Capricorn (Dec 22 - Jan 19)</option>
+                                    <option value="aquarius">Aquarius (Jan 20 - Feb 18)</option>
+                                    <option value="pisces">Pisces (Feb 19 - Mar 20)</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="user_gender">Gender</label>
+                                <select id="user_gender" name="user_gender">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Non-Binary / Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Individual 2 Column -->
+                        <div class="partner-column">
+                            <h2 class="partner-heading individual-two">Partner's Details</h2>
+
+                            <div class="input-group">
+                                <label for="partner_name">Partner's Name</label>
+                                <input type="text" id="partner_name" name="partner_name"
+                                    placeholder="Enter partner's name" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="partner_sign">Zodiac Sign</label>
+                                <select id="partner_sign" name="partner_sign" required>
+                                    <option value="" disabled selected>Select Sign</option>
+                                    <option value="aries">Aries (Mar 21 - Apr 19)</option>
+                                    <option value="taurus">Taurus (Apr 20 - May 20)</option>
+                                    <option value="gemini">Gemini (May 21 - Jun 20)</option>
+                                    <option value="cancer">Cancer (Jun 21 - Jul 22)</option>
+                                    <option value="leo">Leo (Jul 23 - Aug 22)</option>
+                                    <option value="virgo">Virgo (Aug 23 - Sep 22)</option>
+                                    <option value="libra">Libra (Sep 23 - Oct 22)</option>
+                                    <option value="scorpio">Scorpio (Oct 23 - Nov 21)</option>
+                                    <option value="sagittarius">Sagittarius (Nov 22 - Dec 21)</option>
+                                    <option value="capricorn">Capricorn (Dec 22 - Jan 19)</option>
+                                    <option value="aquarius">Aquarius (Jan 20 - Feb 18)</option>
+                                    <option value="pisces">Pisces (Feb 19 - Mar 20)</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="partner_gender">Gender</label>
+                                <select id="partner_gender" name="partner_gender">
+                                    <option value="female">Female</option>
+                                    <option value="male">Male</option>
+                                    <option value="other">Non-Binary / Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="compatibility-check-btn">Check Compatibility</button>
+                </form>
+            </section>
+
+            <!-- Right/Bottom Column: Educational Information -->
+            <aside class="compatibility-info-sidebar">
+                <h3>The Elements of Love</h3>
+                <p>Astrological compatibility relies heavily on how the four primary elements interact with one another:
+                </p>
+
+                <ul class="compatibility-element-list">
+                    <li><strong>Fire (Aries, Leo, Sag):</strong> Brings passion, high energy, and spontaneous adventure.
+                    </li>
+                    <li><strong>Earth (Taurus, Virgo, Cap):</strong> Offers stability, practical support, and long-term
+                        security.</li>
+                    <li><strong>Air (Gemini, Libra, Aqu):</strong> Drives communication, intellectual spark, and social
+                        bonds.</li>
+                    <li><strong>Water (Cancer, Scorpio, Pisces):</strong> Enhances emotional depth, intuition, and deep
+                        empathy.</li>
+                </ul>
+
+                <div class="compatibility-aspect-card">
+                    <h4>What We Analyze</h4>
+                    <p><strong>Romance & Chemistry:</strong> Immediate spark and physical attraction.</p>
+                    <p><strong>Communication:</strong> How well you share ideas and resolve conflicts.</p>
+                    <p><strong>Values & Goals:</strong> Long-term shared vision for life and family.</p>
+                </div>
+            </aside>
+
+        </div>
+
+    </main>
+
+    <footer class="footer-kundali-matching">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horoscope</title>
+    <link rel="stylesheet" href="horoscope.css">
+    <link rel="stylesheet" href="footer.css">
+    <link rel="stylesheet" href="header.css">
+</head>
+
+<body>
+
+    <div>
+        <header class="nav-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <a href="/">
+                        <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                    </a>
+                </div>
+                <div class="logo-text">ASTROVERSE</div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="index.html" class="nlinks">Home</a>
+                <a href="about.html" class="nlinks">About</a>
+                <a href="astrologers.html" class="nlinks">Astrologers</a>
+                <a href="horoscope.html" class="nlinks">Horoscope</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Free Services<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="free-kundali.html">Free Kundali</a>
+                        <a href="kundali-matching.html">Kundali Matching</a>
+                        <a href="compatibility.html">Compatibility</a>
+                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="name-numerology.html">Name Numerology</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Calculators<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="compatibility.html">Love Calculator</a>
+                        <a href="friendship-calculator.html">Friendship Calculator</a>
+                        <a href="name-numerology.html">Numerology Calculator</a>
+                        <a href="mulank-calculator.html">Mulank Calculator</a>
+                    </div>
+                </div>
+                <a href="panchang.html" class="dropdown nlinks">Panchang</a>
+                <div class="dropdown">
+                    <div class="dropdown nlinks">Sign In<span>▼</span></div>
+                    <div class="dropdown-content">
+                        <a href="sign-in-up.html">User Login</a>
+                        <a href="sign-in-up.html">User Signup</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Login</a>
+                        <a href="astrologer-sign-in-up.html">Astrologer Signup</a>
+                        <a href="sign-in-up.html">Admin Login</a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+    </div>
+
+    <main class="horoscope-portal-main">
+        <!-- Hero Banner & Time Filter Section -->
+        <section class="horoscope-hero">
+            <h1>Daily & Seasonal Horoscopes</h1>
+            <p>Select your zodiac sign to unlock deep cosmic insights calculated by your planetary transits.</p>
+
+            <!-- Timeline Navigation Tabs -->
+            <div class="horoscope-timeline-tabs">
+                <button class="time-tab active">Yesterday</button>
+                <button class="time-tab active-today">Today</button>
+                <button class="time-tab">Weekly</button>
+                <button class="time-tab">Monthly</button>
+                <button class="time-tab">Yearly 2026</button>
+            </div>
+        </section>
+
+        <!-- Zodiac Sign Grid Selector -->
+        <section class="zodiac-grid-container">
+            <!-- Aries -->
+            <button class="zodiac-card active-sign" onclick="selectZodiac('aries')">
+                <span class="zodiac-glyph">♈</span>
+                <span class="zodiac-name">Aries</span>
+                <span class="zodiac-date">Mar 21 - Apr 19</span>
+            </button>
+            <!-- Taurus -->
+            <button class="zodiac-card" onclick="selectZodiac('taurus')">
+                <span class="zodiac-glyph">♉</span>
+                <span class="zodiac-name">Taurus</span>
+                <span class="zodiac-date">Apr 20 - May 20</span>
+            </button>
+            <!-- Gemini -->
+            <button class="zodiac-card" onclick="selectZodiac('gemini')">
+                <span class="zodiac-glyph">♊</span>
+                <span class="zodiac-name">Gemini</span>
+                <span class="zodiac-date">May 21 - Jun 20</span>
+            </button>
+            <!-- Cancer -->
+            <button class="zodiac-card" onclick="selectZodiac('cancer')">
+                <span class="zodiac-glyph">♋</span>
+                <span class="zodiac-name">Cancer</span>
+                <span class="zodiac-date">Jun 21 - Jul 22</span>
+            </button>
+            <!-- Leo -->
+            <button class="zodiac-card" onclick="selectZodiac('leo')">
+                <span class="zodiac-glyph">♌</span>
+                <span class="zodiac-name">Leo</span>
+                <span class="zodiac-date">Jul 23 - Aug 22</span>
+            </button>
+            <!-- Virgo -->
+            <button class="zodiac-card" onclick="selectZodiac('virgo')">
+                <span class="zodiac-glyph">♍</span>
+                <span class="zodiac-name">Virgo</span>
+                <span class="zodiac-date">Aug 23 - Sep 22</span>
+            </button>
+            <!-- Libra -->
+            <button class="zodiac-card" onclick="selectZodiac('libra')">
+                <span class="zodiac-glyph">♎</span>
+                <span class="zodiac-name">Libra</span>
+                <span class="zodiac-date">Sep 23 - Oct 22</span>
+            </button>
+            <!-- Scorpio -->
+            <button class="zodiac-card" onclick="selectZodiac('scorpio')">
+                <span class="zodiac-glyph">♏</span>
+                <span class="zodiac-name">Scorpio</span>
+                <span class="zodiac-date">Oct 23 - Nov 21</span>
+            </button>
+            <!-- Sagittarius -->
+            <button class="zodiac-card" onclick="selectZodiac('sagittarius')">
+                <span class="zodiac-glyph">♐</span>
+                <span class="zodiac-name">Sagittarius</span>
+                <span class="zodiac-date">Nov 22 - Dec 21</span>
+            </button>
+            <!-- Capricorn -->
+            <button class="zodiac-card" onclick="selectZodiac('capricorn')">
+                <span class="zodiac-glyph">♑</span>
+                <span class="zodiac-name">Capricorn</span>
+                <span class="zodiac-date">Dec 22 - Jan 19</span>
+            </button>
+            <!-- Aquarius -->
+            <button class="zodiac-card" onclick="selectZodiac('aquarius')">
+                <span class="zodiac-glyph">♒</span>
+                <span class="zodiac-name">Aquarius</span>
+                <span class="zodiac-date">Jan 20 - Feb 18</span>
+            </button>
+            <!-- Pisces -->
+            <button class="zodiac-card" onclick="selectZodiac('pisces')">
+                <span class="zodiac-glyph">♓</span>
+                <span class="zodiac-name">Pisces</span>
+                <span class="zodiac-date">Feb 19 - Mar 20</span>
+            </button>
+        </section>
+
+        <!-- Main Live Horoscope Display Area -->
+        <div class="horoscope-content-grid">
+
+            <!-- Left Column: Core Readings & Life Aspects -->
+            <article class="reading-area-left">
+                <header class="reading-meta">
+                    <h2>Aries Daily Overview <span class="badge-live">Live Reading</span></h2>
+                    <p class="current-transit-info">Ruling Planet: <strong>Mars</strong> | Element:
+                        <strong>Fire</strong> | Sun Transit Degree: <strong>12° Aries</strong></p>
+                </header>
+
+                <!-- General Overview Summary Card -->
+                <div class="reading-card summary-card">
+                    <h3>✨ Cosmic Overview</h3>
+                    <p>The cosmic current alignment pushes you into a highly dynamic zone today. The Moon forms a
+                        pleasant sextile with your ruling planet Mars, fueling your mental reservoir with unyielding
+                        ambition. It is an extraordinary window to conquer stagnant logistical projects. Avoid
+                        over-analyzing social interactions later this evening; balance patience with your innate drive.
+                    </p>
+                </div>
+
+                <!-- Segmented Life Aspects Grid -->
+                <div class="aspect-readings-grid">
+                    <!-- Love & Relationships -->
+                    <div class="reading-card aspect-box">
+                        <h4>💖 Love & Relationship</h4>
+                        <p>Vulnerability becomes your greatest charm today. Open conversations dissolve old friction.
+                            Single signs might feel a sudden attraction toward an analytical Air sign.</p>
+                    </div>
+                    <!-- Career & Ambition -->
+                    <div class="reading-card aspect-box">
+                        <h4>💼 Career & Business</h4>
+                        <p>Do not shy away from leadership roles today. A pitch or conceptual proposal you lay down
+                            during afternoon transits holds a very high conversion success factor.</p>
+                    </div>
+                    <!-- Health & Wellness -->
+                    <div class="reading-card aspect-box">
+                        <h4>🍏 Health & Energy</h4>
+                        <p>High energy levels could turn into nervous exhaustion if not grounded properly. Swap heavy
+                            stimulants or additional caffeine for outdoor activity or physical stretches.</p>
+                    </div>
+                    <!-- Finance & Wealth -->
+                    <div class="reading-card aspect-box">
+                        <h4>💵 Wealth & Finance</h4>
+                        <p>A minor speculative delay clears up. Keep a close watch on impulse luxury online checkouts,
+                            as planetary alignments hint at short-term budgetary fluctuations.</p>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Right Column: Sidebar Metrics, Lucky Metrics & Planetary Positions -->
+            <aside class="metrics-sidebar-right">
+                <!-- Vibe Meter Bar Charts -->
+                <div class="sidebar-widget vibe-meter-card">
+                    <h3>Cosmic Vibe Meters</h3>
+
+                    <div class="meter-group">
+                        <div class="meter-lbl-row"><span>Romance Index</span><strong>85%</strong></div>
+                        <div class="meter-bar-bg">
+                            <div class="meter-fill color-love" style="width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div class="meter-group">
+                        <div class="meter-lbl-row"><span>Career Drive</span><strong>90%</strong></div>
+                        <div class="meter-bar-bg">
+                            <div class="meter-fill color-career" style="width: 90%;"></div>
+                        </div>
+                    </div>
+                    <div class="meter-group">
+                        <div class="meter-lbl-row"><span>Financial Instinct</span><strong>60%</strong></div>
+                        <div class="meter-bar-bg">
+                            <div class="meter-fill color-wealth" style="width: 60%;"></div>
+                        </div>
+                    </div>
+                    <div class="meter-group">
+                        <div class="meter-lbl-row"><span>Mental Clarity</span><strong>75%</strong></div>
+                        <div class="meter-bar-bg">
+                            <div class="meter-fill color-health" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lucky Numbers & Astro Anchors -->
+                <div class="sidebar-widget lucky-anchors-card">
+                    <h3>Your Astro Anchors</h3>
+                    <ul class="anchor-data-list">
+                        <li><span>Lucky Numbers</span><strong>7, 14, 22</strong></li>
+                        <li><span>Lucky Colour</span><strong class="color-swatch-txt"><span
+                                    class="swatch crimson-bg"></span>Crimson Red</strong></li>
+                        <li><span>Ideal Sign Harmony</span><strong>Leo, Sagittarius</strong></li>
+                        <li><span>Challenging Sign</span><strong>Capricorn</strong></li>
+                        <li><span>Auspicious Hours</span><strong>02:30 PM - 04:00 PM</strong></li>
+                    </ul>
+                </div>
+
+                <!-- Planetary Positions Snapshot -->
+                <div class="sidebar-widget planetary-positions-card">
+                    <h3>Today's Ephemeris Snapshot</h3>
+                    <table class="ephemeris-table">
+                        <thead>
+                            <tr>
+                                <th>Body</th>
+                                <th>Sign Placement</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>☉ Sun</td>
+                                <td>Aries 12°</td>
+                                <td>Direct</td>
+                            </tr>
+                            <tr>
+                                <td>☽ Moon</td>
+                                <td>Leo 04°</td>
+                                <td>Direct</td>
+                            </tr>
+                            <tr>
+                                <td>☿ Mercury</td>
+                                <td>Pisces 28°</td>
+                                <td class="retrograde-text">Retrograde</td>
+                            </tr>
+                            <tr>
+                                <td>♀ Venus</td>
+                                <td>Taurus 15°</td>
+                                <td>Domicile</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <footer class="footer-horoscope">
+        <div class="footer-container">
+
+            <!-- 1. Logo & About -->
+            <div class="footer-col">
+                <a href="#" class="footer-logo">
+                    <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
+                </a>
+                <h3>About</h3>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
+                    ancient wisdom with modern psychological insights.</p>
+            </div>
+
+            <!-- 2. Quick Links -->
+            <div class="footer-col">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#">Daily Horoscopes</a></li>
+                    <li><a href="#">Live Consultations</a></li>
+                    <li><a href="#">Moon Phase Calendar</a></li>
+                    <li><a href="#">Astrology Blog</a></li>
+                </ul>
+            </div>
+
+            <!-- 3. Services -->
+            <div class="footer-col">
+                <h3>Services</h3>
+                <ul>
+                    <li><a href="#">Free Kundali</a></li>
+                    <li><a href="#">Kundali Matching</a></li>
+                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="#">Palm Reading</a></li>
+                    <li><a href="#">Name Numerology</a></li>
+                </ul>
+            </div>
+
+            <!-- 4. Contact & Socials -->
+            <div class="footer-col contact-info">
+                <h3>Contact</h3>
+                <p class="fa-solid fa-envelope">atharv@gmail.com</p>
+                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+
+                <div class="social-links">
+                    <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
+                    <a href="#" aria-label="Pinterest" class="fa-brands fa-pinterest"></a>
+                    <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. Copyright Block -->
+        <div class="footer-bottom">
+            <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

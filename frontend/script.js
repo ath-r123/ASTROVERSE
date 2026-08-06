@@ -13,7 +13,7 @@
  * Reduce a number to a single digit by summing its digits.
  * Master numbers (11, 22, 33) are preserved when keepMaster=true.
  */
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://astroverse-q5hk.onrender.com';
 
 async function apiFetch(endpoint, options = {}) {
     const token = localStorage.getItem('astro_token');

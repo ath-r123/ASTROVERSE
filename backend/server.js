@@ -1,4 +1,5 @@
 require('dotenv').config();
+require('./utils/ephemeris');
 const express = require('express');
 const cors = require('cors');
 const connectDatabase = require('./config/db');

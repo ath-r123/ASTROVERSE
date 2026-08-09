@@ -147,7 +147,7 @@ function showNotification(message, type) {
 /* =================================================================
    SECTION 2 — NAVIGATION (Header / Dropdowns / Mobile Menu)
    ================================================================= */
-
+/*
 function initializeNavigation() {
     // Add mobile hamburger toggle if not present
     var navContainer = document.querySelector('.nav-container');
@@ -222,7 +222,7 @@ function initializeNavigation() {
         });
     });
 }
-
+*/
 
 /* =================================================================
    SECTION 3 — ASTROLOGER SIGN IN / SIGN UP (astrologer-sign-in-up.html)
@@ -2210,3 +2210,79 @@ function initializeUserAuth() {
       renderer.setSize(window.innerWidth, window.innerHeight);
     });
   })();
+
+// Universal Clickable Hamburger Toggle
+document.addEventListener('DOMContentLoaded', () => {
+    // Finds the button regardless of class or ID used in HTML
+    const menuBtn = document.querySelector('.hamburger, .menu-icon, .nav-toggle, #menu-btn, #hamburger-btn, header .toggle');
+    const navMenu = document.querySelector('.nav-links, .nav-menu, nav ul, header ul');
+  
+    if (menuBtn && navMenu) {
+      // Force pointer events and z-index on the button element directly
+      menuBtn.style.pointerEvents = 'auto';
+      menuBtn.style.zIndex = '999999';
+      menuBtn.style.cursor = 'pointer';
+  
+      menuBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        navMenu.classList.toggle('active');
+      });
+  
+      // Close navigation menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!menuBtn.contains(e.target) && !navMenu.contains(e.target)) {
+          navMenu.classList.remove('active');
+        }
+      });
+    }
+  });
+
+  // Reliable Mobile Hamburger Toggle Execution
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.querySelector('.mobile-menu-toggle, #menu-btn');
+    const navMenu = document.querySelector('.nav-links');
+  
+    if (toggleBtn && navMenu) {
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        navMenu.classList.toggle('active');
+      });
+  
+      // Close mobile menu when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!toggleBtn.contains(e.target) && !navMenu.contains(e.target)) {
+          navMenu.classList.remove('active');
+        }
+      });
+    }
+  });
+
+  // Clean & Direct Mobile Hamburger Toggle Listener
+document.addEventListener('DOMContentLoaded', () => {
+    const menuBtn = document.getElementById('menu-btn') || document.querySelector('.mobile-menu-toggle');
+    const navMenu = document.querySelector('.nav-links');
+  
+    if (menuBtn && navMenu) {
+      // Force button to be clickable above canvas overlays
+      menuBtn.style.pointerEvents = 'auto';
+      menuBtn.style.zIndex = '10002';
+      menuBtn.style.cursor = 'pointer';
+  
+      menuBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        // Toggles the .active class on nav-links
+        navMenu.classList.toggle('active');
+      });
+  
+      // Close menu when clicking outside of header
+      document.addEventListener('click', (event) => {
+        if (!menuBtn.contains(event.target) && !navMenu.contains(event.target)) {
+          navMenu.classList.remove('active');
+        }
+      });
+    }
+  });

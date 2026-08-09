@@ -5,41 +5,42 @@
     box-sizing: border-box;
 }
 
+/* Desktop Header Bar */
 .nav-container {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 10px 20px;
-    background-color: rgb(0, 0, 0);
+    background-color: #000000;
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 9999;
 }
 
 .logo-container {
     display: flex;
-    text-align: center;
-
+    align-items: center;
 }
 
 .logo-text {
-    align-content: center;
     color: rgb(255, 226, 39);
-    font-size: 30px;
-    padding-left: 20px;
+    font-size: 26px;
+    padding-left: 15px;
+    font-weight: bold;
 }
 
 .nav-links {
     display: flex;
     align-items: center;
     gap: 15px;
-    padding: 5px 50px;
 }
 
 .nlinks {
     text-decoration: none;
     color: gold;
+    font-size: 1rem;
 }
 
 .nlinks:hover {
@@ -54,28 +55,89 @@
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: azure;
-    border: 2px solid rgb(218, 179, 35);
+    background-color: #0d0818;
+    border: 1px solid rgb(218, 179, 35);
     border-radius: 6px;
-    box-shadow: 0 4px 12px color(0, 0, 0, 0.08);
     top: 100%;
     left: 0;
-    z-index: 1001;
+    z-index: 10001;
+    min-width: 160px;
 }
 
 .dropdown-content a {
     color: gold;
     text-decoration: none;
     display: block;
-    text-align: left;
-    padding: 3%;
-    width: 120px;
+    padding: 10px 15px;
 }
 
 .dropdown-content a:hover {
-    color: blue;
+    background-color: rgba(218, 179, 35, 0.2);
+    color: #fff;
 }
 
 .dropdown:hover .dropdown-content {
     display: block;
+}
+
+/* Hide Hamburger Button on Desktop */
+.mobile-menu-toggle {
+    display: none;
+}
+
+/* ============================================================
+   MOBILE & TABLET HEADER OVERHAUL (Screens <= 768px)
+   ============================================================ */
+@media screen and (max-width: 768px) {
+    .nav-container {
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        padding: 10px 16px !important;
+    }
+
+    /* Show Hamburger Button on Right */
+    .mobile-menu-toggle {
+        display: block !important;
+        background: none !important;
+        border: none !important;
+        color: #f4d068 !important;
+        font-size: 28px !important;
+        cursor: pointer !important;
+        z-index: 10002 !important;
+        pointer-events: auto !important;
+        padding: 4px 8px !important;
+    }
+
+    /* Hide Navigation Links List by Default */
+    .nav-links {
+        display: none !important;
+        flex-direction: column !important;
+        position: absolute !important;
+        top: 100% !important;
+        left: 0 !important;
+        width: 100% !important;
+        background-color: rgba(10, 6, 20, 0.98) !important;
+        border-bottom: 1px solid rgba(244, 208, 104, 0.3) !important;
+        padding: 15px 0 !important;
+        gap: 10px !important;
+        z-index: 10000 !important;
+    }
+
+    /* Shown when active class is toggled by JS */
+    .nav-links.active {
+        display: flex !important;
+    }
+
+    .nav-links a, .nav-links .dropdown {
+        width: 100% !important;
+        text-align: center !important;
+        justify-content: center !important;
+    }
+
+    /* Fix Hero Top Spacing */
+    .hero, .hero-section, main {
+        padding-top: 70px !important; /* Compact gap under header */
+        margin-top: 0 !important;
+    }
 }

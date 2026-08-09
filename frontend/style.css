@@ -1005,3 +1005,44 @@ html, body {
       width: 100% !important;
     }
   }
+
+  /* ============================================================
+   FIX: HERO SPACING & HAMBURGER CLICKABILITY
+   ============================================================ */
+
+@media screen and (max-width: 768px) {
+    /* 1. Eliminate large bottom gap under header */
+    header, nav, .header, .header-container {
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+      margin-bottom: 0 !important;
+    }
+  
+    /* 2. Pull the Hero Section right under the header bar */
+    .hero-section, main, .hero, .main-content {
+      padding-top: 15px !important; /* Reduces vertical gap dramatically */
+      margin-top: 0 !important;
+    }
+  
+    .hero-section h1, .hero-title {
+      margin-top: 0 !important;
+      margin-bottom: 15px !important;
+    }
+  
+    /* 3. Make Hamburger Menu Clickable & Bring to Front */
+    .hamburger, .menu-icon, .nav-toggle, #menu-btn, header button {
+      position: relative !important;
+      z-index: 9999 !important; /* Keeps icon above canvas/overlays */
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      user-select: none !important;
+      padding: 8px !important;
+    }
+  }
+
+  #bg-canvas, body::before {
+    pointer-events: none !important;
+  }

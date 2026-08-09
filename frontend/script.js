@@ -2903,3 +2903,90 @@ function initializeLiveChat() {
 }
 
 document.addEventListener('DOMContentLoaded', initializeLiveChat);
+
+// ============================================================
+// USER WALLET & RAZORPAY PAYMENT FRONTEND HANDLER
+// ============================================================
+
+async function fetchWalletBalance() {
+    const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+    const token = localStorage.getItem('astro_token');
+    if (!token) return;
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/wallet`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const result = await response.json();
+      if (result.success) {
+        const balanceElements = document.querySelectorAll('.wallet-balance-amount');
+        balanceElements.forEach(el => el.textContent = `₹${result.balance.toFixed(2)}`);
+      }
+    } catch (err) {
+      console.warn('Wallet balance fetch error:', err.message);
+    }
+  }
+  
+  async function rechargeWallet(amountINR) {
+    const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+    const token = localStorage.getItem('astro_token');
+  
+    if (!token) {
+      alert('Please log in to recharge your wallet.');
+      return;
+    }
+  
+    try {
+      const orderRes = await fetch(`${API_BASE_URL}/wallet/create-order`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ amount: amountINR })
+      });
+  
+      const orderData = await orderRes.json();
+      if (!orderData.success) throw new Error(orderData.message);
+  
+      const options = {
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'ASTROVERSE',
+        description: 'Wallet Recharge',
+        order_id: orderData.orderId,
+        handler: async function (response) {
+          const verifyRes = await fetch(`${API_BASE_URL}/wallet/verify-payment`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              amount: amountINR
+            })
+          });
+  
+          const verifyData = await verifyRes.json();
+          if (verifyData.success) {
+            alert('Recharge Successful! New Balance: ₹' + verifyData.newBalance);
+            fetchWalletBalance();
+          } else {
+            alert('Verification Failed: ' + verifyData.message);
+          }
+        },
+        theme: { color: '#f4d068' }
+      };
+  
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      alert('Recharge Error: ' + err.message);
+    }
+  }
+  
+  document.addEventListener('DOMContentLoaded', fetchWalletBalance);

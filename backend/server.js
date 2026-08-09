@@ -21,6 +21,7 @@ const io = new Server(server, {
 
 app.use(cors({ origin: process.env.CLIENT_URL || true }));
 app.use(express.json({ limit: '1mb' }));
+app.use('/api/wallet', require('./routes/wallet'));
 
 // Health Check
 app.get('/api/health', (req, res) => res.json({ message: 'Astroverse API is running.' }));

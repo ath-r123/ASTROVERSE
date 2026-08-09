@@ -2,7 +2,8 @@ const express = require('express');
 const router = express.Router();
 const axios = require('axios');
 const { calculateKundaliChart } = require('../utils/ephemeris');
-const { requireAuth } = require('../middleware/auth'); // ✅ Match the export name from auth.js
+const { calculateAshtakoota } = require('../utils/ashtakoota');
+const { requireAuth } = require('../middleware/auth');
 const Calculation = require('../models/Calculation');
 
 // Helper Function: Free OpenStreetMap Geocoding
@@ -29,7 +30,7 @@ async function geocodePlace(placeName) {
 }
 
 // POST /api/calculations/kundali
-router.post('/kundali', requireAuth, async (req, res, next) => { // ✅ Updated middleware here
+router.post('/kundali', requireAuth, async (req, res, next) => {
   try {
     const { name, dob, tob, pob, latitude, longitude, timezoneOffset = 5.5 } = req.body;
 
@@ -74,6 +75,76 @@ router.post('/kundali', requireAuth, async (req, res, next) => { // ✅ Updated 
       message: 'Kundali generated with exact geocoded coordinates via Swiss Ephemeris.',
       locationUsed: coords,
       data: chartData,
+      calculationId: record._id
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/calculations/matching (Ashtakoota 36 Guna Milan)
+router.post('/matching', requireAuth, async (req, res, next) => {
+  try {
+    const { boyDetails, girlDetails } = req.body;
+
+    if (!boyDetails?.dob || !boyDetails?.tob || !girlDetails?.dob || !girlDetails?.tob) {
+      return res.status(400).json({ success: false, message: 'Missing required birth details for both partners.' });
+    }
+
+    // 1. Calculate Boy's Moon Position
+    const [bYear, bMonth, bDay] = boyDetails.dob.split('-').map(Number);
+    const [bHour, bMin] = boyDetails.tob.split(':').map(Number);
+    const bCoords = boyDetails.pob ? await geocodePlace(boyDetails.pob) : { latitude: 19.0760, longitude: 72.8777 };
+
+    const boyChart = await calculateKundaliChart({
+      year: bYear,
+      month: bMonth,
+      day: bDay,
+      hour: bHour,
+      minute: bMin,
+      latitude: bCoords.latitude,
+      longitude: bCoords.longitude,
+      timezoneOffset: Number(boyDetails.timezoneOffset || 5.5)
+    });
+
+    // 2. Calculate Girl's Moon Position
+    const [gYear, gMonth, gDay] = girlDetails.dob.split('-').map(Number);
+    const [gHour, gMin] = girlDetails.tob.split(':').map(Number);
+    const gCoords = girlDetails.pob ? await geocodePlace(girlDetails.pob) : { latitude: 19.0760, longitude: 72.8777 };
+
+    const girlChart = await calculateKundaliChart({
+      year: gYear,
+      month: gMonth,
+      day: gDay,
+      hour: gHour,
+      minute: gMin,
+      latitude: gCoords.latitude,
+      longitude: gCoords.longitude,
+      timezoneOffset: Number(girlDetails.timezoneOffset || 5.5)
+    });
+
+    const boyMoon = boyChart.planets.find(p => p.name === 'Moon');
+    const girlMoon = girlChart.planets.find(p => p.name === 'Moon');
+
+    if (!boyMoon || !girlMoon) {
+      return res.status(500).json({ success: false, message: 'Could not calculate Moon positions for matching.' });
+    }
+
+    // 3. Calculate 36 Guna Ashtakoota Score
+    const matchResult = calculateAshtakoota(boyMoon.degree, girlMoon.degree);
+
+    // Save record to MongoDB Atlas
+    const record = await Calculation.create({
+      owner: req.user.id,
+      type: 'matching',
+      input: { boyDetails, girlDetails },
+      result: matchResult
+    });
+
+    res.status(200).json({
+      success: true,
+      message: '36-Guna Ashtakoota matching calculated successfully.',
+      data: matchResult,
       calculationId: record._id
     });
   } catch (err) {

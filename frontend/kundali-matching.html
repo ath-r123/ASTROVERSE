@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kundali Matching</title>
+    <title>Kundali Matching - ASTROVERSE</title>
     <link rel="stylesheet" href="kundali-matching.css">
     <link rel="stylesheet" href="footer.css">
     <link rel="stylesheet" href="header.css">
@@ -71,56 +71,56 @@
         <div class="content-container-kundali-matching">
 
             <section class="form-wrapper-km">
-                <form action="#" method="post" class="matching-form">
+                <form id="kundali-matching-form" class="matching-form">
                     <div class="form-grid">
 
+                        <!-- First Partner (Groom) -->
                         <div class="partner-column">
                             <h2 class="partner-heading groom-color">First Partner (Groom)</h2>
 
                             <div class="input-group">
-                                <label for="p1_name">Full Name</label>
-                                <input type="text" id="p1_name" name="p1_name" placeholder="Enter name" required>
+                                <label for="boy_name">Full Name</label>
+                                <input type="text" id="boy_name" name="boy_name" placeholder="Enter name" required>
                             </div>
 
                             <div class="input-group">
-                                <label for="p1_dob">Date of Birth</label>
-                                <input type="date" id="p1_dob" name="p1_dob" required>
+                                <label for="boy_dob">Date of Birth</label>
+                                <input type="date" id="boy_dob" name="boy_dob" required>
                             </div>
 
                             <div class="input-group">
-                                <label for="p1_tob">Time of Birth</label>
-                                <input type="time" id="p1_tob" name="p1_tob" required>
+                                <label for="boy_tob">Time of Birth</label>
+                                <input type="time" id="boy_tob" name="boy_tob" required>
                             </div>
 
                             <div class="input-group">
-                                <label for="p1_pob">Place of Birth</label>
-                                <input type="text" id="p1_pob" name="p1_pob" placeholder="City, State, Country"
-                                    required>
+                                <label for="boy_pob">Place of Birth</label>
+                                <input type="text" id="boy_pob" name="boy_pob" placeholder="City, State, Country" required>
                             </div>
                         </div>
 
+                        <!-- Second Partner (Bride) -->
                         <div class="partner-column">
                             <h2 class="partner-heading bride-color">Second Partner (Bride)</h2>
 
                             <div class="input-group">
-                                <label for="p2_name">Full Name</label>
-                                <input type="text" id="p2_name" name="p2_name" placeholder="Enter name" required>
+                                <label for="girl_name">Full Name</label>
+                                <input type="text" id="girl_name" name="girl_name" placeholder="Enter name" required>
                             </div>
 
                             <div class="input-group">
-                                <label for="p2_dob">Date of Birth</label>
-                                <input type="date" id="p2_dob" name="p2_dob" required>
+                                <label for="girl_dob">Date of Birth</label>
+                                <input type="date" id="girl_dob" name="girl_dob" required>
                             </div>
 
                             <div class="input-group">
-                                <label for="p2_tob">Time of Birth</label>
-                                <input type="time" id="p2_tob" name="p2_tob" required>
+                                <label for="girl_tob">Time of Birth</label>
+                                <input type="time" id="girl_tob" name="girl_tob" required>
                             </div>
 
                             <div class="input-group">
-                                <label for="p2_pob">Place of Birth</label>
-                                <input type="text" id="p2_pob" name="p2_pob" placeholder="City, State, Country"
-                                    required>
+                                <label for="girl_pob">Place of Birth</label>
+                                <input type="text" id="girl_pob" name="girl_pob" placeholder="City, State, Country" required>
                             </div>
                         </div>
 
@@ -132,8 +132,7 @@
 
             <aside class="info-sidebar">
                 <h3>How Kundali Matching Works</h3>
-                <p>Vedic astrology uses the <strong>Ashtakoota Milan</strong> system to analyze 8 different parameters
-                    (Kootas) based on the positions of the Moon in both charts:</p>
+                <p>Vedic astrology uses the <strong>Ashtakoota Milan</strong> system to analyze 8 different parameters (Kootas) based on the positions of the Moon in both charts:</p>
 
                 <ul class="koota-list">
                     <li><strong>Varna (1 Point):</strong> Work and spiritual compatibility.</li>
@@ -155,6 +154,9 @@
             </aside>
 
         </div>
+
+        <!-- Dynamic Ashtakoota Result Container -->
+        <div id="matching-result-container" class="matching-result-section"></div>
     </main>
 
     <footer class="footer-kundali-matching">
@@ -166,8 +168,7 @@
                     <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
                 </a>
                 <h3>About</h3>
-                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
-                    ancient wisdom with modern psychological insights.</p>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine ancient wisdom with modern psychological insights.</p>
             </div>
 
             <!-- 2. Quick Links -->
@@ -185,11 +186,11 @@
             <div class="footer-col">
                 <h3>Services</h3>
                 <ul>
-                    <li><a href="#">Free Kundali</a></li>
-                    <li><a href="#">Kundali Matching</a></li>
-                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="free-kundali.html">Free Kundali</a></li>
+                    <li><a href="kundali-matching.html">Kundali Matching</a></li>
+                    <li><a href="compatibility.html">Compatibility</a></li>
                     <li><a href="#">Palm Reading</a></li>
-                    <li><a href="#">Name Numerology</a></li>
+                    <li><a href="name-numerology.html">Name Numerology</a></li>
                 </ul>
             </div>
 

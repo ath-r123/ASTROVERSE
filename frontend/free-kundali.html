@@ -78,11 +78,13 @@
 
                     <h2 class="form-heading">Enter Birth Details</h2>
 
+                    <!-- Full Name -->
                     <div class="input-group">
                         <label for="user_name">Full Name</label>
-                        <input type="text" id="user_name" name="user_name" placeholder="Enter your name" required>
+                        <input type="text" id="user_name" name="user_name" placeholder="Enter your full name" required>
                     </div>
 
+                    <!-- Gender, Date of Birth, Time of Birth -->
                     <div class="form-row-grid tri-grid">
                         <div class="input-group">
                             <label for="user_gender">Gender</label>
@@ -105,25 +107,14 @@
                         </div>
                     </div>
 
+                    <!-- Place of Birth with Real-Time City Autocomplete & Ayanamsa System -->
                     <div class="form-row-grid duo-grid">
-                        <!-- Place of Birth with Real-Time City Autocomplete Suggestions -->
-                        <div class="form-group" style="position: relative;">
-                            <label for="pob">Place of Birth</label>
-                            <input type="text" id="pob" name="pob" placeholder="Type city name (e.g. Akot, Mumbai)" autocomplete="off" required>
+                        <div class="input-group" style="position: relative;">
+                            <label for="user_pob">Place of Birth</label>
+                            <input type="text" id="user_pob" name="user_pob" placeholder="Type city name (e.g. Akot, Mumbai)" autocomplete="off" required>
                             <div id="pob-suggestions" class="autocomplete-suggestions"></div>
                         </div>
-                    
-                        <!-- Next Form Group in Duo Grid (e.g., Ayanamsa / Gender) -->
-                        <div class="form-group">
-                            <label for="gender">Gender</label>
-                            <select id="gender" name="gender" required>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                        </div>
-                    </div>
 
-                    
                         <div class="input-group">
                             <label for="ayanamsa_system">Ayanamsa System</label>
                             <select id="ayanamsa_system" name="ayanamsa_system">

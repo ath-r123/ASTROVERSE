@@ -73,6 +73,8 @@ router.post('/kundali', requireAuth, async (req, res, next) => {
       coords = await geocodePlace(pob);
     } else if (isNaN(coords.latitude) || isNaN(coords.longitude)) {
       coords = { latitude: 19.0760, longitude: 72.8777, displayName: 'Mumbai, India' };
+    } else {
+      coords.displayName = pob || 'Selected Location';
     }
 
     const [year, month, day] = dob.split('-').map(Number);
@@ -122,7 +124,10 @@ router.post('/matching', requireAuth, async (req, res, next) => {
     // 1. Calculate Boy's Moon Position
     const [bYear, bMonth, bDay] = boyDetails.dob.split('-').map(Number);
     const [bHour, bMin] = boyDetails.tob.split(':').map(Number);
-    const bCoords = boyDetails.pob ? await geocodePlace(boyDetails.pob) : { latitude: 19.0760, longitude: 72.8777 };
+    let bCoords = { latitude: Number(boyDetails.latitude), longitude: Number(boyDetails.longitude) };
+    if (isNaN(bCoords.latitude) || isNaN(bCoords.longitude)) {
+      bCoords = boyDetails.pob ? await geocodePlace(boyDetails.pob) : { latitude: 19.0760, longitude: 72.8777 };
+    }
 
     const boyChart = await calculateKundaliChart({
       year: bYear,
@@ -138,7 +143,10 @@ router.post('/matching', requireAuth, async (req, res, next) => {
     // 2. Calculate Girl's Moon Position
     const [gYear, gMonth, gDay] = girlDetails.dob.split('-').map(Number);
     const [gHour, gMin] = girlDetails.tob.split(':').map(Number);
-    const gCoords = girlDetails.pob ? await geocodePlace(girlDetails.pob) : { latitude: 19.0760, longitude: 72.8777 };
+    let gCoords = { latitude: Number(girlDetails.latitude), longitude: Number(girlDetails.longitude) };
+    if (isNaN(gCoords.latitude) || isNaN(gCoords.longitude)) {
+      gCoords = girlDetails.pob ? await geocodePlace(girlDetails.pob) : { latitude: 19.0760, longitude: 72.8777 };
+    }
 
     const girlChart = await calculateKundaliChart({
       year: gYear,
@@ -158,8 +166,11 @@ router.post('/matching', requireAuth, async (req, res, next) => {
       return res.status(500).json({ success: false, message: 'Could not calculate Moon positions for matching.' });
     }
 
-    // 3. Calculate 36 Guna Ashtakoota Score
-    const matchResult = calculateAshtakoota(boyMoon.degree, girlMoon.degree);
+    // 3. Calculate 36 Guna Ashtakoota Score using total absolute zodiac degrees (0 - 360)
+    const boyMoonDegree = boyMoon.totalDegree ?? boyMoon.degree;
+    const girlMoonDegree = girlMoon.totalDegree ?? girlMoon.degree;
+
+    const matchResult = calculateAshtakoota(boyMoonDegree, girlMoonDegree);
 
     // Save record to MongoDB Atlas
     const record = await Calculation.create({
@@ -208,7 +219,10 @@ router.post('/panchang', async (req, res, next) => {
       return res.status(500).json({ success: false, message: 'Failed to calculate Sun and Moon positions for Panchang.' });
     }
 
-    const panchangData = calculatePanchang(sun.degree, moon.degree, targetDate);
+    const sunDegree = sun.totalDegree ?? sun.degree;
+    const moonDegree = moon.totalDegree ?? moon.degree;
+
+    const panchangData = calculatePanchang(sunDegree, moonDegree, targetDate);
 
     res.status(200).json({
       success: true,
@@ -248,7 +262,10 @@ router.post('/horoscope', async (req, res, next) => {
       return res.status(500).json({ success: false, message: 'Could not calculate transit positions for Horoscope.' });
     }
 
-    const dailyHoroscopeData = calculateDailyHoroscope(moon.degree, sun.degree);
+    const moonDegree = moon.totalDegree ?? moon.degree;
+    const sunDegree = sun.totalDegree ?? sun.degree;
+
+    const dailyHoroscopeData = calculateDailyHoroscope(moonDegree, sunDegree);
 
     if (sign && dailyHoroscopeData.forecasts[sign.toLowerCase()]) {
       return res.status(200).json({

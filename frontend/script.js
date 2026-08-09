@@ -3318,7 +3318,6 @@ function initPlaceAutocomplete() {
     const suggestionsBox = document.getElementById('pob-suggestions');
   
     if (!pobInput || !suggestionsBox) {
-      console.warn('[Autocomplete Notice] Target input or suggestion container missing.');
       return;
     }
   
@@ -3351,7 +3350,7 @@ function initPlaceAutocomplete() {
               const item = document.createElement('div');
               item.className = 'suggestion-item';
   
-              // Clean up long display strings (City, State, Country)
+              // Extract short readable display name
               const parts = place.displayName.split(',');
               const shortName = parts.length > 2 
                 ? `${parts[0].trim()}, ${parts[1].trim()}, ${parts[parts.length - 1].trim()}`
@@ -3375,13 +3374,12 @@ function initPlaceAutocomplete() {
             suggestionsBox.style.display = 'none';
           }
         } catch (err) {
-          console.warn('[Autocomplete Request Failed]', err);
           suggestionsBox.style.display = 'none';
         }
       }, 300);
     });
   
-    // Hide dropdown on outside click
+    // Close dropdown when clicking outside
     document.addEventListener('click', (e) => {
       if (!pobInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
         suggestionsBox.style.display = 'none';
@@ -3389,7 +3387,7 @@ function initPlaceAutocomplete() {
     });
   }
   
-  // Guarantee execution on page load
+  // Ensure execution regardless of script load state
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initPlaceAutocomplete);
   } else {

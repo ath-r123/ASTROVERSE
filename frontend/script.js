@@ -1501,61 +1501,151 @@ var nakshatraNamesPanchang = [
     'Uttara Bhadrapada', 'Revati'
 ];
 
+// ============================================================
+// SWISS EPHEMERIS DAILY PANCHANG FRONTEND HANDLER
+// ============================================================
+
 function initializePanchang() {
-    var refreshButton = document.querySelector('.panchang-update-btn');
-    if (!refreshButton) return;
-
-    refreshButton.addEventListener('click', function () {
-        var selectedDate = document.getElementById('panchang_date');
-        var selectedLocation = document.getElementById('panchang_location');
-
-        if (!selectedDate || !selectedLocation) return;
-
-        var dateObj = parseDateInput(selectedDate.value);
-        var dayOfMonth = dateObj.getDate();
-        var monthOfYear = dateObj.getMonth();
-
-        // Update Tithi
-        var tithiIndex = dayOfMonth % tithiNames.length;
-        var tithiPaksha = dayOfMonth <= 15 ? 'Shukla Paksha' : 'Krishna Paksha';
-        updatePillarValue(0, tithiPaksha + ', ' + tithiNames[tithiIndex]);
-
-        // Update Vaar (weekday)
-        var dayNamesPanchang = ['Ravivar (Sunday)', 'Somvar (Monday)', 'Mangalvar (Tuesday)', 'Budhvar (Wednesday)', 'Guruvar (Thursday)', 'Shukravar (Friday)', 'Shanivar (Saturday)'];
-        var weekdayIndex = dateObj.getDay();
-        var rulingPlanetNames = ['Sun', 'Moon', 'Mars', 'Mercury', 'Jupiter', 'Venus', 'Saturn'];
-        updatePillarValue(1, dayNamesPanchang[weekdayIndex]);
-        updatePillarDuration(1, 'Ruling Planet: ' + rulingPlanetNames[weekdayIndex]);
-
-        // Update Nakshatra
-        var nakshatraIndex = (dayOfMonth + monthOfYear) % nakshatraNamesPanchang.length;
-        updatePillarValue(2, nakshatraNamesPanchang[nakshatraIndex]);
-
-        // Update Yoga
-        var yogaNames = ['Ayushman', 'Saubhagya', 'Shobhana', 'Atiganda', 'Sukarma', 'Dhriti', 'Shula', 'Ganda', 'Vriddhi', 'Dhruva', 'Vyaghata', 'Harshana'];
-        var yogaIndex = (dayOfMonth * 2 + monthOfYear) % yogaNames.length;
-        updatePillarValue(3, yogaNames[yogaIndex]);
-
-        // Update Karana
-        var karanaNames = ['Bava', 'Balava', 'Kaulava', 'Taitila', 'Garaja', 'Vanija', 'Vishti'];
-        var karanaIndex = dayOfMonth % karanaNames.length;
-        updatePillarValue(4, karanaNames[karanaIndex] + ' (First), ' + karanaNames[(karanaIndex + 1) % karanaNames.length] + ' (Second)');
-
-        // Update Choghadiya table
-        updateChoghadiyaTable(dayOfMonth);
-
-        // Update Samvat years
-        var indianYear = dateObj.getFullYear() + 57;
-        var vikramYear = dateObj.getFullYear() + 78;
-        var samvatHeader = document.querySelector('.vedic-calendar-year');
-        if (samvatHeader) {
-            samvatHeader.innerHTML =
-                'Shaka Samvat: <strong>' + indianYear + '</strong> | Vikram Samvat: <strong>' + vikramYear + '</strong> | Ayana: <strong>' + (monthOfYear >= 5 && monthOfYear <= 11 ? 'Dakshinayana' : 'Uttarayana') + '</strong> | Ritu: <strong>' + getSeasonName(monthOfYear) + '</strong>';
+    const refreshButton = document.querySelector('.panchang-update-btn');
+    const panchangForm = document.getElementById('panchang-form');
+    if (!refreshButton && !panchangForm) return;
+  
+    const dateInput = document.getElementById('panchang_date');
+    const locationInput = document.getElementById('panchang_location');
+  
+    // Set default date input to today if empty
+    if (dateInput && !dateInput.value) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+  
+    // Master fetch function connecting to Node.js backend
+    async function fetchAndRenderPanchang() {
+      const selectedDate = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
+      const selectedLocation = locationInput ? locationInput.value : 'Varanasi, India';
+  
+      // Dynamic backend URL handling (Local vs Production Render/Vercel)
+      const API_BASE_URL = window.location.hostname === 'localhost'
+        ? 'http://localhost:5000/api'
+        : '/api';
+  
+      try {
+        if (typeof showNotification === 'function') {
+          showNotification('Calculating astronomical positions via Swiss Ephemeris...', 'info');
         }
-
-        showNotification('Panchang data refreshed for ' + selectedLocation.value + '.', 'success');
-    });
-}
+  
+        const response = await fetch(`${API_BASE_URL}/calculations/panchang`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date: selectedDate, pob: selectedLocation })
+        });
+  
+        const result = await response.json();
+  
+        if (!response.ok) {
+          throw new Error(result.message || 'Failed to calculate Panchang.');
+        }
+  
+        const data = result.data;
+        const location = result.locationUsed;
+  
+        // 1. Update 5 Pillars of Vedic Time
+        if (document.getElementById('val-tithi')) {
+          document.getElementById('val-tithi').textContent = data.tithi;
+        } else {
+          updatePillarValue(0, data.tithi);
+        }
+  
+        const dateObj = new Date(selectedDate);
+        const dayNamesPanchang = ['Ravivar (Sunday)', 'Somvar (Monday)', 'Mangalvar (Tuesday)', 'Budhvar (Wednesday)', 'Guruvar (Thursday)', 'Shukravar (Friday)', 'Shanivar (Saturday)'];
+        const rulingPlanets = ['Sun (Surya)', 'Moon (Chandra)', 'Mars (Mangal)', 'Mercury (Budha)', 'Jupiter (Guru)', 'Venus (Shukra)', 'Saturn (Shani)'];
+        const dayIndex = dateObj.getDay();
+  
+        if (document.getElementById('val-vaar')) {
+          document.getElementById('val-vaar').textContent = dayNamesPanchang[dayIndex];
+        } else {
+          updatePillarValue(1, dayNamesPanchang[dayIndex]);
+          updatePillarDuration(1, 'Ruling Planet: ' + rulingPlanets[dayIndex]);
+        }
+  
+        if (document.getElementById('val-nakshatra')) {
+          document.getElementById('val-nakshatra').textContent = data.nakshatra;
+        } else {
+          updatePillarValue(2, data.nakshatra);
+        }
+  
+        if (document.getElementById('val-yoga')) {
+          document.getElementById('val-yoga').textContent = data.yoga;
+        } else {
+          updatePillarValue(3, data.yoga);
+        }
+  
+        if (document.getElementById('val-karana')) {
+          document.getElementById('val-karana').textContent = data.karana;
+        } else {
+          updatePillarValue(4, data.karana);
+        }
+  
+        // 2. Update Solar/Lunar Degrees & Geocoded Location Widgets (If present)
+        const sunDegEl = document.getElementById('val-sun-degree');
+        const moonDegEl = document.getElementById('val-moon-degree');
+        const locDisplayEl = document.getElementById('val-location-display');
+        const rahuKaalEl = document.getElementById('val-rahu-kaal');
+  
+        if (sunDegEl) sunDegEl.textContent = `${data.sunDegree}°`;
+        if (moonDegEl) moonDegEl.textContent = `${data.moonDegree}°`;
+        if (locDisplayEl) locDisplayEl.textContent = location.displayName ? location.displayName.split(',')[0] : selectedLocation;
+        if (rahuKaalEl) rahuKaalEl.textContent = data.rahuKaal;
+  
+        // 3. Update Samvat & Ayana Header
+        const year = dateObj.getFullYear();
+        const month = dateObj.getMonth();
+        const shakaYear = year - 78;
+        const vikramYear = year + 57;
+        const ayana = (month >= 5 && month <= 10) ? 'Dakshinayana' : 'Uttarayana';
+  
+        const samvatHeader = document.querySelector('.vedic-calendar-year');
+        if (samvatHeader) {
+          samvatHeader.innerHTML =
+            `Shaka Samvat: <strong>${shakaYear}</strong> | Vikram Samvat: <strong>${vikramYear}</strong> | Ayana: <strong>${ayana}</strong>`;
+        }
+  
+        // 4. Fallback call for Choghadiya table
+        if (typeof updateChoghadiyaTable === 'function') {
+          updateChoghadiyaTable(dateObj.getDate());
+        }
+  
+        if (typeof showNotification === 'function') {
+          showNotification(`Panchang data calculated for ${selectedLocation}.`, 'success');
+        }
+  
+      } catch (err) {
+        if (typeof showNotification === 'function') {
+          showNotification(`Panchang Error: ${err.message}`, 'error');
+        } else {
+          console.error('Panchang fetch error:', err.message);
+        }
+      }
+    }
+  
+    // Handle Refresh Button Click
+    if (refreshButton) {
+      refreshButton.addEventListener('click', function (e) {
+        e.preventDefault();
+        fetchAndRenderPanchang();
+      });
+    }
+  
+    // Handle Form Submission
+    if (panchangForm) {
+      panchangForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        fetchAndRenderPanchang();
+      });
+    }
+  
+    // Fetch Panchang automatically when page loads
+    fetchAndRenderPanchang();
+  }
 
 function updatePillarValue(pillarIndex, newValue) {
     var pillarCards = document.querySelectorAll('.pillar-card');

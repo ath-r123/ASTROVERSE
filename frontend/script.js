@@ -2704,3 +2704,92 @@ function initializePanchang() {
   }
   
   document.addEventListener('DOMContentLoaded', initializePanchang);
+
+
+  // ============================================================
+// DAILY HOROSCOPE FRONTEND HANDLER
+// ============================================================
+
+function initializeHoroscope() {
+    const zodiacCards = document.querySelectorAll('.zodiac-card, .zodiac-selector-item');
+    const horoscopeOutputContainer = document.getElementById('horoscope-result-container') || document.querySelector('.horoscope-display-card');
+  
+    if (!zodiacCards.length && !horoscopeOutputContainer) return;
+  
+    async function fetchHoroscope(selectedSign = 'aries') {
+      const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+  
+      try {
+        if (horoscopeOutputContainer) {
+          horoscopeOutputContainer.innerHTML = '<p style="text-align: center; color: #f4d068;">Fetching planetary transits...</p>';
+        }
+  
+        const response = await fetch(`${API_BASE_URL}/calculations/horoscope`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sign: selectedSign })
+        });
+  
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || 'Failed to fetch horoscope.');
+  
+        renderHoroscopeUI(result.data, result.transits, result.dateUsed);
+      } catch (err) {
+        if (horoscopeOutputContainer) {
+          horoscopeOutputContainer.innerHTML = `<p style="text-align: center; color: #ff7675;">Error: ${err.message}</p>`;
+        }
+      }
+    }
+  
+    // Attach click events to zodiac sign cards/buttons
+    zodiacCards.forEach(card => {
+      card.addEventListener('click', function () {
+        const signName = this.dataset.sign || this.innerText.trim().toLowerCase();
+        fetchHoroscope(signName);
+      });
+    });
+  
+    // Load default horoscope for Aries on launch
+    fetchHoroscope('aries');
+  }
+  
+  function renderHoroscopeUI(data, transits, date) {
+    const container = document.getElementById('horoscope-result-container') || document.querySelector('.horoscope-display-section');
+    if (!container) return;
+  
+    const html = `
+      <div style="max-width: 650px; margin: 25px auto; padding: 25px; background: rgba(18, 12, 38, 0.95); border: 1px solid rgba(244, 208, 104, 0.4); border-radius: 12px; color: #fff;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+          <h2 style="color: #f4d068; margin: 0;">${data.sign} Forecast</h2>
+          <span style="background: rgba(244, 208, 104, 0.2); color: #f4d068; padding: 4px 10px; border-radius: 20px; font-weight: bold;">${data.luckScore}% Luck</span>
+        </div>
+  
+        <p style="color: #a29bfe; font-size: 0.85rem; margin: 8px 0 15px;">
+          📅 Date: ${date} | 🌙 Transiting Moon: ${transits.moonSign} (${transits.moonDegree}°)
+        </p>
+  
+        <p style="font-size: 1.05rem; line-height: 1.6; color: #eadaf7; background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+          ${data.summary}
+        </p>
+  
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 15px; text-align: center;">
+          <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px;">
+            <small style="color: #a29bfe;">Element</small>
+            <strong style="display: block; color: #fff;">${data.element}</strong>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px;">
+            <small style="color: #a29bfe;">Ruling Planet</small>
+            <strong style="display: block; color: #fff;">${data.ruler}</strong>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px;">
+            <small style="color: #a29bfe;">Lucky Color</small>
+            <strong style="display: block; color: #55efc4;">${data.luckyColor}</strong>
+          </div>
+        </div>
+      </div>
+    `;
+  
+    container.innerHTML = html;
+  }
+  
+  document.addEventListener('DOMContentLoaded', initializeHoroscope);

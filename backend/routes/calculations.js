@@ -4,6 +4,7 @@ const axios = require('axios');
 const { calculateKundaliChart } = require('../utils/ephemeris');
 const { calculateAshtakoota } = require('../utils/ashtakoota');
 const { calculatePanchang } = require('../utils/panchang');
+const { calculateDailyHoroscope } = require('../utils/horoscope');
 const { requireAuth } = require('../middleware/auth');
 const Calculation = require('../models/Calculation');
 
@@ -189,6 +190,55 @@ router.post('/panchang', async (req, res, next) => {
       dateUsed: targetDate,
       locationUsed: coords,
       data: panchangData
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/calculations/horoscope (Daily Zodiac Forecasts)
+router.post('/horoscope', async (req, res, next) => {
+  try {
+    const { date, sign } = req.body;
+    const targetDate = date || new Date().toISOString().split('T')[0];
+    const [year, month, day] = targetDate.split('-').map(Number);
+
+    // Compute chart for 12:00 PM Midday transit baseline
+    const chartData = await calculateKundaliChart({
+      year,
+      month,
+      day,
+      hour: 12,
+      minute: 0,
+      latitude: 19.0760,
+      longitude: 72.8777,
+      timezoneOffset: 5.5
+    });
+
+    const sun = chartData.planets.find(p => p.name === 'Sun');
+    const moon = chartData.planets.find(p => p.name === 'Moon');
+
+    if (!sun || !moon) {
+      return res.status(500).json({ success: false, message: 'Could not calculate transit positions for Horoscope.' });
+    }
+
+    const dailyHoroscopeData = calculateDailyHoroscope(moon.degree, sun.degree);
+
+    if (sign && dailyHoroscopeData.forecasts[sign.toLowerCase()]) {
+      return res.status(200).json({
+        success: true,
+        dateUsed: targetDate,
+        transits: dailyHoroscopeData.currentTransits,
+        data: dailyHoroscopeData.forecasts[sign.toLowerCase()]
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Daily planetary transits & horoscope computed via Swiss Ephemeris.',
+      dateUsed: targetDate,
+      transits: dailyHoroscopeData.currentTransits,
+      data: dailyHoroscopeData.forecasts
     });
   } catch (err) {
     next(err);

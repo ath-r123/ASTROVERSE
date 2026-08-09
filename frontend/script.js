@@ -2068,9 +2068,6 @@ document.addEventListener('DOMContentLoaded', function () {
     // AI Chat Assistant
     initializeAIChat();
 
-    // Free Kundali generator
-    initializeFreeKundali();
-
     // Kundali Matching calculator
     initializeKundaliMatching();
 
@@ -2613,51 +2610,6 @@ function generateNorthIndianChartSVG(chartData) {
     `;
   }
   
-  /**
-   * Connects free-kundali.html form to Node.js /api/calculations/kundali
-   */
-  function initializeFreeKundaliForm() {
-    const kundaliForm = document.getElementById('free-kundali-form') || document.querySelector('.kundali-form');
-    if (!kundaliForm) return;
-  
-    kundaliForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-  
-      const name = (document.getElementById('user_name') || {}).value || 'User';
-      const dob = (document.getElementById('user_dob') || {}).value;
-      const tob = (document.getElementById('user_tob') || {}).value;
-      const pob = (document.getElementById('user_pob') || {}).value || 'Mumbai, India';
-  
-      if (!dob || !tob) {
-        alert('Please fill in Date of Birth and Time of Birth.');
-        return;
-      }
-  
-      try {
-        // Send request to Express backend
-        const response = await fetch('/api/calculations/kundali', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('astro_token') || ''}`
-          },
-          body: JSON.stringify({ name, dob, tob, pob })
-        });
-  
-        const result = await response.json();
-  
-        if (!response.ok) {
-          throw new Error(result.message || 'Calculation failed.');
-        }
-  
-        // Render Visual SVG Chart & Ephemeris Details
-        renderKundaliFullOutput(result.data, result.locationUsed, name);
-      } catch (err) {
-        alert(`Error: ${err.message}`);
-      }
-    });
-  }
-  
   function renderKundaliFullOutput(data, location, name) {
     const container = document.querySelector('.kundali-result-section') || document.querySelector('main') || document.body;
   
@@ -2700,9 +2652,6 @@ function generateNorthIndianChartSVG(chartData) {
     container.insertAdjacentHTML('beforeend', outputHTML);
   }
   
-  // Call initialization on DOM ready
-  document.addEventListener('DOMContentLoaded', initializeFreeKundaliForm);
-
   // ============================================================
 // ASHTAKOOTA 36-GUNA MATCHMAKING FRONTEND HANDLER
 // ============================================================
@@ -3308,7 +3257,13 @@ function setupCityAutocomplete() {
         throw new Error(`Server returned an empty response (Status: ${response.status}).`);
       }
   
-      const result = JSON.parse(responseText);
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        const contentType = response.headers.get('content-type') || 'unknown content type';
+        throw new Error(`The Kundali service returned an invalid response (${contentType}, status ${response.status}). Please try again shortly.`);
+      }
   
       if (!response.ok || !result.success) {
         if (response.status === 401) {

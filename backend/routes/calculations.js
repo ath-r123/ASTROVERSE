@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const { calculateKundaliChart } = require('../utils/ephemeris');
 const { calculateAshtakoota } = require('../utils/ashtakoota');
+const { calculatePanchang } = require('../utils/panchang');
 const { requireAuth } = require('../middleware/auth');
 const Calculation = require('../models/Calculation');
 
@@ -146,6 +147,48 @@ router.post('/matching', requireAuth, async (req, res, next) => {
       message: '36-Guna Ashtakoota matching calculated successfully.',
       data: matchResult,
       calculationId: record._id
+    });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/calculations/panchang (Daily Panchang)
+router.post('/panchang', async (req, res, next) => {
+  try {
+    const { date, pob = 'Varanasi, India', timezoneOffset = 5.5 } = req.body;
+    const targetDate = date || new Date().toISOString().split('T')[0];
+
+    const coords = await geocodePlace(pob);
+    const [year, month, day] = targetDate.split('-').map(Number);
+
+    // Compute chart for 06:00 AM Sunrise baseline
+    const chartData = await calculateKundaliChart({
+      year,
+      month,
+      day,
+      hour: 6,
+      minute: 0,
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+      timezoneOffset: Number(timezoneOffset)
+    });
+
+    const sun = chartData.planets.find(p => p.name === 'Sun');
+    const moon = chartData.planets.find(p => p.name === 'Moon');
+
+    if (!sun || !moon) {
+      return res.status(500).json({ success: false, message: 'Failed to calculate Sun and Moon positions for Panchang.' });
+    }
+
+    const panchangData = calculatePanchang(sun.degree, moon.degree, targetDate);
+
+    res.status(200).json({
+      success: true,
+      message: 'Daily Panchang calculated via Swiss Ephemeris.',
+      dateUsed: targetDate,
+      locationUsed: coords,
+      data: panchangData
     });
   } catch (err) {
     next(err);

@@ -2543,3 +2543,74 @@ function initializeMatchingForm() {
   
   // Ensure function runs when DOM loads
   document.addEventListener('DOMContentLoaded', initializeMatchingForm);
+
+  // ============================================================
+// DAILY PANCHANG FRONTEND HANDLER
+// ============================================================
+
+function initializePanchang() {
+    const panchangContainer = document.getElementById('panchang-card') || document.querySelector('.panchang-container');
+    if (!panchangContainer) return;
+  
+    async function loadPanchang(dateVal = '', pobVal = 'Varanasi, India') {
+      const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000/api' : '/api';
+  
+      try {
+        const response = await fetch(`${API_BASE_URL}/calculations/panchang`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ date: dateVal, pob: pobVal })
+        });
+  
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || 'Failed to load Panchang.');
+  
+        renderPanchangUI(result.data, result.dateUsed, result.locationUsed);
+      } catch (err) {
+        console.warn('Panchang load error:', err.message);
+      }
+    }
+  
+    // Load default Panchang for today
+    loadPanchang();
+  }
+  
+  function renderPanchangUI(data, date, location) {
+    const container = document.getElementById('panchang-result-container') || document.querySelector('.panchang-card-wrapper') || document.body;
+  
+    const html = `
+      <div style="max-width: 600px; margin: 25px auto; padding: 20px; background: rgba(18, 12, 38, 0.95); border: 1px solid rgba(244, 208, 104, 0.4); border-radius: 12px; color: #fff;">
+        <h2 style="color: #f4d068; text-anchor: center; margin: 0 0 5px; text-align: center;">Vedic Daily Panchang</h2>
+        <p style="text-align: center; color: #a29bfe; font-size: 0.9rem; margin-bottom: 15px;">
+          📅 ${date} | 📍 ${location.displayName || 'Location'}
+        </p>
+  
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; text-align: center;">
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+            <small style="color: #a29bfe;">Tithi</small>
+            <p style="margin: 4px 0 0; font-weight: bold; color: #f4d068;">${data.tithi}</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+            <small style="color: #a29bfe;">Nakshatra</small>
+            <p style="margin: 4px 0 0; font-weight: bold; color: #f4d068;">${data.nakshatra}</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+            <small style="color: #a29bfe;">Yoga</small>
+            <p style="margin: 4px 0 0; font-weight: bold; color: #f4d068;">${data.yoga}</p>
+          </div>
+          <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px;">
+            <small style="color: #a29bfe;">Karana</small>
+            <p style="margin: 4px 0 0; font-weight: bold; color: #f4d068;">${data.karana}</p>
+          </div>
+        </div>
+  
+        <div style="margin-top: 15px; padding: 10px; background: rgba(255, 118, 117, 0.15); border: 1px solid rgba(255, 118, 117, 0.3); border-radius: 8px; text-align: center;">
+          <strong style="color: #ff7675;">⚠️ Rahu Kaal Timing:</strong> ${data.rahuKaal}
+        </div>
+      </div>
+    `;
+  
+    container.innerHTML = html;
+  }
+  
+  document.addEventListener('DOMContentLoaded', initializePanchang);

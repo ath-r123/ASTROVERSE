@@ -1,11 +1,8 @@
 const sweph = require('sweph');
 const path = require('path');
 
-// Set ephe path safely
 const ephePath = path.join(__dirname, '../ephe');
 sweph.set_ephe_path(ephePath);
-
-console.log(`[SwissEph] Ephemeris path set to: ${ephePath}`);
 
 const RASHIS = [
   'Mesha (Aries)', 'Vrishabha (Taurus)', 'Mithuna (Gemini)', 'Karka (Cancer)',
@@ -22,23 +19,24 @@ const NAKSHATRAS = [
 ];
 
 function parseZodiacPosition(longitude) {
-  const numLong = Number(longitude) || 0;
-  let normalized = numLong % 360;
-  if (normalized < 0) normalized += 360;
+  let numLong = Number(longitude) || 0;
+  // Positive Modulo 360
+  numLong = ((numLong % 360) + 360) % 360;
 
-  const rashiIndex = Math.floor(normalized / 30);
-  const degreeInRashi = normalized % 30;
-  const nakshatraIndex = Math.floor(normalized / (360 / 27));
+  const rashiIndex = Math.floor(numLong / 30);
+  const degreeInRashi = numLong % 30;
+  const nakshatraIndex = Math.floor(numLong / (360 / 27));
 
   return {
+    rashiIndex: rashiIndex + 1, // 1 = Aries, 9 = Sagittarius, etc.
     rashi: RASHIS[rashiIndex] || RASHIS[0],
     degree: Number(degreeInRashi.toFixed(2)),
-    totalDegree: Number(normalized.toFixed(2)),
+    totalDegree: Number(numLong.toFixed(2)),
     nakshatra: NAKSHATRAS[nakshatraIndex] || NAKSHATRAS[0]
   };
 }
 
-function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitude = 19.0760, longitude = 72.8777, timezoneOffset = 5.5 }) {
+function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitude = 21.0963, longitude = 77.0588, timezoneOffset = 5.5 }) {
   return new Promise((resolve, reject) => {
     try {
       const numYear = Number(year);
@@ -48,36 +46,53 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
       const numMin = Number(minute);
       const numLat = Number(latitude);
       const numLng = Number(longitude);
-      const numTz = Number(timezoneOffset);
+      const numTz = Math.abs(Number(timezoneOffset) || 5.5);
 
       if ([numYear, numMonth, numDay].some(v => isNaN(v))) {
-        return reject(new Error('Invalid birth date parameters provided.'));
+        return reject(new Error('Invalid date details provided.'));
       }
 
-      // Convert Local Time -> UTC
+      // 1. Convert IST (Local) -> UTC Hours Decimal
       const decimalLocalHours = numHour + (numMin / 60);
-      const decimalUtcHours = decimalLocalHours - numTz;
+      const decimalUtcHours = decimalLocalHours - numTz; // 14:51 - 5.5 = 9.35 UTC
 
-      // Compute Julian Day
+      // 2. Compute Julian Day
       const gregFlag = typeof sweph.SE_GREG_CAL === 'number' ? sweph.SE_GREG_CAL : 1;
       const julianDay = sweph.julday(numYear, numMonth, numDay, decimalUtcHours, gregFlag);
 
-      // Set Sidereal Mode (Lahiri)
+      // 3. Set Sidereal Mode (Lahiri / Chitra Paksha)
       const sidMode = typeof sweph.SE_SIDM_LAHIRI === 'number' ? sweph.SE_SIDM_LAHIRI : 1;
       sweph.set_sid_mode(sidMode, 0, 0);
 
-      // Get Lahiri Ayanamsa
-      let ayanamsaVal = 0;
-      if (typeof sweph.get_ayanamsa_ut === 'function') {
-        ayanamsaVal = sweph.get_ayanamsa_ut(julianDay);
-      } else if (typeof sweph.get_ayanamsa === 'function') {
-        ayanamsaVal = sweph.get_ayanamsa(julianDay);
-      }
+      // Get exact Lahiri Ayanamsa
+      const ayanamsaVal = typeof sweph.get_ayanamsa_ut === 'function' 
+        ? sweph.get_ayanamsa_ut(julianDay) 
+        : sweph.get_ayanamsa(julianDay);
 
-      // Use MOSHIER flag (1) combined with SPEED (256) and SIDEREAL (65536)
-      // SEFLG_MOSEPH = 1 ensures SwissEph uses built-in math without looking for missing .se1 files
+      // Bitwise Flags: MOSEPH (1) | SPEED (256) | SIDEREAL (65536)
       const flags = (sweph.SEFLG_MOSEPH || 1) | (sweph.SEFLG_SPEED || 256) | (sweph.SEFLG_SIDEREAL || 65536);
 
+      // 4. Calculate Sidereal Ascendant (Lagna)
+      // Pass SEFLG_SIDEREAL into houses_ex to compute Sidereal Lagna directly
+      let siderealAscendantLong = 0;
+      
+      if (typeof sweph.houses_ex === 'function') {
+        const housesEx = sweph.houses_ex(julianDay, flags, numLat, numLng, 'P');
+        if (housesEx && housesEx.ascendant) {
+          siderealAscendantLong = Array.isArray(housesEx.ascendant) ? housesEx.ascendant[0] : housesEx.ascendant;
+        }
+      }
+
+      // Backup fallback if houses_ex is unsupported by native binding
+      if (!siderealAscendantLong) {
+        const houses = sweph.houses(julianDay, numLat, numLng, 'P');
+        let tropicalAsc = Array.isArray(houses.ascendant) ? houses.ascendant[0] : houses.ascendant;
+        siderealAscendantLong = ((tropicalAsc - ayanamsaVal) % 360 + 360) % 360;
+      }
+
+      const ascendantParsed = parseZodiacPosition(siderealAscendantLong);
+
+      // 5. Compute Planetary Positions (Sidereal)
       const planetsToCalculate = [
         { id: sweph.SE_SUN ?? 0, name: 'Sun' },
         { id: sweph.SE_MOON ?? 1, name: 'Moon' },
@@ -94,21 +109,14 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
       for (const p of planetsToCalculate) {
         const body = sweph.calc_ut(julianDay, p.id, flags);
 
-        let pLong = 0;
-        let pSpeed = 0;
-
-        if (Array.isArray(body)) {
-          pLong = body[0] || 0;
-          pSpeed = body[3] || 0;
-        } else if (body && typeof body === 'object') {
-          pLong = body.longitude ?? body.data?.[0] ?? 0;
-          pSpeed = body.longitudeSpeed ?? body.data?.[3] ?? 0;
-        }
+        let pLong = Array.isArray(body) ? body[0] : (body.longitude ?? body.data?.[0] ?? 0);
+        let pSpeed = Array.isArray(body) ? body[3] : (body.longitudeSpeed ?? body.data?.[3] ?? 0);
 
         const parsed = parseZodiacPosition(pLong);
 
         planetResults.push({
           name: p.name,
+          rashiIndex: parsed.rashiIndex,
           rashi: parsed.rashi,
           degree: parsed.degree,
           totalDegree: parsed.totalDegree,
@@ -121,6 +129,7 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
           const parsedKetu = parseZodiacPosition(ketuLong);
           planetResults.push({
             name: 'Ketu',
+            rashiIndex: parsedKetu.rashiIndex,
             rashi: parsedKetu.rashi,
             degree: parsedKetu.degree,
             totalDegree: parsedKetu.totalDegree,
@@ -129,25 +138,6 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
           });
         }
       }
-
-      // Compute Tropical Houses -> Convert to Sidereal
-      const houses = sweph.houses(julianDay, numLat, numLng, 'P');
-      let tropicalAscendant = 0;
-
-      if (houses) {
-        if (Array.isArray(houses.ascendant)) {
-          tropicalAscendant = houses.ascendant[0] || 0;
-        } else if (houses.ascendant !== undefined) {
-          tropicalAscendant = houses.ascendant;
-        } else if (Array.isArray(houses.house)) {
-          tropicalAscendant = houses.house[0] || 0;
-        }
-      }
-
-      let siderealAscendantLong = (tropicalAscendant - ayanamsaVal) % 360;
-      if (siderealAscendantLong < 0) siderealAscendantLong += 360;
-
-      const ascendantParsed = parseZodiacPosition(siderealAscendantLong);
 
       resolve({
         julianDay,

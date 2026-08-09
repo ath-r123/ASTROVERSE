@@ -2103,3 +2103,110 @@ function initializeUserAuth() {
     }
   };
 })();
+
+// ============================================================
+// ASTROVERSE 3D Interactive Cosmic Canvas Engine
+// ============================================================
+(function initAstro3D() {
+    const canvas = document.getElementById('bg-canvas');
+    if (!canvas || typeof Three === 'undefined') return;
+  
+    // Scene, Camera, Renderer Setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 400;
+  
+    const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  
+    // 1. Starfield Particles (Interactive Dust)
+    const starsGeometry = new THREE.BufferGeometry();
+    const starCount = 2500;
+    const starPositions = new Float32Array(starCount * 3);
+    const starScales = new Float32Array(starCount);
+  
+    for (let i = 0; i < starCount * 3; i += 3) {
+      starPositions[i] = (Math.random() - 0.5) * 1200;
+      starPositions[i + 1] = (Math.random() - 0.5) * 1200;
+      starPositions[i + 2] = (Math.random() - 0.5) * 1200;
+    }
+  
+    starsGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+  
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0xf4d068,
+      size: 1.8,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending
+    });
+  
+    const starField = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(starField);
+  
+    // 2. 3D Glowing Celestial Astrolabe Rings
+    const ringGroup = new THREE.Group();
+  
+    function createAstrolabeRing(radius, color, rotationX, rotationY) {
+      const geometry = new THREE.TorusGeometry(radius, 0.6, 16, 100);
+      const material = new THREE.MeshBasicMaterial({
+        color: color,
+        wireframe: true,
+        transparent: true,
+        opacity: 0.35
+      });
+      const ring = new THREE.Mesh(geometry, material);
+      ring.rotation.x = rotationX;
+      ring.rotation.y = rotationY;
+      ringGroup.add(ring);
+      return ring;
+    }
+  
+    const ring1 = createAstrolabeRing(180, 0xd4af37, Math.PI / 4, 0);
+    const ring2 = createAstrolabeRing(220, 0x8a2be2, -Math.PI / 3, Math.PI / 6);
+    const ring3 = createAstrolabeRing(260, 0x4b0082, Math.PI / 6, -Math.PI / 4);
+  
+    scene.add(ringGroup);
+  
+    // Mouse Parallax Effect
+    let mouseX = 0;
+    let mouseY = 0;
+    let targetX = 0;
+    let targetY = 0;
+  
+    window.addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX - window.innerWidth / 2) * 0.05;
+      mouseY = (e.clientY - window.innerHeight / 2) * 0.05;
+    });
+  
+    // Animation Loop
+    function animate() {
+      requestAnimationFrame(animate);
+  
+      // Smooth camera inertia
+      targetX += (mouseX - targetX) * 0.05;
+      targetY += (-mouseY - targetY) * 0.05;
+  
+      camera.position.x = targetX;
+      camera.position.y = targetY;
+      camera.lookAt(scene.position);
+  
+      // Continuous 3D rotation
+      starField.rotation.y += 0.0004;
+      starField.rotation.x += 0.0002;
+  
+      ring1.rotation.z += 0.002;
+      ring2.rotation.z -= 0.0015;
+      ring3.rotation.x += 0.001;
+    }
+  
+    animate();
+  
+    // Responsive Window Resize Handler
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  })();

@@ -8,10 +8,11 @@
   <link rel="stylesheet" href="footer.css">
   <link rel="stylesheet" href="header.css">
   <title>Astrology APP</title>
-
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 
 <body>
+  <canvas id="bg-canvas"></canvas>
   <div>
     <header class="nav-container">
       <div class="logo-container">
@@ -116,47 +117,47 @@
   </div>
 
   <div class="allbodyexcepthero">
-    <div class="whychooseus">
-      <h1 class="h1whychooseus">WHY CHOOSE US</h1>
-      <ul class="ullist">
-        <li>
+    <section class="why-us-section">
+      <h2 class="section-title">WHY CHOOSE US</h2>
+      
+      <div class="why-us-grid">
+        <div class="why-card">
+          <div class="icon-box">📜</div>
           <h3>Verified Astrologers</h3>
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAkXlLSgq9bZAb4RN2h1X9hYvsTq-1FqCsBab0HBr-8A&s=10"
-            alt="astrology image" width="100px">
-        </li>
-        <li>
+          <p>Consult with certified and experienced Vedic experts.</p>
+        </div>
+    
+        <div class="why-card">
+          <div class="icon-box">🔒</div>
           <h3>100% Secure Chat</h3>
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSA3IvFNzUOKkpqR7MTOccM_eBAngCUrRCzEOo0ldNJbA&s=10"
-            alt="secure" width="100px">
-        </li>
-        <li>
+          <p>End-to-end privacy for all your personal consultations.</p>
+        </div>
+    
+        <div class="why-card">
+          <div class="icon-box">✨</div>
           <h3>Personalized Horoscope</h3>
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQb86xuknYashn92znF1brvhrgDbrCHUlpOLBE2htT1qg&s=10"
-            alt="personalized horoscope" width="100px">
-        </li>
-        <li>
+          <p>Accurate birth-chart calculations tailored to your planetary positions.</p>
+        </div>
+    
+        <div class="why-card">
+          <div class="icon-box">🔮</div>
           <h3>Accurate Kundali</h3>
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTZF8HVB3W-RFOH0g56p0xXT05WJ7zZHrnTA7YF_kHGBg&s=10"
-            alt="kundali" width="100px">
-        </li>
-        <li>
+          <p>In-depth Vedic algorithms generating instant birth details.</p>
+        </div>
+    
+        <div class="why-card">
+          <div class="icon-box">⚡</div>
           <h3>Fast Response</h3>
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbAssKzzma3ffiA0bClSR6gD8oiE-EoulfvKR27IWoBg&s=10"
-            alt="fast response" width="100px">
-        </li>
-        <li>
+          <p>Instant connections with available astrologers in real-time.</p>
+        </div>
+    
+        <div class="why-card">
+          <div class="icon-box">🌌</div>
           <h3>24×7 Available</h3>
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQxlomCLZY18XD7WcwqmWQ51JH6J3VKSuX0HtUlDu26Yw&s=10"
-            alt="24×7 Available" width="100px">
-        </li>
-      </ul>
-    </div>
+          <p>Round-the-clock astrological guidance whenever you need it.</p>
+        </div>
+      </div>
+    </section>
 
     <section class="astrologer-grid-wrapper">
 

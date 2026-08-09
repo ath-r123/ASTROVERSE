@@ -1046,3 +1046,67 @@ html, body {
   #bg-canvas, body::before {
     pointer-events: none !important;
   }
+
+  /* ============================================================
+   HIGH-CONTRAST TEXT & ACCESSIBILITY FIX FOR LIGHT SECTIONS
+   ============================================================ */
+
+/* 1. Fix low contrast headers on light backgrounds */
+.allbodyexcepthero h1, 
+.allbodyexcepthero h2, 
+.allbodyexcepthero h3, 
+.rating-heading h2,
+.h1-daily-horoscope h1,
+.faq-container h2 {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: initial !important;
+  color: #1a0b2e !important; /* Deep cosmic dark purple for sharp contrast */
+  text-shadow: none !important;
+  font-weight: 800 !important;
+}
+
+/* 2. Optional: Add a crisp golden-amber accent to specific title words */
+.rating-heading h2::after {
+  background: linear-gradient(to right, #d4af37, #8a2be2) !important;
+}
+
+/* ============================================================
+   FIX: AI CHAT HEADER TEXT VISIBILITY
+   ============================================================ */
+
+   .ai-chat-header h3 {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    -webkit-text-fill-color: initial !important;
+    color: #f4d068 !important; /* Bright Gold for maximum visibility on black */
+    font-weight: 700 !important;
+    text-shadow: 0 0 10px rgba(244, 208, 104, 0.3) !important;
+  }
+  
+  .ai-chat-header p {
+    color: #f5e9a9 !important; /* Soft warm gold subtitle */
+  }
+  /* ============================================================
+   FIX: "WHY CHOOSE US" CARD TEXT CONTRAST & READABILITY
+   ============================================================ */
+
+.why-card h3 {
+    background: none !important;
+    -webkit-background-clip: unset !important;
+    background-clip: unset !important;
+    -webkit-text-fill-color: initial !important;
+    color: #f4d068 !important; /* Bright Gold for high-contrast title */
+    font-weight: 700 !important;
+    text-shadow: 0 0 10px rgba(244, 208, 104, 0.3) !important;
+  }
+  
+  .why-card p {
+    color: #f3f0ff !important; /* Crisp Off-White for body text */
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+  }
+
+  

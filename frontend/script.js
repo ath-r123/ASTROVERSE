@@ -1524,10 +1524,11 @@ function initializePanchang() {
       const selectedLocation = locationInput ? locationInput.value : 'Varanasi, India';
   
       // Dynamic backend URL handling (Local vs Production Render/Vercel)
-      const API_BASE_URL = window.location.hostname === 'localhost'
-        ? 'http://localhost:5000/api'
-        : '/api';
-  
+      const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000/api'
+      : 'https://astroverse-q5hk.onrender.com/api';
+
+
       try {
         if (typeof showNotification === 'function') {
           showNotification('Calculating astronomical positions via Swiss Ephemeris...', 'info');
@@ -2811,7 +2812,9 @@ function initializeLiveChat() {
 
   if (!chatModal) return;
 
-  const SOCKET_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://astroverse-iota.vercel.app';
+ const SOCKET_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:5000'
+    : 'https://astroverse-q5hk.onrender.com';
 
   astrologerButtons.forEach(btn => {
     btn.addEventListener('click', function () {

@@ -22,7 +22,8 @@ const NAKSHATRAS = [
 
 function parseZodiacPosition(longitude) {
   const numLong = Number(longitude) || 0;
-  const normalized = (numLong % 360 + 360) % 360;
+  // Ensure normalized degrees are strictly positive within 0 <= deg < 360
+  const normalized = ((numLong % 360) + 360) % 360;
   const rashiIndex = Math.floor(normalized / 30);
   const degreeInRashi = normalized % 30;
   const nakshatraIndex = Math.floor(normalized / (360 / 27));
@@ -51,7 +52,7 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
         return reject(new Error('Invalid birth date parameters provided.'));
       }
 
-      // 1. Convert local time to decimal UTC hours (e.g. 14:51 IST = 09:21 UTC)
+      // 1. Convert local time to decimal UTC hours (14:51 IST = 09:21 UTC)
       const decimalLocalHours = numHour + (numMin / 60);
       const decimalUtcHours = decimalLocalHours - numTz;
 
@@ -63,11 +64,11 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
         return reject(new Error('Failed to compute Julian Day from birth details.'));
       }
 
-      // 3. Set Sidereal Mode to Lahiri Ayanamsa
+      // 3. Set Sidereal Mode to Lahiri Ayanamsa (Chitra Paksha)
       const sidMode = typeof sweph.SE_SIDM_LAHIRI === 'number' ? sweph.SE_SIDM_LAHIRI : 1;
       sweph.set_sid_mode(sidMode, 0, 0);
 
-      // Extract exact Ayanamsa angle for this Julian Day
+      // Get exact Ayanamsa value for this Julian Day
       let ayanamsaVal = 0;
       if (typeof sweph.get_ayanamsa_ut === 'function') {
         ayanamsaVal = sweph.get_ayanamsa_ut(julianDay);
@@ -78,6 +79,7 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
       // Bitwise flags: SPEED (256) | SIDEREAL (65536)
       const flags = (sweph.SEFLG_SPEED || 256) | (sweph.SEFLG_SIDEREAL || 65536);
 
+      // 4. Calculate Planetary Positions
       const planetsToCalculate = [
         { id: sweph.SE_SUN ?? 0, name: 'Sun' },
         { id: sweph.SE_MOON ?? 1, name: 'Moon' },
@@ -130,24 +132,37 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
         }
       }
 
-      // 4. Compute Houses & Ascendant
-      // 'P' = Placidus house system (standard for Ascendant computation)
-      const houses = sweph.houses(julianDay, numLat, numLng, 'P');
-      let rawTropicalAscendant = 0;
+      // 5. Compute Sidereal Houses & Lagna (Ascendant)
+      let rawAscendantLong = 0;
 
-      if (houses) {
-        if (Array.isArray(houses.ascendant)) {
-          rawTropicalAscendant = houses.ascendant[0] || 0;
-        } else if (houses.ascendant !== undefined) {
-          rawTropicalAscendant = houses.ascendant;
-        } else if (Array.isArray(houses.house)) {
-          rawTropicalAscendant = houses.house[0] || 0;
+      // Try sweph.houses_ex with SIDEREAL flag first
+      if (typeof sweph.houses_ex === 'function') {
+        const housesEx = sweph.houses_ex(julianDay, flags, numLat, numLng, 'P');
+        if (housesEx) {
+          rawAscendantLong = Array.isArray(housesEx.ascendant) ? housesEx.ascendant[0] : (housesEx.ascendant ?? housesEx.house?.[0] ?? 0);
         }
       }
 
-      // Convert Tropical Ascendant to Sidereal (Vedic Lahiri) Ascendant
-      const siderealAscendantLong = (rawTropicalAscendant - ayanamsaVal + 360) % 360;
-      const ascendantParsed = parseZodiacPosition(siderealAscendantLong);
+      // Fallback to standard sweph.houses and explicitly subtract Ayanamsa
+      if (!rawAscendantLong) {
+        const houses = sweph.houses(julianDay, numLat, numLng, 'P');
+        let tropicalAscendant = 0;
+
+        if (houses) {
+          if (Array.isArray(houses.ascendant)) {
+            tropicalAscendant = houses.ascendant[0] || 0;
+          } else if (houses.ascendant !== undefined) {
+            tropicalAscendant = houses.ascendant;
+          } else if (Array.isArray(houses.house)) {
+            tropicalAscendant = houses.house[0] || 0;
+          }
+        }
+
+        // Convert Tropical Ascendant -> Sidereal Ascendant safely
+        rawAscendantLong = ((tropicalAscendant - ayanamsaVal) % 360 + 360) % 360;
+      }
+
+      const ascendantParsed = parseZodiacPosition(rawAscendantLong);
 
       resolve({
         julianDay,

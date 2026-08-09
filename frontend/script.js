@@ -2127,19 +2127,28 @@ function initializeUserAuth() {
 // ============================================================
 // USER LOGIN HANDLER
 // ============================================================
+// ============================================================
+// USER LOGIN HANDLER
+// ============================================================
 async function handleUserLogin(event) {
     if (event) event.preventDefault();
   
+    // Primary check for sign-in-up.html IDs (user_email & user_password)
     const emailInput = document.getElementById('user_email') || document.getElementById('login-email') || document.getElementById('email');
     const passwordInput = document.getElementById('user_password') || document.getElementById('login-password') || document.getElementById('password');
   
     if (!emailInput || !passwordInput) {
-      alert('Form inputs missing. Please reload the page.');
+      alert('Form inputs missing. Please refresh the page.');
       return;
     }
   
     const email = emailInput.value.trim();
     const password = passwordInput.value;
+  
+    if (!email || !password) {
+      alert('Please fill in both email and password.');
+      return;
+    }
   
     const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:5000/api'
@@ -2155,9 +2164,10 @@ async function handleUserLogin(event) {
       const data = await response.json();
   
       if (!response.ok || !data.success) {
-        throw new Error(data.message || 'Login failed.');
+        throw new Error(data.message || 'Invalid email or password.');
       }
   
+      // Save user JWT token to local storage
       localStorage.setItem('astro_token', data.token);
       localStorage.setItem('astro_user', JSON.stringify(data.user));
   
@@ -2179,7 +2189,7 @@ async function handleUserLogin(event) {
     const passwordInput = document.getElementById('signup_password') || document.getElementById('signup-password') || document.getElementById('password');
   
     if (!emailInput || !passwordInput) {
-      alert('Form inputs missing. Please reload the page.');
+      alert('Form inputs missing. Please refresh the page.');
       return;
     }
   

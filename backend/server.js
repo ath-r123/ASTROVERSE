@@ -10,33 +10,44 @@ const { notFound, handleError } = require('./middleware/errors');
 const app = express();
 const server = http.createServer(app);
 
-// Initialize Socket.io with CORS configuration
+// Dynamic allowed origins for development, staging, and production (Vercel)
+const allowedOrigins = [
+  'https://astroverse-iota.vercel.app',
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+  'http://localhost:3000',
+  process.env.CLIENT_URL
+].filter(Boolean);
+
+// CORS Origin Validation Function
+const corsOriginValidator = function (origin, callback) {
+  // Allow requests with no origin (like mobile apps, Postman, or server-to-server curl)
+  if (!origin) return callback(null, true);
+
+  if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+    return callback(null, true);
+  }
+  return callback(new Error(`CORS policy violation: Origin '${origin}' not allowed.`));
+};
+
+// Initialize Socket.io with updated CORS configuration
 const io = new Server(server, {
   cors: {
-    origin: process.env.CLIENT_URL || true,
+    origin: corsOriginValidator,
     methods: ['GET', 'POST'],
     credentials: true
   }
 });
 
-const allowedOrigins = [
-  'http://localhost:5500',
-  'http://127.0.0.1:5500',
-  'http://localhost:3000',
-  process.env.CLIENT_URL
-].filter(Boolean); // Filters out undefined values if CLIENT_URL isn't set yet
-
+// Configure Express CORS middleware
 app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, Postman, or server-to-server curl)
-    if (!origin || allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error('CORS policy violation: Origin not allowed.'));
-  },
-  credentials: true
+  origin: corsOriginValidator,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+// Express Body Parsers & Routes
 app.use(express.json({ limit: '1mb' }));
 app.use('/api/wallet', require('./routes/wallet'));
 

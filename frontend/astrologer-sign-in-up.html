@@ -85,7 +85,7 @@
                     <p>Access your active consultations, customer chats, and wallet payouts.</p>
                 </div>
 
-                <form action="#" method="POST" class="astro-auth-form">
+                <form action="#" method="POST" class="astro-auth-form" onsubmit="handleUserLogin(event)">
                     <div class="astro-input-group">
                         <label for="astro_login_id">Verified Email or Astrologer ID</label>
                         <input type="text" id="astro_login_id" name="astro_login_id"
@@ -118,7 +118,7 @@
                         within 48 hours.</p>
                 </div>
 
-                <form action="#" method="POST" class="astro-auth-form" enctype="multipart/form-data">
+                <form action="#" method="POST" class="astro-auth-form" enctype="multipart/form-data" onsubmit="handleUserSignup(event)">
 
                     <!-- Primary Information Group -->
                     <fieldset class="form-step-section">

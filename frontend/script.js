@@ -2119,6 +2119,94 @@ function initializeUserAuth() {
         console.log('[ASTROVERSE] User auth module detected.');
     }
 }
+
+// ============================================================
+// ADD NEW AUTH HANDLERS BELOW HERE
+// ============================================================
+
+async function handleUserLogin(event) {
+    event.preventDefault();
+  
+    const emailInput = document.getElementById('login-email') || document.getElementById('email');
+    const passwordInput = document.getElementById('login-password') || document.getElementById('password');
+  
+    if (!emailInput || !passwordInput) {
+      alert('Form inputs missing. Please reload the page.');
+      return;
+    }
+  
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+  
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000/api'
+      : 'https://astroverse-q5hk.onrender.com/api';
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Login failed.');
+      }
+  
+      localStorage.setItem('astro_token', data.token);
+      localStorage.setItem('astro_user', JSON.stringify(data.user));
+  
+      alert('Login Successful!');
+      window.location.href = 'index.html';
+    } catch (err) {
+      alert(`Login Error: ${err.message}`);
+    }
+  }
+  
+  async function handleUserSignup(event) {
+    event.preventDefault();
+  
+    const nameInput = document.getElementById('signup-name') || document.getElementById('name');
+    const emailInput = document.getElementById('signup-email') || document.getElementById('email');
+    const passwordInput = document.getElementById('signup-password') || document.getElementById('password');
+  
+    if (!emailInput || !passwordInput) {
+      alert('Form inputs missing. Please reload the page.');
+      return;
+    }
+  
+    const name = nameInput ? nameInput.value.trim() : 'User';
+    const email = emailInput.value.trim();
+    const password = passwordInput.value;
+  
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000/api'
+      : 'https://astroverse-q5hk.onrender.com/api';
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Registration failed.');
+      }
+  
+      localStorage.setItem('astro_token', data.token);
+      localStorage.setItem('astro_user', JSON.stringify(data.user));
+  
+      alert('Account Created Successfully!');
+      window.location.href = 'index.html';
+    } catch (err) {
+      alert(`Signup Error: ${err.message}`);
+    }
+  }
 // Successful login, sign-up, and account-creation handlers store their session
 // under these existing keys. Send the user to the home page immediately after.
 (() => {
@@ -2993,3 +3081,170 @@ async function fetchWalletBalance() {
   }
   
   document.addEventListener('DOMContentLoaded', fetchWalletBalance);
+
+ // ============================================================
+// 1. CITY AUTOCOMPLETE HANDLER (Matches HTML id="user_pob")
+// ============================================================
+
+function setupCityAutocomplete() {
+    const pobInput = document.getElementById('user_pob');
+    const suggestionsBox = document.getElementById('city-suggestions');
+  
+    if (!pobInput || !suggestionsBox) return;
+  
+    let debounceTimer = null;
+  
+    pobInput.addEventListener('input', function () {
+      const query = this.value.trim();
+  
+      clearTimeout(debounceTimer);
+  
+      if (query.length < 1) {
+        suggestionsBox.style.display = 'none';
+        suggestionsBox.innerHTML = '';
+        return;
+      }
+  
+      debounceTimer = setTimeout(async () => {
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? 'http://localhost:5000/api'
+          : 'https://astroverse-q5hk.onrender.com/api';
+  
+        try {
+          const res = await fetch(`${API_BASE_URL}/calculations/places?query=${encodeURIComponent(query)}`);
+          const result = await res.json();
+  
+          if (result.success && result.places && result.places.length > 0) {
+            suggestionsBox.innerHTML = '';
+            suggestionsBox.style.display = 'block';
+  
+            result.places.forEach(place => {
+              const item = document.createElement('div');
+              item.style.padding = '10px';
+              item.style.cursor = 'pointer';
+              item.style.color = '#fff';
+              item.style.borderBottom = '1px solid rgba(255,255,255,0.1)';
+              item.textContent = place.displayName;
+  
+              item.addEventListener('mouseover', () => item.style.background = 'rgba(244, 208, 104, 0.2)');
+              item.addEventListener('mouseout', () => item.style.background = 'transparent');
+  
+              item.addEventListener('click', () => {
+                pobInput.value = place.displayName;
+                pobInput.dataset.lat = place.latitude;
+                pobInput.dataset.lon = place.longitude;
+                suggestionsBox.style.display = 'none';
+              });
+  
+              suggestionsBox.appendChild(item);
+            });
+          } else {
+            suggestionsBox.style.display = 'none';
+          }
+        } catch (err) {
+          console.warn('City autocomplete error:', err.message);
+        }
+      }, 300);
+    });
+  
+    document.addEventListener('click', (e) => {
+      if (e.target !== pobInput && e.target !== suggestionsBox) {
+        suggestionsBox.style.display = 'none';
+      }
+    });
+  }
+  
+  // Ensure autocomplete initializes when DOM loads
+  document.addEventListener('DOMContentLoaded', setupCityAutocomplete);
+  
+  
+  // ============================================================
+  // 2. KUNDALI SUBMIT HANDLER (Signed-In Users Only)
+  // ============================================================
+  
+  async function handleKundaliSubmit(event) {
+    event.preventDefault();
+  
+    const token = localStorage.getItem('astro_token');
+    if (!token) {
+      alert('Please sign in to generate your Kundali.');
+      window.location.href = 'sign-in-up.html';
+      return;
+    }
+  
+    // Determine backend URL based on environment
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000/api'
+      : 'https://astroverse-q5hk.onrender.com/api';
+  
+    const name = document.getElementById('user_name')?.value || '';
+    const dob = document.getElementById('user_dob')?.value;
+    const tob = document.getElementById('user_tob')?.value;
+    const pobInput = document.getElementById('user_pob');
+    const pob = pobInput?.value || 'Mumbai, India';
+  
+    // Read coordinates stored from autocomplete selection
+    const latitude = pobInput?.dataset.lat || null;
+    const longitude = pobInput?.dataset.lon || null;
+  
+    if (!dob || !tob) {
+      alert('Please select both Date and Time of Birth.');
+      return;
+    }
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/calculations/kundali`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          name, 
+          dob, 
+          tob, 
+          pob, 
+          latitude, 
+          longitude 
+        })
+      });
+  
+      const responseText = await response.text();
+      
+      if (!responseText) {
+        throw new Error(`Server returned an empty response (Status: ${response.status}).`);
+      }
+  
+      const result = JSON.parse(responseText);
+  
+      if (!response.ok || !result.success) {
+        if (response.status === 401) {
+          alert('Session expired. Please sign in again.');
+          localStorage.removeItem('astro_token');
+          window.location.href = 'sign-in-up.html';
+          return;
+        }
+        throw new Error(result.message || 'Failed to generate Kundali.');
+      }
+  
+      alert('Kundali Generated Successfully!');
+      console.log('Kundali Chart Data:', result.data);
+  
+      // Render formatted output into container
+      const container = document.getElementById('kundali-result-container');
+      if (container) {
+        container.innerHTML = `
+          <div style="background: #120c26; border: 1px solid #f4d068; border-radius: 10px; padding: 20px; color: #fff; margin-top: 20px;">
+            <h3 style="color: #f4d068; margin-top: 0;">Vedic Kundali Result (${name || 'User'})</h3>
+            <p><strong>Location Used:</strong> ${result.locationUsed?.displayName || pob}</p>
+            <p><strong>Ascendant (Lagna):</strong> ${result.data?.ascendant?.rashi} (${result.data?.ascendant?.degree}°)</p>
+            <h4 style="color: #f4d068;">Planetary Positions:</h4>
+            <pre style="color:#fff; background:#080417; padding:15px; border-radius:8px; overflow-x:auto;">${JSON.stringify(result.data?.planets, null, 2)}</pre>
+          </div>
+        `;
+      }
+  
+    } catch (err) {
+      alert(`Kundali Error: ${err.message}`);
+    }
+  }

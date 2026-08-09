@@ -50,7 +50,7 @@
                 <a href="panchang.html" class="dropdown nlinks">Panchang</a>
                 <div class="dropdown">
                     <div class="dropdown nlinks">Sign In<span>▼</span></div>
-                    <div class="dropdown-content">
+                    <div class="dropdown-content" style="right: 0; left: auto;">
                         <a href="sign-in-up.html">User Login</a>
                         <a href="sign-in-up.html">User Signup</a>
                         <a href="astrologer-sign-in-up.html">Astrologer Login</a>
@@ -74,7 +74,7 @@
 
             <!-- Left Column: The Kundali Generation Form -->
             <section class="free-kundali-form-wrapper">
-                <form id="free-kundali-form" class="kundali-gen-form">
+                <form id="free-kundali-form" class="kundali-gen-form" onsubmit="handleKundaliSubmit(event)">
 
                     <h2 class="form-heading">Enter Birth Details</h2>
 
@@ -106,9 +106,21 @@
                     </div>
 
                     <div class="form-row-grid duo-grid">
-                        <div class="input-group">
+                        <!-- Place of Birth with Real-Time City Autocomplete Suggestions -->
+                        <div class="input-group" style="position: relative;">
                             <label for="user_pob">Place of Birth</label>
-                            <input type="text" id="user_pob" name="user_pob" placeholder="e.g. Varanasi, Mumbai, New York" required>
+                            <input 
+                                type="text" 
+                                id="user_pob" 
+                                name="user_pob" 
+                                placeholder="Type city name (e.g. Varanasi, Mumbai, New York)..." 
+                                autocomplete="off" 
+                                required
+                            >
+                            <div 
+                                id="city-suggestions" 
+                                style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: #0e0924; border: 1px solid #f4d068; border-radius: 0 0 6px 6px; max-height: 200px; overflow-y: auto; z-index: 1000;"
+                            ></div>
                         </div>
 
                         <div class="input-group">

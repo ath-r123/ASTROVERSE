@@ -846,108 +846,46 @@ function initializeFreeKundali() {
     var kundaliForm = document.querySelector('.kundali-gen-form');
     if (!kundaliForm) return;
 
-    kundaliForm.addEventListener('submit', function (event) {
-        event.preventDefault();
-
-        var fullName = document.getElementById('user_name').value.trim();
-        var gender = document.getElementById('user_gender').value;
-        var dateOfBirth = document.getElementById('user_dob').value;
-        var timeOfBirth = document.getElementById('user_tob').value;
-        var placeOfBirth = document.getElementById('user_pob').value.trim();
-        var ayanamsaSystem = document.getElementById('ayanamsa_system').value;
-
-        if (!fullName || !gender || !dateOfBirth || !timeOfBirth || !placeOfBirth) {
-            showNotification('Please fill in all required birth detail fields.', 'error');
-            return;
-        }
-
-        // Result markup uses HTML, so escape values entered by the visitor.
-        fullName = escapeHTML(fullName);
-        placeOfBirth = escapeHTML(placeOfBirth);
-
-        // Parse the birth date
-        var birthDate = parseDateInput(dateOfBirth);
-        var birthDay = birthDate.getDate();
-        var birthMonth = birthDate.getMonth();
-        var birthYear = birthDate.getFullYear();
-
-        // Calculate birth day of the week
-        var dayOfWeekIndex = birthDate.getDay();
-        var dayOfWeekName = dayNames[dayOfWeekIndex];
-
-        // Calculate Vedic Rashi (Moon sign approximation based on birth day)
-        var rashiIndex = Math.floor((birthDay - 1) / 2.5) % 12;
-        var selectedRashi = rashiNames[rashiIndex];
-
-        // Calculate Nakshatra (lunar mansion approximation)
-        var nakshatraIndex = Math.floor((birthDay * 1.125)) % 27;
-        var selectedNakshatra = nakshatraNames[nakshatraIndex];
-
-        // Calculate approximate Ascendant (Lagna) based on time of birth
-        var timeParts = timeOfBirth.split(':');
-        var birthHour = parseInt(timeParts[0], 10);
-        var birthMinute = parseInt(timeParts[1], 10);
-        var totalMinutesFromMidnight = birthHour * 60 + birthMinute;
-        var lagnaIndex = Math.floor(totalMinutesFromMidnight / 120) % 12;
-        var ascendantSign = rashiNames[lagnaIndex];
-
-        // Determine planetary period (Vimshottari Dasha approximation)
-        var dashaCycle = ['Ketu', 'Venus', 'Sun', 'Moon', 'Mars', 'Rahu', 'Jupiter', 'Saturn', 'Mercury'];
-        var currentDashaLord = dashaCycle[birthDay % 9];
-
-        // Build the result display
-        var resultHTML =
-            '<div style="margin-top:30px;padding:30px;background:linear-gradient(135deg,#fff9e6,#ffffff);' +
-            'border:2px solid #e67e22;border-radius:12px;">' +
-            '<h2 style="color:#d35400;margin-bottom:20px;text-align:center;">🔮 ' + fullName + '\'s Janam Kundali</h2>' +
-            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">' +
-
-            '<div style="padding:15px;background:#fff;border-radius:8px;border-left:4px solid #e67e22;">' +
-            '<h4 style="color:#d35400;margin-bottom:8px;">Personal Details</h4>' +
-            '<p><strong>Name:</strong> ' + fullName + '</p>' +
-            '<p><strong>Gender:</strong> ' + gender.charAt(0).toUpperCase() + gender.slice(1) + '</p>' +
-            '<p><strong>Date of Birth:</strong> ' + birthDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) + '</p>' +
-            '<p><strong>Day:</strong> ' + dayOfWeekName + '</p>' +
-            '<p><strong>Time of Birth:</strong> ' + timeOfBirth + '</p>' +
-            '<p><strong>Place:</strong> ' + placeOfBirth + '</p>' +
-            '<p><strong>Ayanamsa:</strong> ' + ayanamsaSystem.charAt(0).toUpperCase() + ayanamsaSystem.slice(1) + '</p>' +
-            '</div>' +
-
-            '<div style="padding:15px;background:#fff;border-radius:8px;border-left:4px solid #9d692e;">' +
-            '<h4 style="color:#9d692e;margin-bottom:8px;">Vedic Chart Parameters</h4>' +
-            '<p><strong>Lagna (Ascendant):</strong> ' + ascendantSign + '</p>' +
-            '<p><strong>Rashi (Moon Sign):</strong> ' + selectedRashi + '</p>' +
-            '<p><strong>Nakshatra:</strong> ' + selectedNakshatra + '</p>' +
-            '<p><strong>Current Dasha Period:</strong> ' + currentDashaLord + '</p>' +
-            '</div>' +
-
-            '</div>' +
-
-            '<div style="margin-top:20px;padding:15px;background:#f0f9ff;border-radius:8px;border:1px solid #bae6fd;">' +
-            '<h4 style="color:#0369a1;margin-bottom:8px;">💡 Planetary Snapshot</h4>' +
-            '<p>Sun in ' + rashiNames[(birthMonth + 1) % 12] + ' | ' +
-            'Moon in ' + selectedRashi + ' | ' +
-            'Mars in ' + rashiNames[(birthMonth + 4) % 12] + ' | ' +
-            'Mercury in ' + rashiNames[(birthMonth + 2) % 12] + '</p>' +
-            '</div>' +
-
-            '</div>';
-
-        // Insert result after the form
-        var existingResult = kundaliForm.parentElement.querySelector('.kundali-result-container');
-        if (existingResult) existingResult.remove();
-
-        var resultContainer = document.createElement('div');
-        resultContainer.className = 'kundali-result-container';
-        resultContainer.innerHTML = resultHTML;
-        kundaliForm.parentElement.appendChild(resultContainer);
-        saveCalculation('kundali', { name: fullName, gender: gender, dateOfBirth: dateOfBirth, timeOfBirth: timeOfBirth, placeOfBirth: placeOfBirth }, { rashi: selectedRashi, nakshatra: selectedNakshatra, lagna: ascendantSign, dasha: currentDashaLord });
-
-        showNotification('Kundali generated successfully for ' + fullName + '!', 'success');
-
-        // Scroll to result
-        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    });
+   // In frontend/script.js inside initializeFreeKundali()
+kundaliForm.addEventListener('submit', async function (event) {
+    event.preventDefault();
+  
+    const fullName = document.getElementById('user_name').value.trim();
+    const dateOfBirth = document.getElementById('user_dob').value;
+    const timeOfBirth = document.getElementById('user_tob').value;
+  
+    if (!fullName || !dateOfBirth || !timeOfBirth) {
+      showNotification('Please fill in all required fields.', 'error');
+      return;
+    }
+  
+    // Coordinates for birth place (Can be static or expanded via Geocoding API)
+    const payload = {
+      name: fullName,
+      dob: dateOfBirth,      // YYYY-MM-DD
+      tob: timeOfBirth,      // HH:MM
+      latitude: 19.0760,     // Default to Mumbai or user input
+      longitude: 72.8777,
+      timezoneOffset: 5.5
+    };
+  
+    try {
+      showNotification('Computing Swiss Ephemeris chart...', 'info');
+  
+      // Send payload to Express backend API
+      const response = await apiFetch('/calculations/kundali', {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+  
+      if (response.success) {
+        renderKundaliResults(response.data, fullName);
+        showNotification(`Chart calculated with C-Engine precision for ${fullName}!`, 'success');
+      }
+    } catch (error) {
+      showNotification(error.message, 'error');
+    }
+  });
 }
 
 
@@ -2286,3 +2224,209 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
+
+  function renderKundaliResults(chartData, name) {
+    const kundaliForm = document.querySelector('.kundali-gen-form');
+    if (!kundaliForm) return;
+  
+    // Build planet grid items
+    let planetsHTML = chartData.planets.map(p => `
+      <div style="padding: 10px; background: rgba(255,255,255,0.05); border-radius: 6px; border-left: 3px solid #f4d068;">
+        <strong style="color: #f4d068;">${p.name} ${p.retrograde ? '(R)' : ''}</strong>
+        <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #d1c7e0;">
+          ${p.rashi} @ ${p.degree}° <br>
+          <small>Nakshatra: ${p.nakshatra}</small>
+        </p>
+      </div>
+    `).join('');
+  
+    const resultHTML = `
+      <div class="kundali-result-container" style="margin-top: 30px; padding: 25px; background: rgba(18, 12, 38, 0.85); border: 1px solid rgba(244, 208, 104, 0.4); border-radius: 12px; color: #fff;">
+        <h3 style="color: #f4d068; text-align: center; margin-bottom: 15px;">
+          Vedic Birth Chart for ${escapeHTML(name)}
+        </h3>
+        <div style="padding: 12px; background: rgba(244, 208, 104, 0.1); border-radius: 8px; margin-bottom: 20px; text-align: center;">
+          <strong style="color: #f4d068; font-size: 1.1rem;">Lagna (Ascendant): ${chartData.ascendant.rashi} (${chartData.ascendant.degree}°)</strong>
+          <p style="margin: 4px 0 0 0; font-size: 0.9rem; color: #eadaf7;">Ascendant Nakshatra: ${chartData.ascendant.nakshatra}</p>
+        </div>
+  
+        <h4 style="color: #f4d068; margin-bottom: 12px;">Planetary Positions (Sidereal / Lahiri)</h4>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+          ${planetsHTML}
+        </div>
+      </div>
+    `;
+  
+    // Replace existing container if already calculated
+    const existing = kundaliForm.parentElement.querySelector('.kundali-result-container');
+    if (existing) existing.remove();
+  
+    kundaliForm.insertAdjacentHTML('afterend', resultHTML);
+  }
+
+  // ============================================================
+// SWISS EPHEMERIS KUNDALI & VISUAL SVG CHART RENDERER
+// ============================================================
+
+/**
+ * Renders a North Indian (Diamond Style) SVG Birth Chart
+ * @param {Object} chartData - Data returned from Swiss Ephemeris backend
+ */
+function generateNorthIndianChartSVG(chartData) {
+    const RASHIS_ORDER = [
+      'Mesha (Aries)', 'Vrishabha (Taurus)', 'Mithuna (Gemini)', 'Karka (Cancer)',
+      'Simha (Leo)', 'Kanya (Virgo)', 'Tula (Libra)', 'Vrischika (Scorpio)',
+      'Dhanu (Sagittarius)', 'Makara (Capricorn)', 'Kumbha (Aquarius)', 'Meena (Pisces)'
+    ];
+  
+    // 1. Find Ascendant (Lagna) sign index (0 - 11)
+    const lagnaRashi = chartData.ascendant.rashi;
+    const lagnaIndex = RASHIS_ORDER.findIndex(r => lagnaRashi.includes(r.split(' ')[0]));
+  
+    // 2. Map planets into houses (1 to 12) relative to Lagna
+    const housePlanets = Array.from({ length: 12 }, () => []);
+    
+    chartData.planets.forEach(p => {
+      const planetRashiIndex = RASHIS_ORDER.findIndex(r => p.rashi.includes(r.split(' ')[0]));
+      // Calculate house number relative to Lagna (1-indexed)
+      const houseNumber = ((planetRashiIndex - lagnaIndex + 12) % 12) + 1;
+      housePlanets[houseNumber - 1].push(`${p.name}${p.retrograde ? '(R)' : ''}`);
+    });
+  
+    // House coordinates for North Indian Chart text labels
+    const housePositions = {
+      1:  { x: 200, y: 110, rashiX: 200, rashiY: 65 },  // Top central diamond
+      2:  { x: 100, y: 60,  rashiX: 100, rashiY: 35 },  // Top left triangle
+      3:  { x: 60,  y: 100, rashiX: 35,  rashiY: 100 }, // Upper left triangle
+      4:  { x: 110, y: 200, rashiX: 65,  rashiY: 200 }, // Left central diamond
+      5:  { x: 60,  y: 300, rashiX: 35,  rashiY: 300 }, // Lower left triangle
+      6:  { x: 100, y: 340, rashiX: 100, rashiY: 365 }, // Bottom left triangle
+      7:  { x: 200, y: 290, rashiX: 200, rashiY: 335 }, // Bottom central diamond
+      8:  { x: 300, y: 340, rashiX: 300, rashiY: 365 }, // Bottom right triangle
+      9:  { x: 340, y: 300, rashiX: 365, rashiY: 300 }, // Lower right triangle
+      10: { x: 290, y: 200, rashiX: 335, rashiY: 200 }, // Right central diamond
+      11: { x: 340, y: 100, rashiX: 365, rashiY: 100 }, // Upper right triangle
+      12: { x: 300, y: 60,  rashiX: 300, rashiY: 35 }   // Top right triangle
+    };
+  
+    // Build SVG planet and sign elements
+    let houseElementsHTML = '';
+    for (let h = 1; h <= 12; h++) {
+      const pos = housePositions[h];
+      const signNum = ((lagnaIndex + h - 1) % 12) + 1; // Rashi number 1-12
+      const planetsInHouse = housePlanets[h - 1].join(', ');
+  
+      houseElementsHTML += `
+        <!-- Rashi Number -->
+        <text x="${pos.rashiX}" y="${pos.rashiY}" fill="#f4d068" font-size="11" font-weight="bold" text-anchor="middle">${signNum}</text>
+        <!-- Planets in House -->
+        <text x="${pos.x}" y="${pos.y}" fill="#ffffff" font-size="10" text-anchor="middle">${planetsInHouse}</text>
+      `;
+    }
+  
+    return `
+      <div style="max-width: 420px; margin: 20px auto; background: rgba(10, 6, 26, 0.9); padding: 15px; border-radius: 12px; border: 1px solid rgba(244, 208, 104, 0.3);">
+        <h4 style="color: #f4d068; text-align: center; margin-bottom: 10px;">North Indian Birth Chart (Lagna)</h4>
+        <svg viewBox="0 0 400 400" style="width: 100%; height: auto; font-family: sans-serif;">
+          <!-- Outer Box -->
+          <rect x="10" y="10" width="380" height="380" fill="none" stroke="#f4d068" stroke-width="2"/>
+          <!-- Inner Diagonals -->
+          <line x1="10" y1="10" x2="390" y2="390" stroke="#f4d068" stroke-width="1.5"/>
+          <line x1="390" y1="10" x2="10" y2="390" stroke="#f4d068" stroke-width="1.5"/>
+          <!-- Inner Diamond -->
+          <polygon points="200,10 390,200 200,390 10,200" fill="none" stroke="#f4d068" stroke-width="1.5"/>
+          ${houseElementsHTML}
+        </svg>
+      </div>
+    `;
+  }
+  
+  /**
+   * Connects free-kundali.html form to Node.js /api/calculations/kundali
+   */
+  function initializeFreeKundaliForm() {
+    const kundaliForm = document.getElementById('free-kundali-form') || document.querySelector('.kundali-form');
+    if (!kundaliForm) return;
+  
+    kundaliForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+  
+      const name = (document.getElementById('user_name') || {}).value || 'User';
+      const dob = (document.getElementById('user_dob') || {}).value;
+      const tob = (document.getElementById('user_tob') || {}).value;
+      const pob = (document.getElementById('user_pob') || {}).value || 'Mumbai, India';
+  
+      if (!dob || !tob) {
+        alert('Please fill in Date of Birth and Time of Birth.');
+        return;
+      }
+  
+      try {
+        // Send request to Express backend
+        const response = await fetch('/api/calculations/kundali', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('astro_token') || ''}`
+          },
+          body: JSON.stringify({ name, dob, tob, pob })
+        });
+  
+        const result = await response.json();
+  
+        if (!response.ok) {
+          throw new Error(result.message || 'Calculation failed.');
+        }
+  
+        // Render Visual SVG Chart & Ephemeris Details
+        renderKundaliFullOutput(result.data, result.locationUsed, name);
+      } catch (err) {
+        alert(`Error: ${err.message}`);
+      }
+    });
+  }
+  
+  function renderKundaliFullOutput(data, location, name) {
+    const container = document.querySelector('.kundali-result-section') || document.querySelector('main') || document.body;
+  
+    const svgChart = generateNorthIndianChartSVG(data);
+  
+    const planetsListHTML = data.planets.map(p => `
+      <div style="background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; border-left: 3px solid #f4d068;">
+        <strong style="color: #f4d068;">${p.name} ${p.retrograde ? '(R)' : ''}</strong>
+        <p style="margin: 2px 0 0; font-size: 0.85rem; color: #d1c7e0;">
+          ${p.rashi} @ ${p.degree}° <br>
+          <small>Nakshatra: ${p.nakshatra}</small>
+        </p>
+      </div>
+    `).join('');
+  
+    const outputHTML = `
+      <div class="ephemeris-result-card" style="margin: 30px auto; max-width: 800px; padding: 25px; background: rgba(18, 12, 38, 0.95); border: 1px solid rgba(244, 208, 104, 0.4); border-radius: 12px; color: #fff;">
+        <h2 style="color: #f4d068; text-align: center;">Kundali for ${name}</h2>
+        <p style="text-align: center; color: #a29bfe; font-size: 0.9rem;">
+          📍 Location: ${location.displayName || 'Geocoded Coordinates'} (${location.latitude.toFixed(2)}°, ${location.longitude.toFixed(2)}°)
+        </p>
+  
+        ${svgChart}
+  
+        <div style="margin-top: 20px; padding: 12px; background: rgba(244, 208, 104, 0.1); border-radius: 8px; text-align: center;">
+          <strong style="color: #f4d068; font-size: 1.1rem;">Ascendant (Lagna): ${data.ascendant.rashi} @ ${data.ascendant.degree}°</strong>
+          <p style="margin: 4px 0 0; font-size: 0.9rem; color: #eadaf7;">Nakshatra: ${data.ascendant.nakshatra}</p>
+        </div>
+  
+        <h3 style="color: #f4d068; margin: 20px 0 10px;">Planetary Positions (Sidereal / Lahiri)</h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+          ${planetsListHTML}
+        </div>
+      </div>
+    `;
+  
+    const existing = document.querySelector('.ephemeris-result-card');
+    if (existing) existing.remove();
+  
+    container.insertAdjacentHTML('beforeend', outputHTML);
+  }
+  
+  // Call initialization on DOM ready
+  document.addEventListener('DOMContentLoaded', initializeFreeKundaliForm);

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Free Kundali</title>
+    <title>Free Kundali - ASTROVERSE</title>
     <link rel="stylesheet" href="free-kundali.css">
     <link rel="stylesheet" href="footer.css">
     <link rel="stylesheet" href="header.css">
@@ -60,12 +60,12 @@
             </nav>
         </header>
     </div>
+
     <main class="kundali-gen-main">
         <!-- Hero Banner Section -->
         <section class="free-kundali-hero-section">
             <h1>Free Janam Kundali Online</h1>
-            <p>Generate your detailed Vedic birth chart instantly to unlock insights about your personality, career, and
-                future roadmap.</p>
+            <p>Generate your detailed Vedic birth chart instantly to unlock insights about your personality, career, and future roadmap.</p>
         </section>
 
         <!-- Main Content Container Grid -->
@@ -73,7 +73,7 @@
 
             <!-- Left Column: The Kundali Generation Form -->
             <section class="free-kundali-form-wrapper">
-                <form action="#" method="POST" class="kundali-gen-form">
+                <form id="free-kundali-form" class="kundali-gen-form">
 
                     <h2 class="form-heading">Enter Birth Details</h2>
 
@@ -107,8 +107,7 @@
                     <div class="form-row-grid duo-grid">
                         <div class="input-group">
                             <label for="user_pob">Place of Birth</label>
-                            <input type="text" id="user_pob" name="user_pob" placeholder="City, State, Country"
-                                required>
+                            <input type="text" id="user_pob" name="user_pob" placeholder="e.g. Varanasi, Mumbai, New York" required>
                         </div>
 
                         <div class="input-group">
@@ -129,28 +128,25 @@
             <!-- Right/Bottom Column: Educational Information -->
             <aside class="free-kundali-info-sidebar">
                 <h3>What Your Kundali Reveals</h3>
-                <p>Your Janam Kundali is a cosmic snapshot of the sky at the exact second you were born. A complete
-                    chart includes:</p>
+                <p>Your Janam Kundali is a cosmic snapshot of the sky at the exact second you were born. A complete chart includes:</p>
 
                 <ul class="chart-list">
-                    <li><strong>Lagna Chart (Ascendant):</strong> Maps your physical nature, outward ego, and basic life
-                        path.</li>
-                    <li><strong>Navamsha Chart (D9):</strong> Uncovers hidden potentials, inner strength, and marriage
-                        dynamics.</li>
-                    <li><strong>Vimshottari Dasha:</strong> The planetary timeline tracking your past, present, and
-                        future cycles.</li>
-                    <li><strong>Planet Positions:</strong> Precise placements of Sun, Moon, and Rahu/Ketu across the 12
-                        houses.</li>
+                    <li><strong>Lagna Chart (Ascendant):</strong> Maps your physical nature, outward ego, and basic life path.</li>
+                    <li><strong>Navamsha Chart (D9):</strong> Uncovers hidden potentials, inner strength, and marriage dynamics.</li>
+                    <li><strong>Vimshottari Dasha:</strong> The planetary timeline tracking your past, present, and future cycles.</li>
+                    <li><strong>Planet Positions:</strong> Precise placements of Sun, Moon, and Rahu/Ketu across the 12 houses.</li>
                 </ul>
 
                 <div class="importance-card">
-                    <h4>💡 Why Time Matters</h4>
-                    <p>An exact birth time ensures accurate calculations for your <strong>Ascendant degree</strong> and
-                        fast-moving <strong>Moon sub-periods (Pratyantar Dashas)</strong>.</p>
+                    <h4>💡 Why Time & Place Matter</h4>
+                    <p>Exact birth time and city coordinates ensure precise calculations for your <strong>Ascendant degree</strong> and <strong>Moon Nakshatras</strong> via Swiss Ephemeris C-engine.</p>
                 </div>
             </aside>
 
         </div>
+
+        <!-- Dynamic Swiss Ephemeris Output Container & North Indian SVG Chart -->
+        <div id="kundali-result-container" class="kundali-result-section"></div>
     </main>
 
     <footer class="footer-free-kundali">
@@ -162,8 +158,7 @@
                     <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
                 </a>
                 <h3>About</h3>
-                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
-                    ancient wisdom with modern psychological insights.</p>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine ancient wisdom with modern psychological insights.</p>
             </div>
 
             <!-- 2. Quick Links -->
@@ -181,11 +176,11 @@
             <div class="footer-col">
                 <h3>Services</h3>
                 <ul>
-                    <li><a href="#">Free Kundali</a></li>
-                    <li><a href="#">Kundali Matching</a></li>
-                    <li><a href="#">Compatibility</a></li>
+                    <li><a href="free-kundali.html">Free Kundali</a></li>
+                    <li><a href="kundali-matching.html">Kundali Matching</a></li>
+                    <li><a href="compatibility.html">Compatibility</a></li>
                     <li><a href="#">Palm Reading</a></li>
-                    <li><a href="#">Name Numerology</a></li>
+                    <li><a href="name-numerology.html">Name Numerology</a></li>
                 </ul>
             </div>
 

@@ -3303,3 +3303,70 @@ function setupCityAutocomplete() {
       alert(`Kundali Error: ${err.message}`);
     }
   }
+
+  function initPlaceAutocomplete() {
+    const pobInput = document.getElementById('pob');
+    const suggestionsBox = document.getElementById('pob-suggestions');
+  
+    if (!pobInput || !suggestionsBox) return;
+  
+    let debounceTimer;
+  
+    pobInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim();
+      clearTimeout(debounceTimer);
+  
+      if (query.length < 2) {
+        suggestionsBox.innerHTML = '';
+        suggestionsBox.style.display = 'none';
+        return;
+      }
+  
+      debounceTimer = setTimeout(async () => {
+        const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+          ? 'http://localhost:5000/api'
+          : 'https://astroverse-q5hk.onrender.com/api';
+  
+        try {
+          const response = await fetch(`${API_BASE_URL}/calculations/places?query=${encodeURIComponent(query)}`);
+          const data = await response.json();
+  
+          if (data.success && data.places && data.places.length > 0) {
+            suggestionsBox.innerHTML = '';
+            suggestionsBox.style.display = 'block';
+  
+            data.places.forEach(place => {
+              const item = document.createElement('div');
+              item.className = 'suggestion-item';
+              item.textContent = place.displayName;
+  
+              item.addEventListener('click', () => {
+                pobInput.value = place.displayName;
+                pobInput.dataset.lat = place.latitude;
+                pobInput.dataset.lon = place.longitude;
+  
+                suggestionsBox.innerHTML = '';
+                suggestionsBox.style.display = 'none';
+              });
+  
+              suggestionsBox.appendChild(item);
+            });
+          } else {
+            suggestionsBox.innerHTML = '';
+            suggestionsBox.style.display = 'none';
+          }
+        } catch (err) {
+          console.warn('[Autocomplete Error]', err);
+          suggestionsBox.style.display = 'none';
+        }
+      }, 300);
+    });
+  
+    document.addEventListener('click', (e) => {
+      if (!pobInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
+        suggestionsBox.style.display = 'none';
+      }
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', initPlaceAutocomplete);

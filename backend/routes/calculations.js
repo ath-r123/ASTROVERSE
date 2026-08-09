@@ -11,7 +11,8 @@ const Calculation = require('../models/Calculation');
 // Helper Function: Free OpenStreetMap Geocoding
 async function geocodePlace(placeName) {
   try {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(placeName)}&limit=1`;
+    const query = String(placeName || '').trim();
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&countrycodes=in&featureType=settlement&addressdetails=1&limit=1`;
     const response = await axios.get(url, {
       headers: { 'User-Agent': 'ASTROVERSE-Astrology-App' }
     });
@@ -34,12 +35,12 @@ async function geocodePlace(placeName) {
 // GET /api/calculations/places?query=mumbai - Place Autocomplete Endpoint
 router.get('/places', async (req, res, next) => {
   try {
-    const { query } = req.query;
+    const query = String(req.query.query || '').trim();
     if (!query || query.trim().length < 2) {
       return res.status(200).json({ success: true, places: [] });
     }
 
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&countrycodes=in&featureType=settlement&limit=8&addressdetails=1&accept-language=en`;
     const response = await axios.get(url, {
       headers: { 'User-Agent': 'ASTROVERSE-Astrology-App' }
     });
@@ -60,7 +61,7 @@ router.get('/places', async (req, res, next) => {
 // POST /api/calculations/kundali - Protected (Signed-in Users Only)
 router.post('/kundali', requireAuth, async (req, res, next) => {
   try {
-    const { name, dob, tob, pob, latitude, longitude, timezoneOffset = 5.5 } = req.body;
+    const { name, dob, tob, pob, latitude, longitude, ayanamsa = 'lahiri' } = req.body;
 
     if (!dob || !tob) {
       return res.status(400).json({ success: false, message: 'Missing required birth date or time.' });
@@ -89,7 +90,8 @@ router.post('/kundali', requireAuth, async (req, res, next) => {
       minute,
       latitude: coords.latitude,
       longitude: coords.longitude,
-      timezoneOffset: Number(timezoneOffset)
+      timezoneOffset: 5.5,
+      ayanamsa
     });
 
     // Save record to MongoDB Atlas associated with req.user.id
@@ -137,7 +139,8 @@ router.post('/matching', requireAuth, async (req, res, next) => {
       minute: bMin,
       latitude: bCoords.latitude,
       longitude: bCoords.longitude,
-      timezoneOffset: Number(boyDetails.timezoneOffset || 5.5)
+      timezoneOffset: 5.5,
+      ayanamsa: 'lahiri'
     });
 
     // 2. Calculate Girl's Moon Position
@@ -156,7 +159,8 @@ router.post('/matching', requireAuth, async (req, res, next) => {
       minute: gMin,
       latitude: gCoords.latitude,
       longitude: gCoords.longitude,
-      timezoneOffset: Number(girlDetails.timezoneOffset || 5.5)
+      timezoneOffset: 5.5,
+      ayanamsa: 'lahiri'
     });
 
     const boyMoon = boyChart.planets.find(p => p.name === 'Moon');
@@ -194,7 +198,7 @@ router.post('/matching', requireAuth, async (req, res, next) => {
 // POST /api/calculations/panchang (Daily Panchang)
 router.post('/panchang', async (req, res, next) => {
   try {
-    const { date, pob = 'Varanasi, India', timezoneOffset = 5.5 } = req.body;
+    const { date, pob = 'Varanasi, India' } = req.body;
     const targetDate = date || new Date().toISOString().split('T')[0];
 
     const coords = await geocodePlace(pob);
@@ -209,7 +213,8 @@ router.post('/panchang', async (req, res, next) => {
       minute: 0,
       latitude: coords.latitude,
       longitude: coords.longitude,
-      timezoneOffset: Number(timezoneOffset)
+      timezoneOffset: 5.5,
+      ayanamsa: 'lahiri'
     });
 
     const sun = chartData.planets.find(p => p.name === 'Sun');
@@ -252,7 +257,8 @@ router.post('/horoscope', async (req, res, next) => {
       minute: 0,
       latitude: 19.0760,
       longitude: 72.8777,
-      timezoneOffset: 5.5
+      timezoneOffset: 5.5,
+      ayanamsa: 'lahiri'
     });
 
     const sun = chartData.planets.find(p => p.name === 'Sun');

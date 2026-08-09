@@ -1,6 +1,8 @@
 const sweph = require('sweph');
 const path = require('path');
 
+const { constants } = sweph;
+
 const ephePath = path.join(__dirname, '../ephe');
 sweph.set_ephe_path(ephePath);
 
@@ -29,16 +31,40 @@ function parseZodiacPosition(longitude) {
   const rashiIndex = Math.floor(normalized / 30);
   const degreeInRashi = normalized % 30;
   const nakshatraIndex = Math.floor(normalized / (360 / 27));
+  const nakshatraArc = 360 / 27;
+  const pada = Math.floor((normalized % nakshatraArc) / (nakshatraArc / 4)) + 1;
 
   return {
     rashi: RASHIS[rashiIndex] || RASHIS[0],
-    degree: Number(degreeInRashi.toFixed(2)),
-    totalDegree: Number(normalized.toFixed(2)),
-    nakshatra: NAKSHATRAS[nakshatraIndex] || NAKSHATRAS[0]
+    degree: Number(degreeInRashi.toFixed(6)),
+    totalDegree: Number(normalized.toFixed(6)),
+    nakshatra: NAKSHATRAS[nakshatraIndex] || NAKSHATRAS[0],
+    pada
   };
 }
 
-function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitude = 19.0760, longitude = 72.8777, timezoneOffset = 5.5 }) {
+const AYANAMSA_MODES = {
+  lahiri: constants.SE_SIDM_LAHIRI,
+  raman: constants.SE_SIDM_RAMAN,
+  krishnamurti: constants.SE_SIDM_KRISHNAMURTI
+};
+
+function validNumber(value, minimum, maximum) {
+  const number = Number(value);
+  return Number.isFinite(number) && number >= minimum && number <= maximum;
+}
+
+function calculateKundaliChart({
+  year,
+  month,
+  day,
+  hour = 0,
+  minute = 0,
+  latitude = 19.0760,
+  longitude = 72.8777,
+  timezoneOffset = 5.5,
+  ayanamsa = 'lahiri'
+}) {
   return new Promise((resolve, reject) => {
     try {
       const numYear = Number(year);
@@ -49,9 +75,18 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
       const numLat = Number(latitude);
       const numLng = Number(longitude);
       const numTz = Number(timezoneOffset);
+      const ayanamsaKey = String(ayanamsa || 'lahiri').toLowerCase();
 
-      if ([numYear, numMonth, numDay].some(v => isNaN(v))) {
+      if (!Number.isInteger(numYear) || !Number.isInteger(numMonth) || !Number.isInteger(numDay) ||
+          !validNumber(numHour, 0, 23) || !validNumber(numMin, 0, 59) ||
+          !validNumber(numLat, -90, 90) || !validNumber(numLng, -180, 180) || !Number.isFinite(numTz)) {
         return reject(new Error('Invalid birth date parameters provided.'));
+      }
+      if (numYear < 1800 || numYear > 2399) {
+        return reject(new Error('Precise Swiss Ephemeris files in this service support birth years from 1800 to 2399.'));
+      }
+      if (!['lahiri', 'raman', 'krishnamurti', 'sayana'].includes(ayanamsaKey)) {
+        return reject(new Error('Unsupported ayanamsa system.'));
       }
 
       // 1. Local Time -> UTC Hours
@@ -59,44 +94,38 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
       const decimalUtcHours = decimalLocalHours - numTz;
 
       // 2. Compute Julian Day in UTC
-      const gregFlag = typeof sweph.SE_GREG_CAL === 'number' ? sweph.SE_GREG_CAL : 1;
-      const julianDay = sweph.julday(numYear, numMonth, numDay, decimalUtcHours, gregFlag);
+      const julianDay = sweph.julday(numYear, numMonth, numDay, decimalUtcHours, constants.SE_GREG_CAL);
 
       if (typeof julianDay !== 'number' || isNaN(julianDay)) {
         return reject(new Error('Failed to compute Julian Day from birth details.'));
       }
 
-      // 3. Set Lahiri Sidereal Mode
-      const sidMode = typeof sweph.SE_SIDM_LAHIRI === 'number' ? sweph.SE_SIDM_LAHIRI : 1;
-      sweph.set_sid_mode(sidMode, 0, 0);
+      // Indian defaults: IST (+05:30) and Lahiri (Chitra Paksha) sidereal zodiac.
+      // Swiss Ephemeris keeps this setting process-wide, so set it for every chart.
+      const sidereal = ayanamsaKey !== 'sayana';
+      if (sidereal) sweph.set_sid_mode(AYANAMSA_MODES[ayanamsaKey], 0, 0);
 
-      // Get exact Lahiri Ayanamsa
-      let ayanamsaVal = 0;
-      if (typeof sweph.get_ayanamsa_ut === 'function') {
-        ayanamsaVal = sweph.get_ayanamsa_ut(julianDay);
-      } else if (typeof sweph.get_ayanamsa === 'function') {
-        ayanamsaVal = sweph.get_ayanamsa(julianDay);
-      }
+      const ayanamsaVal = sidereal ? sweph.get_ayanamsa_ut(julianDay) : 0;
 
-      // Bitwise flags: SPEED (256) | SIDEREAL (65536)
-      const flags = (sweph.SEFLG_SPEED || 256) | (sweph.SEFLG_SIDEREAL || 65536);
+      const flags = constants.SEFLG_SWIEPH | constants.SEFLG_SPEED | (sidereal ? constants.SEFLG_SIDEREAL : 0);
 
       // 4. Calculate Planetary Positions
       const planetsToCalculate = [
-        { id: sweph.SE_SUN ?? 0, name: 'Sun' },
-        { id: sweph.SE_MOON ?? 1, name: 'Moon' },
-        { id: sweph.SE_MARS ?? 4, name: 'Mars' },
-        { id: sweph.SE_MERCURY ?? 2, name: 'Mercury' },
-        { id: sweph.SE_JUPITER ?? 5, name: 'Jupiter' },
-        { id: sweph.SE_VENUS ?? 3, name: 'Venus' },
-        { id: sweph.SE_SATURN ?? 6, name: 'Saturn' },
-        { id: sweph.SE_TRUE_NODE ?? 11, name: 'Rahu' }
+        { id: constants.SE_SUN, name: 'Sun' },
+        { id: constants.SE_MOON, name: 'Moon' },
+        { id: constants.SE_MARS, name: 'Mars' },
+        { id: constants.SE_MERCURY, name: 'Mercury' },
+        { id: constants.SE_JUPITER, name: 'Jupiter' },
+        { id: constants.SE_VENUS, name: 'Venus' },
+        { id: constants.SE_SATURN, name: 'Saturn' },
+        { id: constants.SE_TRUE_NODE, name: 'Rahu' }
       ];
 
       const planetResults = [];
 
       for (const p of planetsToCalculate) {
         const body = sweph.calc_ut(julianDay, p.id, flags);
+        if (body.error) throw new Error(`Swiss Ephemeris failed for ${p.name}: ${body.error}`);
 
         let pLong = 0;
         let pSpeed = 0;
@@ -117,6 +146,7 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
           degree: parsed.degree,
           totalDegree: parsed.totalDegree,
           nakshatra: parsed.nakshatra,
+          pada: parsed.pada,
           retrograde: pSpeed < 0
         });
 
@@ -129,37 +159,27 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
             degree: parsedKetu.degree,
             totalDegree: parsedKetu.totalDegree,
             nakshatra: parsedKetu.nakshatra,
+            pada: parsedKetu.pada,
             retrograde: true
           });
         }
       }
 
-      // 5. Compute Lagna (Ascendant)
-      // Standard Tropical House Calculation
-      const houses = sweph.houses(julianDay, numLat, numLng, 'P');
-      let tropicalAscendant = 0;
-
-      if (houses) {
-        if (Array.isArray(houses.ascendant)) {
-          tropicalAscendant = houses.ascendant[0] || 0;
-        } else if (houses.ascendant !== undefined) {
-          tropicalAscendant = houses.ascendant;
-        } else if (Array.isArray(houses.house)) {
-          tropicalAscendant = houses.house[0] || 0;
-        }
+      // Whole-sign houses are the conventional Vedic presentation. houses_ex()
+      // returns a sidereal Ascendant directly in data.points[0] when given the
+      // sidereal flag; no manual ayanamsa subtraction is required.
+      const houseResult = sweph.houses_ex(julianDay, sidereal ? constants.SEFLG_SIDEREAL : 0, numLat, numLng, 'W');
+      if (houseResult.error || !Number.isFinite(houseResult.data?.points?.[0])) {
+        throw new Error(`Swiss Ephemeris failed to calculate the ascendant: ${houseResult.error || 'missing ascendant'}`);
       }
-
-      // Convert Tropical Ascendant -> Sidereal Ascendant by subtracting Ayanamsa
-      let siderealAscendantLong = (tropicalAscendant - ayanamsaVal) % 360;
-      if (siderealAscendantLong < 0) {
-        siderealAscendantLong += 360;
-      }
-
-      const ascendantParsed = parseZodiacPosition(siderealAscendantLong);
+      const ascendantParsed = parseZodiacPosition(houseResult.data.points[0]);
 
       resolve({
         julianDay,
-        ayanamsa: Number(ayanamsaVal.toFixed(2)),
+        ayanamsa: Number(ayanamsaVal.toFixed(6)),
+        ayanamsaSystem: ayanamsaKey,
+        timezoneOffset: numTz,
+        houseSystem: 'whole-sign',
         ascendant: ascendantParsed,
         planets: planetResults
       });

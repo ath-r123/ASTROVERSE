@@ -3141,7 +3141,7 @@ function setupCityAutocomplete() {
   
       clearTimeout(debounceTimer);
   
-      if (query.length < 1) {
+      if (query.length < 2) {
         suggestionsBox.style.display = 'none';
         suggestionsBox.innerHTML = '';
         return;
@@ -3154,7 +3154,9 @@ function setupCityAutocomplete() {
   
         try {
           const res = await fetch(`${API_BASE_URL}/calculations/places?query=${encodeURIComponent(query)}`);
+          if (!res.ok) throw new Error(`City search failed (status ${res.status}).`);
           const result = await res.json();
+          if (pobInput.value.trim() !== query) return;
   
           if (result.success && result.places && result.places.length > 0) {
             suggestionsBox.innerHTML = '';
@@ -3182,6 +3184,7 @@ function setupCityAutocomplete() {
             });
           } else {
             suggestionsBox.style.display = 'none';
+            suggestionsBox.innerHTML = '';
           }
         } catch (err) {
           console.warn('City autocomplete error:', err.message);
@@ -3224,6 +3227,7 @@ function setupCityAutocomplete() {
     const tob = document.getElementById('user_tob')?.value;
     const pobInput = document.getElementById('user_pob');
     const pob = pobInput?.value || 'Mumbai, India';
+    const ayanamsa = document.getElementById('ayanamsa_system')?.value || 'lahiri';
   
     // Read coordinates stored from autocomplete selection
     const latitude = pobInput?.dataset.lat || null;
@@ -3247,7 +3251,10 @@ function setupCityAutocomplete() {
           tob, 
           pob, 
           latitude, 
-          longitude 
+          longitude,
+          // Indian Standard Time; India has no current DST adjustment.
+          timezoneOffset: 5.5,
+          ayanamsa
         })
       });
   

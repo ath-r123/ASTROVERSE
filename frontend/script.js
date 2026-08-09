@@ -3310,12 +3310,15 @@ function setupCityAutocomplete() {
 // REAL-TIME PLACE AUTOCOMPLETE LOGIC
 // ============================================================
 
+// ============================================================
+// REAL-TIME PLACE AUTOCOMPLETE LOGIC
+// ============================================================
 function initPlaceAutocomplete() {
     const pobInput = document.getElementById('user_pob') || document.getElementById('pob');
     const suggestionsBox = document.getElementById('pob-suggestions');
   
     if (!pobInput || !suggestionsBox) {
-      console.warn('[Autocomplete Warning] Input or suggestions box element missing from DOM.');
+      console.warn('[Autocomplete Notice] Target input or suggestion container missing.');
       return;
     }
   
@@ -3348,7 +3351,7 @@ function initPlaceAutocomplete() {
               const item = document.createElement('div');
               item.className = 'suggestion-item';
   
-              // Clean up long OpenStreetMap display names (City, State, Country)
+              // Clean up long display strings (City, State, Country)
               const parts = place.displayName.split(',');
               const shortName = parts.length > 2 
                 ? `${parts[0].trim()}, ${parts[1].trim()}, ${parts[parts.length - 1].trim()}`
@@ -3378,7 +3381,7 @@ function initPlaceAutocomplete() {
       }, 300);
     });
   
-    // Hide dropdown when user clicks elsewhere on the page
+    // Hide dropdown on outside click
     document.addEventListener('click', (e) => {
       if (!pobInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
         suggestionsBox.style.display = 'none';
@@ -3386,7 +3389,7 @@ function initPlaceAutocomplete() {
     });
   }
   
-  // Auto-execute initialization immediately
+  // Guarantee execution on page load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initPlaceAutocomplete);
   } else {

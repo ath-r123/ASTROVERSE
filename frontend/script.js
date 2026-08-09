@@ -2793,3 +2793,113 @@ function initializeHoroscope() {
   }
   
   document.addEventListener('DOMContentLoaded', initializeHoroscope);
+
+  // ============================================================
+// LIVE SOCKET.IO CONSULTATION CHAT FRONTEND
+// ============================================================
+
+let socket = null;
+let currentSessionId = null;
+
+function initializeLiveChat() {
+  const chatModal = document.getElementById('chat-modal');
+  const chatForm = document.getElementById('chat-form');
+  const chatInput = document.getElementById('chat-input');
+  const chatMessages = document.getElementById('chat-messages');
+  const closeChatBtn = document.getElementById('close-chat-btn');
+  const astrologerButtons = document.querySelectorAll('.chat-now-btn, .connect-astro-btn');
+
+  if (!chatModal) return;
+
+  const SOCKET_URL = window.location.hostname === 'localhost' ? 'http://localhost:5000' : 'https://astroverse-iota.vercel.app';
+
+  astrologerButtons.forEach(btn => {
+    btn.addEventListener('click', function () {
+      const astroName = this.dataset.name || 'Astrologer Consultation';
+      currentSessionId = `session_${Date.now()}`;
+
+      // Open Modal
+      document.getElementById('chat-astrologer-name').textContent = astroName;
+      chatModal.style.display = 'flex';
+
+      // Connect Socket
+      if (typeof io !== 'undefined') {
+        socket = io(SOCKET_URL);
+
+        const userId = localStorage.getItem('astro_user_id') || `user_${Math.floor(Math.random() * 1000)}`;
+
+        socket.emit('join_session', {
+          sessionId: currentSessionId,
+          userId,
+          role: 'user'
+        });
+
+        // Socket Listeners
+        socket.on('receive_message', (msg) => {
+          appendChatMessage(msg, msg.senderId === userId);
+        });
+
+        socket.on('session_ended', () => {
+          alert('Consultation session has ended.');
+          closeChatModal();
+        });
+      }
+    });
+  });
+
+  // Send Message Event
+  if (chatForm) {
+    chatForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      const text = chatInput.value.trim();
+      if (!text || !socket) return;
+
+      const userId = localStorage.getItem('astro_user_id') || 'user_123';
+
+      socket.emit('send_message', {
+        sessionId: currentSessionId,
+        senderId: userId,
+        senderName: 'You',
+        text
+      });
+
+      chatInput.value = '';
+    });
+  }
+
+  if (closeChatBtn) {
+    closeChatBtn.addEventListener('click', () => {
+      if (socket && currentSessionId) {
+        socket.emit('end_session', { sessionId: currentSessionId });
+      }
+      closeChatModal();
+    });
+  }
+
+  function closeChatModal() {
+    if (socket) socket.disconnect();
+    chatModal.style.display = 'none';
+    chatMessages.innerHTML = '';
+  }
+
+  function appendChatMessage(msg, isSelf) {
+    const msgDiv = document.createElement('div');
+    msgDiv.style.alignSelf = isSelf ? 'flex-end' : 'flex-start';
+    msgDiv.style.maxWidth = '80%';
+    msgDiv.style.padding = '8px 12px';
+    msgDiv.style.borderRadius = '8px';
+    msgDiv.style.background = isSelf ? '#f4d068' : '#1e163d';
+    msgDiv.style.color = isSelf ? '#000' : '#fff';
+    msgDiv.style.fontSize = '0.9rem';
+
+    msgDiv.innerHTML = `
+      <div style="font-size: 0.75rem; opacity: 0.8; margin-bottom: 2px;">${msg.senderName} • ${msg.timestamp}</div>
+      <div>${msg.text}</div>
+    `;
+
+    chatMessages.appendChild(msgDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', initializeLiveChat);

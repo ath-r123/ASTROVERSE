@@ -31,7 +31,33 @@ async function geocodePlace(placeName) {
   return { latitude: 19.0760, longitude: 72.8777, displayName: 'Mumbai, Maharashtra, India' };
 }
 
-// POST /api/calculations/kundali
+// GET /api/calculations/places?query=mumbai - Place Autocomplete Endpoint
+router.get('/places', async (req, res, next) => {
+  try {
+    const { query } = req.query;
+    if (!query || query.trim().length < 2) {
+      return res.status(200).json({ success: true, places: [] });
+    }
+
+    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&addressdetails=1`;
+    const response = await axios.get(url, {
+      headers: { 'User-Agent': 'ASTROVERSE-Astrology-App' }
+    });
+
+    const places = (response.data || []).map(item => ({
+      displayName: item.display_name,
+      latitude: parseFloat(item.lat),
+      longitude: parseFloat(item.lon)
+    }));
+
+    res.status(200).json({ success: true, places });
+  } catch (err) {
+    console.warn('[Geocoding Search Error]', err.message);
+    res.status(200).json({ success: true, places: [] });
+  }
+});
+
+// POST /api/calculations/kundali - Protected (Signed-in Users Only)
 router.post('/kundali', requireAuth, async (req, res, next) => {
   try {
     const { name, dob, tob, pob, latitude, longitude, timezoneOffset = 5.5 } = req.body;
@@ -42,10 +68,10 @@ router.post('/kundali', requireAuth, async (req, res, next) => {
 
     let coords = { latitude: Number(latitude), longitude: Number(longitude) };
 
-    // Geocode place of birth if lat/lng are missing
-    if ((!latitude || !longitude) && pob) {
+    // Geocode place of birth if lat/lng are missing or invalid
+    if ((isNaN(coords.latitude) || isNaN(coords.longitude)) && pob) {
       coords = await geocodePlace(pob);
-    } else if (!latitude || !longitude) {
+    } else if (isNaN(coords.latitude) || isNaN(coords.longitude)) {
       coords = { latitude: 19.0760, longitude: 72.8777, displayName: 'Mumbai, India' };
     }
 
@@ -64,7 +90,7 @@ router.post('/kundali', requireAuth, async (req, res, next) => {
       timezoneOffset: Number(timezoneOffset)
     });
 
-    // Save record to MongoDB Atlas
+    // Save record to MongoDB Atlas associated with req.user.id
     const record = await Calculation.create({
       owner: req.user.id,
       type: 'kundali',

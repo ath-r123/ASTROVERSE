@@ -19,7 +19,24 @@ const io = new Server(server, {
   }
 });
 
-app.use(cors({ origin: process.env.CLIENT_URL || true }));
+const allowedOrigins = [
+  'http://localhost:5500',
+  'http://127.0.0.1:5500',
+  'http://localhost:3000',
+  process.env.CLIENT_URL
+].filter(Boolean); // Filters out undefined values if CLIENT_URL isn't set yet
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps, Postman, or server-to-server curl)
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS policy violation: Origin not allowed.'));
+  },
+  credentials: true
+}));
+
 app.use(express.json({ limit: '1mb' }));
 app.use('/api/wallet', require('./routes/wallet'));
 

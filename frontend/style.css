@@ -1109,3 +1109,14 @@ html, body {
     line-height: 1.5 !important;
   }
 
+
+  html, body {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  .header, header, nav {
+    box-sizing: border-box;
+    max-width: 100vw;
+  }

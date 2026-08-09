@@ -22,7 +22,6 @@ function parseZodiacPosition(longitude) {
   let numLong = Number(longitude);
   if (isNaN(numLong)) numLong = 0;
 
-  // Guarantee strictly positive modulo between 0 and 359.999
   numLong = ((numLong % 360) + 360) % 360;
 
   const rashiIndex = Math.floor(numLong / 30);
@@ -30,7 +29,7 @@ function parseZodiacPosition(longitude) {
   const nakshatraIndex = Math.floor(numLong / (360 / 27));
 
   return {
-    rashiIndex: rashiIndex + 1, // 1 = Aries, 9 = Sagittarius
+    rashiIndex: rashiIndex + 1,
     rashi: RASHIS[rashiIndex] || RASHIS[0],
     degree: Number(degreeInRashi.toFixed(2)),
     totalDegree: Number(numLong.toFixed(2)),
@@ -48,20 +47,17 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
       const numMin = Number(minute);
       const numLat = Number(latitude);
       const numLng = Number(longitude);
-      
-      // Force positive IST timezone offset (5.5)
       const numTz = 5.5;
 
       if ([numYear, numMonth, numDay].some(v => isNaN(v))) {
         return reject(new Error('Invalid birth date parameters provided.'));
       }
 
-      // 1. Convert Local Time -> Decimal UTC Hours
-      // 14:51 IST -> 09:21 UTC (9.35 hours)
+      // 1. Local Time (14:51 IST) -> UTC (09:21 UTC)
       const decimalLocalHours = numHour + (numMin / 60);
       const decimalUtcHours = decimalLocalHours - numTz;
 
-      // 2. Compute Julian Day in UTC
+      // 2. Compute Julian Day
       const gregFlag = typeof sweph.SE_GREG_CAL === 'number' ? sweph.SE_GREG_CAL : 1;
       const julianDay = sweph.julday(numYear, numMonth, numDay, decimalUtcHours, gregFlag);
 
@@ -69,31 +65,45 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
       const sidMode = typeof sweph.SE_SIDM_LAHIRI === 'number' ? sweph.SE_SIDM_LAHIRI : 1;
       sweph.set_sid_mode(sidMode, 0, 0);
 
-      // Extract exact Lahiri Ayanamsa
+      // Get Lahiri Ayanamsa
       const ayanamsaVal = typeof sweph.get_ayanamsa_ut === 'function' 
         ? sweph.get_ayanamsa_ut(julianDay) 
         : sweph.get_ayanamsa(julianDay);
 
-      // Bitwise Flags: MOSEPH (1) | SPEED (256) | SIDEREAL (65536)
+      // Flags: MOSEPH (1) | SPEED (256) | SIDEREAL (65536)
       const flags = (sweph.SEFLG_MOSEPH || 1) | (sweph.SEFLG_SPEED || 256) | (sweph.SEFLG_SIDEREAL || 65536);
 
-      // 4. Calculate Sidereal Ascendant (Lagna)
-      // Call standard houses with Julian Day in UTC and coordinates
-      const houseData = sweph.houses(julianDay, numLat, numLng, 'P');
-      
-      let rawTropicalAscendant = 0;
-      if (houseData) {
-        if (typeof houseData.ascendant === 'number') {
-          rawTropicalAscendant = houseData.ascendant;
-        } else if (Array.isArray(houseData.ascendant)) {
-          rawTropicalAscendant = houseData.ascendant[0];
-        } else if (Array.isArray(houseData.house)) {
-          rawTropicalAscendant = houseData.house[0];
+      // 4. Calculate True Sidereal Lagna via RAMC / Sidereal Time
+      // Greenwich Sidereal Time (GST) in hours
+      const sidTimeHours = sweph.sidtime(julianDay); 
+      // Local Sidereal Time (RAMC) in degrees
+      const ramc = ((sidTimeHours * 15) + numLng) % 360;
+
+      let siderealAscendantLong = 0;
+
+      // Use houses_armc with RAMC directly
+      if (typeof sweph.houses_armc === 'function') {
+        const armcData = sweph.houses_armc(ramc, numLat, ayanamsaVal, 'P');
+        if (armcData && armcData.ascendant !== undefined) {
+          siderealAscendantLong = Array.isArray(armcData.ascendant) ? armcData.ascendant[0] : armcData.ascendant;
         }
       }
 
-      // Convert Tropical Ascendant -> Sidereal Ascendant (Lahiri)
-      let siderealAscendantLong = ((rawTropicalAscendant - ayanamsaVal) % 360 + 360) % 360;
+      // Fallback calculation for Sidereal Ascendant from RAMC
+      if (!siderealAscendantLong) {
+        // RAMC to Sidereal Ascendant conversion formula
+        const radLat = (numLat * Math.PI) / 180;
+        const radEcl = (23.4393 * Math.PI) / 180; // Obliquity of ecliptic
+        const radRamc = (ramc * Math.PI) / 180;
+
+        // Ascendant formula: tan(Asc) = cos(RAMC) / (-sin(RAMC)*cos(eps) - tan(lat)*sin(eps))
+        const y = Math.cos(radRamc);
+        const x = -Math.sin(radRamc) * Math.cos(radEcl) - Math.tan(radLat) * Math.sin(radEcl);
+        let tropicalAsc = (Math.atan2(y, x) * 180) / Math.PI;
+        tropicalAsc = ((tropicalAsc % 360) + 360) % 360;
+
+        siderealAscendantLong = ((tropicalAsc - ayanamsaVal) % 360 + 360) % 360;
+      }
 
       const ascendantParsed = parseZodiacPosition(siderealAscendantLong);
 

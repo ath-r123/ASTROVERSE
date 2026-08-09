@@ -1,11 +1,18 @@
-function notFound(req, res) {
-  res.status(404).json({ message: `Route not found: ${req.method} ${req.originalUrl}` });
-}
+const handleError = (err, req, res, next) => {
+  let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  let message = err.message;
 
-function handleError(error, req, res, next) {
-  console.error(error);
-  const status = error.name === 'ValidationError' ? 400 : error.status || 500;
-  res.status(status).json({ message: error.message || 'Something went wrong.' });
-}
+  // Handle MongoDB Duplicate Key (E11000)
+  if (err.code === 11000) {
+    statusCode = 400;
+    const field = Object.keys(err.keyValue || {})[0] || 'field';
+    message = `An account with this ${field} already exists. Please sign in instead.`;
+  }
 
-module.exports = { notFound, handleError };
+  res.status(statusCode).json({
+    success: false,
+    message
+  });
+};
+
+module.exports = { handleError };

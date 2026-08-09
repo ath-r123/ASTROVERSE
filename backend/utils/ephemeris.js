@@ -22,8 +22,10 @@ const NAKSHATRAS = [
 
 function parseZodiacPosition(longitude) {
   const numLong = Number(longitude) || 0;
-  // Ensure normalized degrees are strictly positive within 0 <= deg < 360
-  const normalized = ((numLong % 360) + 360) % 360;
+  // Guaranteed positive modulo between 0 and 359.9999
+  let normalized = numLong % 360;
+  if (normalized < 0) normalized += 360;
+
   const rashiIndex = Math.floor(normalized / 30);
   const degreeInRashi = normalized % 30;
   const nakshatraIndex = Math.floor(normalized / (360 / 27));
@@ -52,7 +54,7 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
         return reject(new Error('Invalid birth date parameters provided.'));
       }
 
-      // 1. Convert local time to decimal UTC hours (14:51 IST = 09:21 UTC)
+      // 1. Local Time -> UTC Hours
       const decimalLocalHours = numHour + (numMin / 60);
       const decimalUtcHours = decimalLocalHours - numTz;
 
@@ -64,11 +66,11 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
         return reject(new Error('Failed to compute Julian Day from birth details.'));
       }
 
-      // 3. Set Sidereal Mode to Lahiri Ayanamsa (Chitra Paksha)
+      // 3. Set Lahiri Sidereal Mode
       const sidMode = typeof sweph.SE_SIDM_LAHIRI === 'number' ? sweph.SE_SIDM_LAHIRI : 1;
       sweph.set_sid_mode(sidMode, 0, 0);
 
-      // Get exact Ayanamsa value for this Julian Day
+      // Get exact Lahiri Ayanamsa
       let ayanamsaVal = 0;
       if (typeof sweph.get_ayanamsa_ut === 'function') {
         ayanamsaVal = sweph.get_ayanamsa_ut(julianDay);
@@ -132,37 +134,28 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
         }
       }
 
-      // 5. Compute Sidereal Houses & Lagna (Ascendant)
-      let rawAscendantLong = 0;
+      // 5. Compute Lagna (Ascendant)
+      // Standard Tropical House Calculation
+      const houses = sweph.houses(julianDay, numLat, numLng, 'P');
+      let tropicalAscendant = 0;
 
-      // Try sweph.houses_ex with SIDEREAL flag first
-      if (typeof sweph.houses_ex === 'function') {
-        const housesEx = sweph.houses_ex(julianDay, flags, numLat, numLng, 'P');
-        if (housesEx) {
-          rawAscendantLong = Array.isArray(housesEx.ascendant) ? housesEx.ascendant[0] : (housesEx.ascendant ?? housesEx.house?.[0] ?? 0);
+      if (houses) {
+        if (Array.isArray(houses.ascendant)) {
+          tropicalAscendant = houses.ascendant[0] || 0;
+        } else if (houses.ascendant !== undefined) {
+          tropicalAscendant = houses.ascendant;
+        } else if (Array.isArray(houses.house)) {
+          tropicalAscendant = houses.house[0] || 0;
         }
       }
 
-      // Fallback to standard sweph.houses and explicitly subtract Ayanamsa
-      if (!rawAscendantLong) {
-        const houses = sweph.houses(julianDay, numLat, numLng, 'P');
-        let tropicalAscendant = 0;
-
-        if (houses) {
-          if (Array.isArray(houses.ascendant)) {
-            tropicalAscendant = houses.ascendant[0] || 0;
-          } else if (houses.ascendant !== undefined) {
-            tropicalAscendant = houses.ascendant;
-          } else if (Array.isArray(houses.house)) {
-            tropicalAscendant = houses.house[0] || 0;
-          }
-        }
-
-        // Convert Tropical Ascendant -> Sidereal Ascendant safely
-        rawAscendantLong = ((tropicalAscendant - ayanamsaVal) % 360 + 360) % 360;
+      // Convert Tropical Ascendant -> Sidereal Ascendant by subtracting Ayanamsa
+      let siderealAscendantLong = (tropicalAscendant - ayanamsaVal) % 360;
+      if (siderealAscendantLong < 0) {
+        siderealAscendantLong += 360;
       }
 
-      const ascendantParsed = parseZodiacPosition(rawAscendantLong);
+      const ascendantParsed = parseZodiacPosition(siderealAscendantLong);
 
       resolve({
         julianDay,

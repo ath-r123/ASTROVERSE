@@ -3313,6 +3313,9 @@ function setupCityAutocomplete() {
 // ============================================================
 // REAL-TIME PLACE AUTOCOMPLETE LOGIC
 // ============================================================
+// ============================================================
+// REAL-TIME PLACE AUTOCOMPLETE LOGIC
+// ============================================================
 function initPlaceAutocomplete() {
     const pobInput = document.getElementById('user_pob') || document.getElementById('pob');
     const suggestionsBox = document.getElementById('pob-suggestions');

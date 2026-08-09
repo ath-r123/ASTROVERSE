@@ -13,7 +13,7 @@
  * Reduce a number to a single digit by summing its digits.
  * Master numbers (11, 22, 33) are preserved when keepMaster=true.
  */
-const API_BASE_URL = 'https://astroverse-q5hk.onrender.com';
+const API_BASE_URL = 'https://astroverse-q5hk.onrender.com/api';
 
 async function apiFetch(endpoint, options = {}) {
     const token = localStorage.getItem('astro_token');
@@ -2045,9 +2045,10 @@ document.addEventListener('DOMContentLoaded', function () {
     initializeNavigation();
     syncHeaderAuth();
 
-    // Prevent raw form submissions
+    // Prevent raw form submissions. Authentication forms already use their
+    // explicit onsubmit handlers, so do not attach the legacy demo handler as
+    // well (it would send a second, conflicting request).
     initializeFormGuards();
-    initializeDemoForms();
 
     // Smooth scrolling for anchor links
     initializeSmoothScroll();

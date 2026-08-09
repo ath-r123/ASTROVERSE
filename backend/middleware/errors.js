@@ -1,3 +1,7 @@
+const notFound = (req, res) => {
+  res.status(404).json({ success: false, message: `Route not found: ${req.method} ${req.originalUrl}` });
+};
+
 const handleError = (err, req, res, next) => {
   let statusCode = res.statusCode === 200 ? 500 : res.statusCode;
   let message = err.message;
@@ -15,4 +19,4 @@ const handleError = (err, req, res, next) => {
   });
 };
 
-module.exports = { handleError };
+module.exports = { notFound, handleError };

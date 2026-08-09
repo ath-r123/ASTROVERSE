@@ -50,7 +50,7 @@
                 <a href="panchang.html" class="dropdown nlinks">Panchang</a>
                 <div class="dropdown">
                     <div class="dropdown nlinks">Sign In<span>▼</span></div>
-                    <div class="dropdown-content">
+                    <div class="dropdown-content" style="right: 0; left: auto;">
                         <a href="sign-in-up.html">User Login</a>
                         <a href="sign-in-up.html">User Signup</a>
                         <a href="astrologer-sign-in-up.html">Astrologer Login</a>
@@ -72,10 +72,8 @@
         <div class="astro-auth-container">
             <!-- Toggle Tabs specifically for Astrologers -->
             <div class="astro-tabs">
-                <button class="astro-tab-btn active" id="tab-astro-login" onclick="toggleAstroAuth('login')">Astrologer
-                    Login</button>
-                <button class="astro-tab-btn" id="tab-astro-signup" onclick="toggleAstroAuth('signup')">Join as
-                    Astrologer</button>
+                <button class="astro-tab-btn active" id="tab-astro-login" onclick="toggleAstroAuth('login')">Astrologer Login</button>
+                <button class="astro-tab-btn" id="tab-astro-signup" onclick="toggleAstroAuth('signup')">Join as Astrologer</button>
             </div>
 
             <!-- ================= ASTROLOGER LOGIN FORM ================= -->
@@ -85,11 +83,10 @@
                     <p>Access your active consultations, customer chats, and wallet payouts.</p>
                 </div>
 
-                <form action="#" method="POST" class="astro-auth-form" onsubmit="handleUserLogin(event)">
+                <form id="astro-login-form" class="astro-auth-form" onsubmit="handleAstroLogin(event)">
                     <div class="astro-input-group">
                         <label for="astro_login_id">Verified Email or Astrologer ID</label>
-                        <input type="text" id="astro_login_id" name="astro_login_id"
-                            placeholder="ASTRO-108 or email@example.com" required>
+                        <input type="text" id="astro_login_id" name="astro_login_id" placeholder="ASTRO-108 or email@example.com" required>
                     </div>
 
                     <div class="astro-input-group">
@@ -97,8 +94,7 @@
                             <label for="astro_login_password">Password</label>
                             <a href="#" class="astro-link">Forgot password?</a>
                         </div>
-                        <input type="password" id="astro_login_password" name="astro_login_password"
-                            placeholder="••••••••" required>
+                        <input type="password" id="astro_login_password" name="astro_login_password" placeholder="••••••••" required>
                     </div>
 
                     <div class="astro-checkbox-group">
@@ -114,11 +110,10 @@
             <section class="astro-form-wrapper" id="astroSignupFormSection">
                 <div class="form-header-box">
                     <h2>Onboarding Application</h2>
-                    <p>Complete the profile verification form below. Our vetting team will review your application
-                        within 48 hours.</p>
+                    <p>Complete the profile verification form below. Our vetting team will review your application within 48 hours.</p>
                 </div>
 
-                <form action="#" method="POST" class="astro-auth-form" enctype="multipart/form-data" onsubmit="handleUserSignup(event)">
+                <form id="astro-signup-form" class="astro-auth-form" onsubmit="handleAstroSignup(event)">
 
                     <!-- Primary Information Group -->
                     <fieldset class="form-step-section">
@@ -126,25 +121,21 @@
                         <div class="astro-form-grid">
                             <div class="astro-input-group">
                                 <label for="astro_name">Full Professional Name</label>
-                                <input type="text" id="astro_name" name="astro_name" placeholder="e.g., Acharya Sharma"
-                                    required>
+                                <input type="text" id="astro_name" name="astro_name" placeholder="e.g., Acharya Sharma" required>
                             </div>
                             <div class="astro-input-group">
                                 <label for="astro_email">Professional Email</label>
-                                <input type="email" id="astro_email" name="astro_email" placeholder="name@domain.com"
-                                    required>
+                                <input type="email" id="astro_email" name="astro_email" placeholder="name@domain.com" required>
                             </div>
                         </div>
                         <div class="astro-form-grid">
                             <div class="astro-input-group">
                                 <label for="astro_phone">Contact Number (With Country Code)</label>
-                                <input type="tel" id="astro_phone" name="astro_phone" placeholder="+91 98765 43210"
-                                    required>
+                                <input type="tel" id="astro_phone" name="astro_phone" placeholder="+91 98765 43210" required>
                             </div>
                             <div class="astro-input-group">
                                 <label for="astro_languages">Languages Spoken</label>
-                                <input type="text" id="astro_languages" name="astro_languages"
-                                    placeholder="e.g., Hindi, English, Bengali" required>
+                                <input type="text" id="astro_languages" name="astro_languages" placeholder="e.g., Hindi, English, Bengali" required>
                             </div>
                         </div>
                     </fieldset>
@@ -155,8 +146,7 @@
                         <div class="astro-form-grid">
                             <div class="astro-input-group">
                                 <label for="astro_experience">Years of Active Experience</label>
-                                <input type="number" id="astro_experience" name="astro_experience" min="1" max="60"
-                                    placeholder="e.g., 8" required>
+                                <input type="number" id="astro_experience" name="astro_experience" min="1" max="60" placeholder="e.g., 8" required>
                             </div>
                             <div class="astro-input-group">
                                 <label for="astro_primary_skill">Primary Modality</label>
@@ -173,9 +163,7 @@
                         </div>
                         <div class="astro-input-group">
                             <label for="astro_bio">Short Professional Bio (Displayed to Clients)</label>
-                            <textarea id="astro_bio" name="astro_bio" rows="3"
-                                placeholder="Briefly describe your lineage, methodology, and consulting approach..."
-                                required></textarea>
+                            <textarea id="astro_bio" name="astro_bio" rows="3" placeholder="Briefly describe your lineage, methodology, and consulting approach..." required></textarea>
                         </div>
                     </fieldset>
 
@@ -183,17 +171,15 @@
                     <fieldset class="form-step-section">
                         <legend>3. Verification & Certifications</legend>
                         <div class="astro-input-group">
-                            <label for="astro_cert">Upload Astrology Certificate / ID Proof <span
-                                    class="required-tag">*</span></label>
-                            <input type="file" id="astro_cert" name="astro_cert" accept=".pdf,.jpg,.jpeg,.png" required>
+                            <label for="astro_cert">Upload Astrology Certificate / ID Proof <span class="required-tag">*</span></label>
+                            <input type="file" id="astro_cert" name="astro_cert" accept=".pdf,.jpg,.jpeg,.png">
                             <small class="file-hint">Accepted formats: PDF, JPG, PNG (Max 5MB)</small>
                         </div>
                     </fieldset>
 
                     <div class="astro-checkbox-group">
                         <input type="checkbox" id="astro_terms" name="astro_terms" required>
-                        <label for="astro_terms">I certify that all details provided are accurate and I agree to the <a
-                                href="#" class="astro-link">Astrologer Code of Conduct</a>.</label>
+                        <label for="astro_terms">I certify that all details provided are accurate and I agree to the <a href="#" class="astro-link">Astrologer Code of Conduct</a>.</label>
                     </div>
 
                     <button type="submit" class="astro-submit-btn btn-secondary-color">Submit Application</button>
@@ -212,8 +198,7 @@
                     <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
                 </a>
                 <h3>About</h3>
-                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine
-                    ancient wisdom with modern psychological insights.</p>
+                <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine ancient wisdom with modern psychological insights.</p>
             </div>
 
             <!-- 2. Quick Links -->

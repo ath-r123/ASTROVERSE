@@ -2207,6 +2207,83 @@ async function handleUserLogin(event) {
       alert(`Signup Error: ${err.message}`);
     }
   }
+
+  // ============================================================
+// 2. ASTROLOGER PARTNER PORTAL AUTHENTICATION HANDLERS
+// ============================================================
+
+  async function handleAstroLogin(event) {
+    if (event) event.preventDefault();
+  
+    const idInput = document.getElementById('astro_login_id');
+    const passwordInput = document.getElementById('astro_login_password');
+  
+    if (!idInput || !passwordInput) return;
+  
+    const emailOrId = idInput.value.trim();
+    const password = passwordInput.value;
+  
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000/api'
+      : 'https://astroverse-q5hk.onrender.com/api';
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/astrologers/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: emailOrId, password })
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Astrologer login failed.');
+      }
+  
+      localStorage.setItem('astro_token', data.token);
+      localStorage.setItem('astro_user', JSON.stringify(data.astrologer || data.user));
+  
+      alert('Astrologer Login Successful!');
+      window.location.href = 'dashboard.html';
+    } catch (err) {
+      alert(`Astrologer Login Error: ${err.message}`);
+    }
+  }
+  
+  async function handleAstroSignup(event) {
+    if (event) event.preventDefault();
+  
+    const name = document.getElementById('astro_name')?.value.trim();
+    const email = document.getElementById('astro_email')?.value.trim();
+    const phone = document.getElementById('astro_phone')?.value.trim();
+    const languages = document.getElementById('astro_languages')?.value.trim();
+    const experience = document.getElementById('astro_experience')?.value;
+    const specialty = document.getElementById('astro_primary_skill')?.value;
+    const bio = document.getElementById('astro_bio')?.value.trim();
+  
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:5000/api'
+      : 'https://astroverse-q5hk.onrender.com/api';
+  
+    try {
+      const response = await fetch(`${API_BASE_URL}/astrologers/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, languages, experience, specialty, bio })
+      });
+  
+      const data = await response.json();
+  
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || 'Application submission failed.');
+      }
+  
+      alert('Application Submitted Successfully! Our vetting team will review your profile within 48 hours.');
+      window.location.href = 'index.html';
+    } catch (err) {
+      alert(`Application Error: ${err.message}`);
+    }
+  }
 // Successful login, sign-up, and account-creation handlers store their session
 // under these existing keys. Send the user to the home page immediately after.
 (() => {

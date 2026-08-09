@@ -12,7 +12,7 @@ const Calculation = require('../models/Calculation');
 async function geocodePlace(placeName) {
   try {
     const query = String(placeName || '').trim();
-    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&countrycodes=in&featureType=settlement&addressdetails=1&limit=1`;
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&countrycodes=in&addressdetails=1&limit=1`;
     const response = await axios.get(url, {
       headers: { 'User-Agent': 'ASTROVERSE-Astrology-App' }
     });
@@ -40,7 +40,7 @@ router.get('/places', async (req, res, next) => {
       return res.status(200).json({ success: true, places: [] });
     }
 
-    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&countrycodes=in&featureType=settlement&limit=8&addressdetails=1&accept-language=en`;
+    const url = `https://nominatim.openstreetmap.org/search?format=jsonv2&q=${encodeURIComponent(query)}&countrycodes=in&limit=8&addressdetails=1&accept-language=en`;
     const response = await axios.get(url, {
       headers: { 'User-Agent': 'ASTROVERSE-Astrology-App' }
     });

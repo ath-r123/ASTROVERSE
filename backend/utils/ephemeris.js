@@ -21,8 +21,8 @@ const NAKSHATRAS = [
 function parseZodiacPosition(longitude) {
   let numLong = Number(longitude);
   if (isNaN(numLong)) numLong = 0;
-  
-  // Guarantee positive modulo between 0 and 359.999
+
+  // Guarantee strictly positive modulo between 0 and 359.999
   numLong = ((numLong % 360) + 360) % 360;
 
   const rashiIndex = Math.floor(numLong / 30);
@@ -48,25 +48,28 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
       const numMin = Number(minute);
       const numLat = Number(latitude);
       const numLng = Number(longitude);
-      const numTz = Math.abs(Number(timezoneOffset) || 5.5);
+      
+      // Force positive IST timezone offset (5.5)
+      const numTz = 5.5;
 
       if ([numYear, numMonth, numDay].some(v => isNaN(v))) {
-        return reject(new Error('Invalid birth date details provided.'));
+        return reject(new Error('Invalid birth date parameters provided.'));
       }
 
-      // 1. Convert Local IST -> UTC Decimal Hours
+      // 1. Convert Local Time -> Decimal UTC Hours
+      // 14:51 IST -> 09:21 UTC (9.35 hours)
       const decimalLocalHours = numHour + (numMin / 60);
-      const decimalUtcHours = decimalLocalHours - numTz; // 14:51 IST -> 09:21 UTC
+      const decimalUtcHours = decimalLocalHours - numTz;
 
-      // 2. Compute Julian Day
+      // 2. Compute Julian Day in UTC
       const gregFlag = typeof sweph.SE_GREG_CAL === 'number' ? sweph.SE_GREG_CAL : 1;
       const julianDay = sweph.julday(numYear, numMonth, numDay, decimalUtcHours, gregFlag);
 
-      // 3. Set Sidereal Mode (Lahiri / Chitra Paksha)
+      // 3. Set Lahiri Sidereal Mode
       const sidMode = typeof sweph.SE_SIDM_LAHIRI === 'number' ? sweph.SE_SIDM_LAHIRI : 1;
       sweph.set_sid_mode(sidMode, 0, 0);
 
-      // Get exact Lahiri Ayanamsa
+      // Extract exact Lahiri Ayanamsa
       const ayanamsaVal = typeof sweph.get_ayanamsa_ut === 'function' 
         ? sweph.get_ayanamsa_ut(julianDay) 
         : sweph.get_ayanamsa(julianDay);
@@ -74,29 +77,27 @@ function calculateKundaliChart({ year, month, day, hour = 0, minute = 0, latitud
       // Bitwise Flags: MOSEPH (1) | SPEED (256) | SIDEREAL (65536)
       const flags = (sweph.SEFLG_MOSEPH || 1) | (sweph.SEFLG_SPEED || 256) | (sweph.SEFLG_SIDEREAL || 65536);
 
-      // 4. Calculate Lagna (Ascendant) Safely
-      let rawAscendant = 0;
-      
-      // Call standard houses
+      // 4. Calculate Sidereal Ascendant (Lagna)
+      // Call standard houses with Julian Day in UTC and coordinates
       const houseData = sweph.houses(julianDay, numLat, numLng, 'P');
-
+      
+      let rawTropicalAscendant = 0;
       if (houseData) {
         if (typeof houseData.ascendant === 'number') {
-          rawAscendant = houseData.ascendant;
+          rawTropicalAscendant = houseData.ascendant;
         } else if (Array.isArray(houseData.ascendant)) {
-          rawAscendant = houseData.ascendant[0];
+          rawTropicalAscendant = houseData.ascendant[0];
         } else if (Array.isArray(houseData.house)) {
-          rawAscendant = houseData.house[0];
+          rawTropicalAscendant = houseData.house[0];
         }
       }
 
-      // Subtract Ayanamsa to convert Tropical -> Sidereal (Lahiri)
-      let siderealAscendantLong = ((rawAscendant - ayanamsaVal) % 360 + 360) % 360;
+      // Convert Tropical Ascendant -> Sidereal Ascendant (Lahiri)
+      let siderealAscendantLong = ((rawTropicalAscendant - ayanamsaVal) % 360 + 360) % 360;
 
-      // Parse Lagna
       const ascendantParsed = parseZodiacPosition(siderealAscendantLong);
 
-      // 5. Compute Planetary Positions (Sidereal)
+      // 5. Compute Planetary Positions
       const planetsToCalculate = [
         { id: sweph.SE_SUN ?? 0, name: 'Sun' },
         { id: sweph.SE_MOON ?? 1, name: 'Moon' },

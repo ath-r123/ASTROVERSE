@@ -2430,3 +2430,116 @@ function generateNorthIndianChartSVG(chartData) {
   
   // Call initialization on DOM ready
   document.addEventListener('DOMContentLoaded', initializeFreeKundaliForm);
+
+  // ============================================================
+// ASHTAKOOTA 36-GUNA MATCHMAKING FRONTEND HANDLER
+// ============================================================
+
+function initializeMatchingForm() {
+    const matchingForm = document.getElementById('kundali-matching-form') || document.querySelector('.matching-form');
+    if (!matchingForm) return;
+  
+    matchingForm.addEventListener('submit', async function (e) {
+      e.preventDefault();
+  
+      // Get live API Base URL dynamically
+      const API_BASE_URL = window.location.hostname === 'localhost'
+        ? 'http://localhost:5000/api'
+        : '/api';
+  
+      const payload = {
+        boyDetails: {
+          name: document.getElementById('boy_name')?.value || 'Partner 1',
+          dob: document.getElementById('boy_dob')?.value,
+          tob: document.getElementById('boy_tob')?.value,
+          pob: document.getElementById('boy_pob')?.value || 'Mumbai, India'
+        },
+        girlDetails: {
+          name: document.getElementById('girl_name')?.value || 'Partner 2',
+          dob: document.getElementById('girl_dob')?.value,
+          tob: document.getElementById('girl_tob')?.value,
+          pob: document.getElementById('girl_pob')?.value || 'Mumbai, India'
+        }
+      };
+  
+      if (!payload.boyDetails.dob || !payload.boyDetails.tob || !payload.girlDetails.dob || !payload.girlDetails.tob) {
+        alert('Please fill in Date and Time of Birth for both partners.');
+        return;
+      }
+  
+      try {
+        const response = await fetch(`${API_BASE_URL}/calculations/matching`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('astro_token') || ''}`
+          },
+          body: JSON.stringify(payload)
+        });
+  
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || 'Matching calculation failed.');
+  
+        renderMatchingTable(result.data, payload.boyDetails.name, payload.girlDetails.name);
+      } catch (err) {
+        alert(`Error: ${err.message}`);
+      }
+    });
+  }
+  
+  function renderMatchingTable(data, boyName, girlName) {
+    const container = document.getElementById('matching-result-container') || document.querySelector('.matching-result-section') || document.body;
+  
+    const kootas = [
+      { name: 'Varna', key: 'varna' },
+      { name: 'Vashya', key: 'vashya' },
+      { name: 'Tara', key: 'tara' },
+      { name: 'Yoni', key: 'yoni' },
+      { name: 'Graha Maitri', key: 'maitri' },
+      { name: 'Gana', key: 'gana' },
+      { name: 'Bhakoot', key: 'bhakoot' },
+      { name: 'Nadi', key: 'nadi' }
+    ];
+  
+    const rowsHTML = kootas.map(k => `
+      <tr>
+        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: bold; color: #f4d068;">${k.name}</td>
+        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; color: #fff;">${data.scores[k.key].max}</td>
+        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; color: #55efc4; font-weight: bold;">${data.scores[k.key].obtained}</td>
+      </tr>
+    `).join('');
+  
+    const statusColor = data.isCompatible ? '#55efc4' : '#ff7675';
+  
+    const outputHTML = `
+      <div style="max-width: 650px; margin: 30px auto; padding: 25px; background: rgba(18, 12, 38, 0.95); border: 1px solid rgba(244, 208, 104, 0.4); border-radius: 12px; color: #fff;">
+        <h2 style="color: #f4d068; text-align: center; margin-bottom: 5px;">Ashtakoota Milan Result</h2>
+        <p style="text-align: center; color: #a29bfe;">${boyName} & ${girlName}</p>
+  
+        <div style="margin: 20px 0; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; text-align: center;">
+          <h3 style="margin: 0; font-size: 2.2rem; color: ${statusColor};">${data.totalPoints} / 36 Gunas</h3>
+          <p style="margin: 6px 0 0; color: #eadaf7;">
+            ${data.isCompatible ? '✅ Auspicious Compatibility (18+ Points)' : '⚠️ Moderate / Low Compatibility (<18 Points)'}
+          </p>
+        </div>
+  
+        <table style="width: 100%; border-collapse: collapse; margin-top: 15px;">
+          <thead>
+            <tr style="background: rgba(244, 208, 104, 0.15); color: #f4d068;">
+              <th style="padding: 10px; text-align: left;">Koota</th>
+              <th style="padding: 10px; text-align: center;">Max Points</th>
+              <th style="padding: 10px; text-align: center;">Obtained</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHTML}
+          </tbody>
+        </table>
+      </div>
+    `;
+  
+    container.innerHTML = outputHTML;
+  }
+  
+  // Ensure function runs when DOM loads
+  document.addEventListener('DOMContentLoaded', initializeMatchingForm);

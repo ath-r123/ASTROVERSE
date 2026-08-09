@@ -2124,11 +2124,14 @@ function initializeUserAuth() {
 // ADD NEW AUTH HANDLERS BELOW HERE
 // ============================================================
 
+// ============================================================
+// USER LOGIN HANDLER
+// ============================================================
 async function handleUserLogin(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
   
-    const emailInput = document.getElementById('login-email') || document.getElementById('email');
-    const passwordInput = document.getElementById('login-password') || document.getElementById('password');
+    const emailInput = document.getElementById('user_email') || document.getElementById('login-email') || document.getElementById('email');
+    const passwordInput = document.getElementById('user_password') || document.getElementById('login-password') || document.getElementById('password');
   
     if (!emailInput || !passwordInput) {
       alert('Form inputs missing. Please reload the page.');
@@ -2165,12 +2168,15 @@ async function handleUserLogin(event) {
     }
   }
   
+  // ============================================================
+  // USER SIGNUP HANDLER
+  // ============================================================
   async function handleUserSignup(event) {
-    event.preventDefault();
+    if (event) event.preventDefault();
   
-    const nameInput = document.getElementById('signup-name') || document.getElementById('name');
-    const emailInput = document.getElementById('signup-email') || document.getElementById('email');
-    const passwordInput = document.getElementById('signup-password') || document.getElementById('password');
+    const nameInput = document.getElementById('signup_name') || document.getElementById('signup-name') || document.getElementById('name');
+    const emailInput = document.getElementById('signup_email') || document.getElementById('signup-email') || document.getElementById('email');
+    const passwordInput = document.getElementById('signup_password') || document.getElementById('signup-password') || document.getElementById('password');
   
     if (!emailInput || !passwordInput) {
       alert('Form inputs missing. Please reload the page.');
@@ -2207,7 +2213,6 @@ async function handleUserLogin(event) {
       alert(`Signup Error: ${err.message}`);
     }
   }
-
   // ============================================================
 // 2. ASTROLOGER PARTNER PORTAL AUTHENTICATION HANDLERS
 // ============================================================

@@ -3303,9 +3303,11 @@ function setupCityAutocomplete() {
       alert(`Kundali Error: ${err.message}`);
     }
   }
-
-  function initPlaceAutocomplete() {
-    const pobInput = document.getElementById('pob');
+// ============================================================
+// REAL-TIME PLACE AUTOCOMPLETE LOGIC
+// ============================================================
+function initPlaceAutocomplete() {
+    const pobInput = document.getElementById('user_pob') || document.getElementById('pob');
     const suggestionsBox = document.getElementById('pob-suggestions');
   
     if (!pobInput || !suggestionsBox) return;
@@ -3338,10 +3340,17 @@ function setupCityAutocomplete() {
             data.places.forEach(place => {
               const item = document.createElement('div');
               item.className = 'suggestion-item';
-              item.textContent = place.displayName;
+              
+              // Format a cleaner, shorter city name display
+              const parts = place.displayName.split(',');
+              const shortName = parts.length > 2 
+                ? `${parts[0].trim()}, ${parts[1].trim()}, ${parts[parts.length - 1].trim()}`
+                : place.displayName;
+  
+              item.textContent = shortName;
   
               item.addEventListener('click', () => {
-                pobInput.value = place.displayName;
+                pobInput.value = shortName;
                 pobInput.dataset.lat = place.latitude;
                 pobInput.dataset.lon = place.longitude;
   
@@ -3356,12 +3365,13 @@ function setupCityAutocomplete() {
             suggestionsBox.style.display = 'none';
           }
         } catch (err) {
-          console.warn('[Autocomplete Error]', err);
+          console.warn('[Autocomplete Request Failed]', err);
           suggestionsBox.style.display = 'none';
         }
       }, 300);
     });
   
+    // Hide suggestion list when clicking outside
     document.addEventListener('click', (e) => {
       if (!pobInput.contains(e.target) && !suggestionsBox.contains(e.target)) {
         suggestionsBox.style.display = 'none';
@@ -3369,4 +3379,9 @@ function setupCityAutocomplete() {
     });
   }
   
-  document.addEventListener('DOMContentLoaded', initPlaceAutocomplete);
+  // Bind event on DOM load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPlaceAutocomplete);
+  } else {
+    initPlaceAutocomplete();
+  }

@@ -21,7 +21,7 @@ router.post('/register', async (req, res, next) => {
     if (await User.exists({ email })) return res.status(409).json({ message: 'An account with this email already exists.' });
 
     const user = await User.create({ name, email, password, role });
-    res.status(201).json({ token: createToken(user), user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.status(201).json({ success: true, token: createToken(user), user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (error) { next(error); }
 });
 
@@ -32,7 +32,7 @@ router.post('/login', async (req, res, next) => {
     if (!email || !password) return res.status(400).json({ message: 'Email and password are required.' });
     const user = await User.findOne({ email }).select('+password');
     if (!user || !(await user.matchesPassword(password))) return res.status(401).json({ message: 'Email or password is incorrect.' });
-    res.json({ token: createToken(user), user: { id: user._id, name: user.name, email: user.email, role: user.role } });
+    res.json({ success: true, token: createToken(user), user: { id: user._id, name: user.name, email: user.email, role: user.role } });
   } catch (error) { next(error); }
 });
 

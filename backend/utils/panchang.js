@@ -81,5 +81,6 @@ const TITHIS = [
       moonDegree: moon.toFixed(2)
     };
   }
+
   
   module.exports = { calculatePanchang };

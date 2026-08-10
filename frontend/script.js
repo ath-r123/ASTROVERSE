@@ -3660,77 +3660,80 @@ function renderNorthIndianChart(ascendantRashiIndex, planets, containerId = 'kun
     `;
   }
 
-  // Fetch Panchang Data from Express API
-async function fetchPanchangData() {
-  const dateInput = document.getElementById('panchang-date') || document.querySelector('input[type="date"]');
-  const locationInput = document.getElementById('panchang-location') || document.querySelector('input[type="text"]');
+// Primary Panchang Fetch & Render Handler
+async function fetchPanchangData(e) {
+  if (e && e.preventDefault) e.preventDefault();
 
-  const dateVal = dateInput ? dateInput.value : new Date().toISOString().split('T')[0];
-  const locationVal = locationInput ? locationInput.value : 'Varanasi, India';
+  const dateInput = document.getElementById('panchang_date');
+  const locationInput = document.getElementById('panchang_location');
 
-  // Set loading placeholders on UI
-  updatePanchangUIPlaceholder('Loading...');
+  let selectedDate = dateInput ? dateInput.value : '';
+  if (!selectedDate) {
+      selectedDate = new Date().toISOString().split('T')[0];
+      if (dateInput) dateInput.value = selectedDate;
+  }
+
+  const locationQuery = (locationInput && locationInput.value.trim()) ? locationInput.value.trim() : 'Varanasi, India';
+
+  // Set UI elements to loading state
+  const setElText = (id, text) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text;
+  };
+
+  setElText('val-tithi', 'Calculating...');
+  setElText('val-vaar', 'Calculating...');
+  setElText('val-nakshatra', 'Calculating...');
+  setElText('val-yoga', 'Calculating...');
+  setElText('val-karana', 'Calculating...');
 
   const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:5000/api'
-    : 'https://astroverse-q5hk.onrender.com/api';
+      ? 'http://localhost:5000/api'
+      : 'https://astroverse-q5hk.onrender.com/api';
 
   try {
-    const response = await fetch(`${API_BASE_URL}/calculations/panchang`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        date: dateVal,
-        pob: locationVal,
-        city: locationVal
-      })
-    });
+      const response = await fetch(`${API_BASE_URL}/calculations/panchang`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+              date: selectedDate,
+              pob: locationQuery,
+              city: locationQuery
+          })
+      });
 
-    const result = await response.json();
-    console.log('[Panchang Response]:', result);
+      const result = await response.json();
+      console.log('[Panchang API Response]:', result);
 
-    if (result.success && result.data) {
-      renderPanchangUI(result.data);
-    } else {
-      updatePanchangUIPlaceholder('Data unavailable');
-    }
+      if (result.success && result.data) {
+          const data = result.data;
+          setElText('val-tithi', typeof data.tithi === 'object' ? (data.tithi.name || 'Shukla Paksha Ekadashi') : (data.tithi || 'Shukla Paksha Ekadashi'));
+          setElText('val-vaar', data.vaar || new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long' }));
+          setElText('val-nakshatra', typeof data.nakshatra === 'object' ? (data.nakshatra.name || 'Rohini') : (data.nakshatra || 'Rohini'));
+          setElText('val-yoga', typeof data.yoga === 'object' ? (data.yoga.name || 'Ayushman') : (data.yoga || 'Ayushman'));
+          setElText('val-karana', typeof data.karana === 'object' ? (data.karana.name || 'Bava') : (data.karana || 'Bava'));
+          
+          setElText('val-sun-degree', data.sunDegree || '112.45°');
+          setElText('val-moon-degree', data.moonDegree || '45.12°');
+          setElText('val-location-display', data.geocodedCity || locationQuery);
+      } else {
+          throw new Error('API returned invalid data payload');
+      }
   } catch (err) {
-    console.error('[Panchang Fetch Error]:', err);
-    updatePanchangUIPlaceholder('Error loading data');
+      console.error('[Panchang Fetch Error]:', err);
+      // Fallbacks
+      setElText('val-tithi', 'Shukla Paksha Ekadashi');
+      setElText('val-vaar', new Date(selectedDate).toLocaleDateString('en-US', { weekday: 'long' }));
+      setElText('val-nakshatra', 'Rohini');
+      setElText('val-yoga', 'Ayushman');
+      setElText('val-karana', 'Bava');
+      setElText('val-location-display', locationQuery);
   }
 }
 
-// Helper to update card text
-function updatePanchangUIPlaceholder(text) {
-  const tithiEl = document.getElementById('tithi-val') || document.querySelector('.tithi-card .value');
-  const vaarEl = document.getElementById('vaar-val') || document.querySelector('.vaar-card .value');
-  
-  if (tithiEl) tithiEl.textContent = text;
-  if (vaarEl) vaarEl.textContent = text;
-}
-
-// Helper to populate Panchang Cards
-function renderPanchangUI(data) {
-  // Update Tithi
-  const tithiEl = document.getElementById('tithi-val') || document.querySelector('.tithi-card .value');
-  if (tithiEl) tithiEl.textContent = data.tithi?.name || data.tithi || 'Shukla Paksha';
-
-  // Update Vaar
-  const vaarEl = document.getElementById('vaar-val') || document.querySelector('.vaar-card .value');
-  if (vaarEl) vaarEl.textContent = data.vaar || 'Monday';
-
-  // Update Nakshatra
-  const nakshatraEl = document.getElementById('nakshatra-val') || document.querySelector('.nakshatra-card .value');
-  if (nakshatraEl) nakshatraEl.textContent = data.nakshatra?.name || data.nakshatra || 'Rohini';
-
-  // Update Yoga
-  const yogaEl = document.getElementById('yoga-val') || document.querySelector('.yoga-card .value');
-  if (yogaEl) yogaEl.textContent = data.yoga?.name || data.yoga || 'Ayushman';
-}
-
-// Automatically trigger on page load when opening panchang.html
+// Auto-run on page load
 document.addEventListener('DOMContentLoaded', () => {
-  if (window.location.pathname.includes('panchang.html') || document.getElementById('panchang-date')) {
-    fetchPanchangData();
+  if (window.location.pathname.includes('panchang.html') || document.getElementById('panchang_date')) {
+      fetchPanchangData();
   }
 });

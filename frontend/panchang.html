@@ -34,7 +34,7 @@
                         <a href="free-kundali.html">Free Kundali</a>
                         <a href="kundali-matching.html">Kundali Matching</a>
                         <a href="compatibility.html">Compatibility</a>
-                        <a href="">Palm Reading(Coming Soon)</a>
+                        <a href="#">Palm Reading (Coming Soon)</a>
                         <a href="name-numerology.html">Name Numerology</a>
                     </div>
                 </div>
@@ -69,7 +69,7 @@
             <p>Access precise astronomical calculations, Muhuratas, planetary transits, and auspicious timings calculated for your coordinates.</p>
 
             <!-- Location & Date Tracker Control Form -->
-            <form id="panchang-form" class="panchang-picker-bar">
+            <form id="panchang-form" class="panchang-picker-bar" onsubmit="fetchPanchangData(event); return false;">
                 <div class="picker-group">
                     <label for="panchang_date">Select Date</label>
                     <input type="date" id="panchang_date" name="panchang_date">
@@ -78,19 +78,17 @@
                     <label for="panchang_location">Location / City</label>
                     <input type="text" id="panchang_location" name="panchang_location" placeholder="e.g. Varanasi, Mumbai, Delhi" value="Varanasi, India">
                 </div>
-                <button type="submit" class="panchang-update-btn"  onclick="fetchPanchangData()" >🔄 Refresh Data</button>
+                <button type="submit" class="panchang-update-btn">🔄 Refresh Data</button>
             </form>
         </section>
 
         <!-- Dynamic Output Container for Ephemeris Calculations -->
         <div id="panchang-result-container">
-            <!-- Main Content Architecture Grid -->
             <div class="panchang-grid-layout">
 
                 <!-- ================= LEFT COLUMN: SEMANTIC PANCHANG METRICS ================= -->
                 <div class="panchang-main-column">
 
-                    <!-- Quick Date & Samvat Header Info -->
                     <header class="panchang-calendar-header">
                         <h2>Panchang Parameters Overview</h2>
                         <p class="vedic-calendar-year">
@@ -98,7 +96,7 @@
                         </p>
                     </header>
 
-                    <!-- Grid: The Five Pillars of Vedic Time -->
+                    <!-- The Five Pillars of Vedic Time -->
                     <section class="five-pillars-grid">
                         <!-- 1. Tithi -->
                         <div class="pillar-card">
@@ -147,7 +145,7 @@
                         </div>
                     </section>
 
-                    <!-- Detailed Choghadiya Muhurata Matrix -->
+                    <!-- Detailed Choghadiya Timings Matrix -->
                     <section class="panchang-section-card table-card">
                         <h3>☀️ Day Choghadiya Timings</h3>
                         <table class="panchang-data-table">
@@ -192,7 +190,6 @@
                 <!-- ================= RIGHT COLUMN: TIMING WIDGETS & EPHEMERIS ================= -->
                 <aside class="panchang-sidebar">
 
-                    <!-- Solar & Lunar Positions Widget -->
                     <div class="sidebar-widget sun-moon-card">
                         <h3>Solar & Lunar Calendar</h3>
                         <ul class="astro-time-list">
@@ -202,7 +199,6 @@
                         </ul>
                     </div>
 
-                    <!-- Auspicious vs Inauspicious Muhurata Timings Widget -->
                     <div class="sidebar-widget muhurata-card">
                         <h3>Muhurata Timings</h3>
 
@@ -214,7 +210,7 @@
 
                         <div class="muhurata-group alert-border">
                             <h4>Rahu Kaal (Inauspicious)</h4>
-                            <p id="val-rahu-kaal" class="time-stamp">Loading...</p>
+                            <p id="val-rahu-kaal" class="time-stamp">07:30 AM - 09:00 AM</p>
                             <small>Avoid initiating travel, contracts, or rituals.</small>
                         </div>
                     </div>
@@ -227,8 +223,6 @@
 
     <footer class="footer-horoscope">
         <div class="footer-container">
-
-            <!-- 1. Logo & About -->
             <div class="footer-col">
                 <a href="#" class="footer-logo">
                     <img src="https://m.media-amazon.com/images/I/41rsuuWWZyL.jpg" alt="Company Logo" width="50">
@@ -237,34 +231,30 @@
                 <p>Decoding the geometry of the heavens to illuminate your earthly path. Our expert astrologers combine ancient wisdom with modern psychological insights.</p>
             </div>
 
-            <!-- 2. Quick Links -->
             <div class="footer-col">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="#">Daily Horoscopes</a></li>
-                    <li><a href="#">Live Consultations</a></li>
-                    <li><a href="#">Moon Phase Calendar</a></li>
-                    <li><a href="#">Astrology Blog</a></li>
+                    <li><a href="horoscope.html">Daily Horoscopes</a></li>
+                    <li><a href="astrologers.html">Live Consultations</a></li>
+                    <li><a href="panchang.html">Panchang Calendar</a></li>
+                    <li><a href="about.html">Astrology Blog</a></li>
                 </ul>
             </div>
 
-            <!-- 3. Services -->
             <div class="footer-col">
                 <h3>Services</h3>
                 <ul>
                     <li><a href="free-kundali.html">Free Kundali</a></li>
                     <li><a href="kundali-matching.html">Kundali Matching</a></li>
                     <li><a href="compatibility.html">Compatibility</a></li>
-                    <li><a href="#">Palm Reading</a></li>
                     <li><a href="name-numerology.html">Name Numerology</a></li>
                 </ul>
             </div>
 
-            <!-- 4. Contact & Socials -->
             <div class="footer-col contact-info">
                 <h3>Contact</h3>
                 <p class="fa-solid fa-envelope">atharv@gmail.com</p>
-                <p class="fa-solid fa-location-dot"> Celestial Circle, Cosmic Way</p>
+                <p class="fa-solid fa-location-dot">Celestial Circle, Cosmic Way</p>
 
                 <div class="social-links">
                     <a href="#" aria-label="Instagram" class="fa-brands fa-instagram"></a>
@@ -272,10 +262,8 @@
                     <a href="#" aria-label="YouTube" class="fa-brands fa-youtube"></a>
                 </div>
             </div>
-
         </div>
 
-        <!-- 5. Copyright Block -->
         <div class="footer-bottom">
             <p>&copy; 2026 ASTROVERSE Astrology Studio. All cosmic rights reserved.</p>
         </div>

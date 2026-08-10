@@ -10,6 +10,7 @@ const { requireAuth, allowRoles } = require('../middleware/auth');
 const router = express.Router();
 
 // Helper Function: Append Row to Google Sheet
+// Helper Function: Append Row to Google Sheet
 async function appendToGoogleSheet(data) {
   try {
     const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
@@ -21,30 +22,31 @@ async function appendToGoogleSheet(data) {
       return;
     }
 
-    // Replace escaped newlines for cloud environments (Render, Heroku, Vercel)
+    // Replace escaped newlines for Render/Vercel environments
     const privateKey = rawPrivateKey.replace(/\\n/g, '\n');
 
+    // Authenticate with Google JWT
     const serviceAccountAuth = new JWT({
       email: clientEmail,
       key: privateKey,
       scopes: ['https://www.googleapis.com/auth/spreadsheets'],
     });
 
+    // Initialize spreadsheet with auth object in v4 signature
     const doc = new GoogleSpreadsheet(spreadsheetId, serviceAccountAuth);
+    
+    // Fetch spreadsheet metadata
     await doc.loadInfo();
 
-    // Safely target sheet tab named 'Astrologer Signups', or default to the first tab
-    let sheet = doc.sheetsByTitle['Astrologer Signups'];
+    // Select the tab named 'Astrologer Signups' or default to first sheet
+    const sheet = doc.sheetsByTitle['Astrologer Signups'] || doc.sheetsByIndex[0];
+    
     if (!sheet) {
-      sheet = doc.sheetsByIndex[0];
-    }
-
-    if (!sheet) {
-      console.error('[Google Sheets Sync Error] Target worksheet not found.');
+      console.error('[Google Sheets Sync Error] Target sheet tab not found.');
       return;
     }
 
-    // Append row matching exact Google Sheet column headers
+    // Append row matching column header names exactly
     await sheet.addRow({
       'Timestamp': new Date().toISOString(),
       'Name': String(data.name || ''),
@@ -59,7 +61,7 @@ async function appendToGoogleSheet(data) {
 
     console.log('[Google Sheets Sync Success] Appended row for:', data.name);
   } catch (err) {
-    console.error('[Google Sheets Sync Error]', err);
+    console.error('[Google Sheets Sync Detailed Error]:', err.message || err);
   }
 }
 

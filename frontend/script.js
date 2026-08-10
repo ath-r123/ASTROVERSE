@@ -2274,11 +2274,10 @@ async function handleUserLogin(event) {
     const specialty = document.getElementById('astro_primary_skill')?.value;
     const bio = document.getElementById('astro_bio')?.value.trim();
   
-    // Get file input element
-    const certFileInput = document.getElementById('astro_certificate') || document.querySelector('input[type="file"]');
-    const certFile = certFileInput?.files[0];
+    // Target the exact file input element
+    const certFileInput = document.getElementById('astro_certificate');
+    const certFile = certFileInput?.files?.[0];
   
-    // Form validation
     if (!certFile) {
       alert('Please choose a certificate/ID proof file to upload.');
       return;
@@ -2286,14 +2285,16 @@ async function handleUserLogin(event) {
   
     // Construct FormData payload
     const formData = new FormData();
-    formData.append('name', name);
-    formData.append('email', email);
-    formData.append('phone', phone);
-    formData.append('languages', languages);
-    formData.append('experience', experience);
-    formData.append('specialty', specialty);
-    formData.append('bio', bio);
-    formData.append('certificate', certFile); // The key 'certificate' matches multer single('certificate')
+    formData.append('name', name || '');
+    formData.append('email', email || '');
+    formData.append('phone', phone || '');
+    formData.append('languages', languages || '');
+    formData.append('experience', experience || 0);
+    formData.append('specialty', specialty || '');
+    formData.append('bio', bio || '');
+    
+    // Attach binary file with field key 'certificate' matching Multer configuration
+    formData.append('certificate', certFile);
   
     const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:5000/api'
@@ -2302,8 +2303,8 @@ async function handleUserLogin(event) {
     try {
       const response = await fetch(`${API_BASE_URL}/astrologers/register`, {
         method: 'POST',
-        // DO NOT set 'Content-Type' header here! 
-        // The browser automatically sets standard multipart boundary headers.
+        // Note: Do NOT set 'Content-Type' header here.
+        // Fetch automatically adds boundary parameters for multipart/form-data.
         body: formData
       });
   

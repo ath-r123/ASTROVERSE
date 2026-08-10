@@ -1912,12 +1912,16 @@ function renderAstrologerCards(astrologers) {
   }).join('');
 }
 
-// Automatically load when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', loadAstrologers);
-} else {
-  loadAstrologers();
-}
+// RIGHT: Only run loadAstrologers if on astrologers.html or if the grid container exists
+document.addEventListener('DOMContentLoaded', () => {
+  const isAstrologersPage = window.location.pathname.includes('astrologers.html') || 
+                            document.querySelector('.astro-cards-grid') || 
+                            document.getElementById('astrologer-cards-container');
+
+  if (isAstrologersPage) {
+      loadAstrologers();
+  }
+});
 
 function initializeAstrologerFilters() {
     var searchInput = document.getElementById('astro_search');

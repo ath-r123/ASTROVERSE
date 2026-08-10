@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const astrologerSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, unique: true },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: false, unique: true },
   specialties: [{ type: String, trim: true }],
   languages: [{ type: String, trim: true }],
   experience: { type: Number, min: 0, required: true },

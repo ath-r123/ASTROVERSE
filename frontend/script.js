@@ -1838,9 +1838,10 @@ function initializeHomepageReviews() {
    SECTION 16 — ASTROLOGER SEARCH & FILTER (astrologers.html)
    ================================================================= */
    function renderAstrologerCards(astrologers) {
-    // 1. Target the grid container directly by ID or class
-    var container = document.getElementById('astrologer-cards-container') || 
-                    document.querySelector('.astro-cards-grid') || 
+    // 1. Locate container directly by grid class, container ID, or existing card parent
+    var container = document.querySelector('.astro-cards-grid') || 
+                    document.getElementById('astrologer-cards-container') || 
+                    document.querySelector('.astrologers-grid') ||
                     (document.querySelector('.astro-profile-card') && document.querySelector('.astro-profile-card').parentElement);
 
     if (!container) return;
@@ -1848,7 +1849,7 @@ function initializeHomepageReviews() {
     container.innerHTML = '';
 
     if (!astrologers || astrologers.length === 0) {
-        container.innerHTML = '<p class="no-astrologers-msg">No verified astrologers currently available.</p>';
+        container.innerHTML = '<p class="no-data-msg" style="grid-column: 1/-1; text-align: center; padding: 2rem;">No verified astrologers currently available.</p>';
         return;
     }
 
@@ -1856,12 +1857,12 @@ function initializeHomepageReviews() {
         var card = document.createElement('article');
         card.className = 'astro-profile-card';
 
-        // 2. Fall back to root profile name if user reference is missing
+        // 2. Prioritize astrologer.name first before checking astrologer.user.name
         var rawName = astrologer.name || (astrologer.user && astrologer.user.name) || 'Astrologer';
         var name = escapeHTML(rawName);
 
-        var specialties = escapeHTML(Array.isArray(astrologer.specialties) ? astrologer.specialties.join(', ') : (astrologer.specialties || ''));
-        var languages = escapeHTML(Array.isArray(astrologer.languages) ? astrologer.languages.join(', ') : (astrologer.languages || ''));
+        var specialties = escapeHTML(Array.isArray(astrologer.specialties) ? astrologer.specialties.join(', ') : (astrologer.specialties || 'General'));
+        var languages = escapeHTML(Array.isArray(astrologer.languages) ? astrologer.languages.join(', ') : (astrologer.languages || 'English, Hindi'));
         var status = escapeHTML(astrologer.status || 'online');
         var exp = astrologer.experience || 0;
         var price = astrologer.pricePerMinute || 0;
@@ -1889,11 +1890,11 @@ function initializeHomepageReviews() {
             '</div>';
 
         card.querySelector('.btn-chat').addEventListener('click', function () { 
-            startSession('chat', astrologer._id); 
+            if (typeof startSession === 'function') startSession('chat', astrologer._id); 
         });
 
         card.querySelector('.btn-call').addEventListener('click', function () { 
-            startSession('call', astrologer._id); 
+            if (typeof startSession === 'function') startSession('call', astrologer._id); 
         });
 
         container.appendChild(card);

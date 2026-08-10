@@ -1834,71 +1834,90 @@ function initializeHomepageReviews() {
 }
 
 
-/* =================================================================
-   SECTION 16 — ASTROLOGER SEARCH & FILTER (astrologers.html)
-   ================================================================= */
-   function renderAstrologerCards(astrologers) {
-    // 1. Locate container directly by grid class, container ID, or existing card parent
-    var container = document.querySelector('.astro-cards-grid') || 
-                    document.getElementById('astrologer-cards-container') || 
-                    document.querySelector('.astrologers-grid') ||
-                    (document.querySelector('.astro-profile-card') && document.querySelector('.astro-profile-card').parentElement);
+// Load approved astrologers from Render API
+async function loadAstrologers() {
+  const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:5000/api'
+    : 'https://astroverse-q5hk.onrender.com/api';
 
-    if (!container) return;
+  try {
+    const res = await fetch(`${API_BASE_URL}/astrologers`);
+    const data = await res.json();
+    console.log('[DEBUG API Data]:', data);
 
-    container.innerHTML = '';
+    // Read the array specifically from data.astrologers
+    const astrologerList = data.astrologers || [];
+    renderAstrologerCards(astrologerList);
+  } catch (err) {
+    console.error('[Frontend Error] Failed to fetch astrologers:', err);
+  }
+}
 
-    if (!astrologers || astrologers.length === 0) {
-        container.innerHTML = '<p class="no-data-msg" style="grid-column: 1/-1; text-align: center; padding: 2rem;">No verified astrologers currently available.</p>';
-        return;
-    }
+// Render cards into the DOM
+function renderAstrologerCards(astrologers) {
+  // Target container safely across different page layouts
+  var container = document.querySelector('.astro-cards-grid') || 
+                  document.getElementById('astrologer-cards-container') || 
+                  document.querySelector('.astrologers-grid') ||
+                  document.querySelector('.astrologer-container') ||
+                  document.querySelector('main');
 
-    astrologers.forEach(function (astrologer) {
-        var card = document.createElement('article');
-        card.className = 'astro-profile-card';
+  if (!container) {
+    console.error('[Frontend Error] Could not find grid container on astrologers.html');
+    return;
+  }
 
-        // 2. Prioritize astrologer.name first before checking astrologer.user.name
-        var rawName = astrologer.name || (astrologer.user && astrologer.user.name) || 'Astrologer';
-        var name = escapeHTML(rawName);
+  if (!astrologers || astrologers.length === 0) {
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;"><h3>No verified astrologers available yet.</h3></div>';
+    return;
+  }
 
-        var specialties = escapeHTML(Array.isArray(astrologer.specialties) ? astrologer.specialties.join(', ') : (astrologer.specialties || 'General'));
-        var languages = escapeHTML(Array.isArray(astrologer.languages) ? astrologer.languages.join(', ') : (astrologer.languages || 'English, Hindi'));
-        var status = escapeHTML(astrologer.status || 'online');
-        var exp = astrologer.experience || 0;
-        var price = astrologer.pricePerMinute || 0;
+  container.innerHTML = astrologers.map(function (astro) {
+    // Check astro.name first before fallback to astro.user.name
+    var rawName = astro.name || (astro.user && astro.user.name) || 'Astrologer';
+    var name = (typeof escapeHTML === 'function') ? escapeHTML(rawName) : rawName;
 
-        card.innerHTML = 
-            '<div class="card-status-header">' +
-                '<span class="status-badge status-' + status + '">' + status + '</span>' +
-                '<span class="experience-tag">' + exp + ' Yrs Exp</span>' +
-            '</div>' +
-            '<div class="astro-card-body">' +
-                '<div class="astro-meta-info">' +
-                    '<h2 class="astro-name">' + name + '</h2>' +
-                    '<p class="astro-specialties">' + specialties + '</p>' +
-                    '<p class="astro-languages">' + languages + '</p>' +
-                '</div>' +
-            '</div>' +
-            '<div class="astro-card-footer">' +
-                '<div class="price-block">' +
-                    '<strong class="current-price">₹' + price + '/min</strong>' +
-                '</div>' +
-                '<div class="action-buttons-group">' +
-                    '<button class="cta-btn btn-chat">Chat</button>' +
-                    '<button class="cta-btn btn-call">Call</button>' +
-                '</div>' +
-            '</div>';
+    var rawSpecs = Array.isArray(astro.specialties) ? astro.specialties.join(', ') : (astro.specialties || 'Vedic Astrology');
+    var specialties = (typeof escapeHTML === 'function') ? escapeHTML(rawSpecs) : rawSpecs;
 
-        card.querySelector('.btn-chat').addEventListener('click', function () { 
-            if (typeof startSession === 'function') startSession('chat', astrologer._id); 
-        });
+    var rawLangs = Array.isArray(astro.languages) ? astro.languages.join(', ') : (astro.languages || 'English, Hindi');
+    var languages = (typeof escapeHTML === 'function') ? escapeHTML(rawLangs) : rawLangs;
 
-        card.querySelector('.btn-call').addEventListener('click', function () { 
-            if (typeof startSession === 'function') startSession('call', astrologer._id); 
-        });
+    var exp = astro.experience || 0;
+    var price = astro.pricePerMinute || 0;
 
-        container.appendChild(card);
-    });
+    return `
+      <article class="astro-profile-card">
+        <div class="card-status-header">
+          <span class="status-badge status-online">online</span>
+          <span class="experience-tag">${exp} Yrs Exp</span>
+        </div>
+        <div class="astro-card-body">
+          <div class="astro-meta-info">
+            <h2 class="astro-name">${name}</h2>
+            <p class="astro-specialties">${specialties}</p>
+            <p class="astro-languages">${languages}</p>
+          </div>
+        </div>
+        <div class="astro-card-footer">
+          <div class="price-block">
+            <strong class="current-price">₹${price}/min</strong>
+          </div>
+          <div class="action-buttons-group">
+            <button class="cta-btn btn-chat" onclick="if(typeof startSession==='function') startSession('chat', '${astro._id}')">Chat</button>
+            <button class="cta-btn btn-call" onclick="if(typeof startSession==='function') startSession('call', '${astro._id}')">Call</button>
+          </div>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+// Automatically load when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadAstrologers);
+} else {
+  loadAstrologers();
 }
 
 function initializeAstrologerFilters() {

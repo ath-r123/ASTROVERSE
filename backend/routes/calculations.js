@@ -258,56 +258,5 @@ router.post('/panchang', async (req, res, next) => {
   }
 });
 
-// POST /api/calculations/horoscope (Daily Forecasts)
-router.post('/horoscope', async (req, res, next) => {
-  try {
-    const { date, sign } = req.body;
-    const targetDate = date || new Date().toISOString().split('T')[0];
-    const [year, month, day] = targetDate.split('-').map(Number);
-
-    const chartData = await calculateKundaliChart({
-      year,
-      month,
-      day,
-      hour: 12,
-      minute: 0,
-      latitude: 19.0760,
-      longitude: 72.8777,
-      timezoneOffset: 5.5,
-      ayanamsa: 'lahiri'
-    });
-
-    const sun = chartData.planets.find(p => p.name === 'Sun');
-    const moon = chartData.planets.find(p => p.name === 'Moon');
-
-    if (!sun || !moon) {
-      return res.status(500).json({ success: false, message: 'Could not calculate transits for Horoscope.' });
-    }
-
-    const moonDegree = moon.totalDegree ?? moon.degree;
-    const sunDegree = sun.totalDegree ?? sun.degree;
-
-    const dailyHoroscopeData = calculateDailyHoroscope(moonDegree, sunDegree);
-
-    if (sign && dailyHoroscopeData.forecasts[sign.toLowerCase()]) {
-      return res.status(200).json({
-        success: true,
-        dateUsed: targetDate,
-        transits: dailyHoroscopeData.currentTransits,
-        data: dailyHoroscopeData.forecasts[sign.toLowerCase()]
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: 'Daily planetary transits & horoscope computed.',
-      dateUsed: targetDate,
-      transits: dailyHoroscopeData.currentTransits,
-      data: dailyHoroscopeData.forecasts
-    });
-  } catch (err) {
-    next(err);
-  }
-});
 
 module.exports = router;

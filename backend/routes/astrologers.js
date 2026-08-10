@@ -14,15 +14,15 @@ async function appendToGoogleSheet(data) {
   try {
     const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
     const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
-    
-    // Format the private key string for deployment environments
     const rawPrivateKey = process.env.GOOGLE_PRIVATE_KEY;
-    const privateKey = rawPrivateKey ? rawPrivateKey.replace(/\\n/g, '\n') : null;
 
-    if (!spreadsheetId || !clientEmail || !privateKey) {
+    if (!spreadsheetId || !clientEmail || !rawPrivateKey) {
       console.warn('[Google Sheets Sync] Missing environment variables. Skipping sheet update.');
       return;
     }
+
+    // Replace escaped newlines for cloud environments (Render, Heroku, Vercel)
+    const privateKey = rawPrivateKey.replace(/\\n/g, '\n');
 
     const serviceAccountAuth = new JWT({
       email: clientEmail,
@@ -33,28 +33,33 @@ async function appendToGoogleSheet(data) {
     const doc = new GoogleSpreadsheet(spreadsheetId, serviceAccountAuth);
     await doc.loadInfo();
 
-    // Target sheet tab name
-    const sheet = doc.sheetsByTitle['Astrologer Signups'] || doc.sheetsByIndex[0];
+    // Safely target sheet tab named 'Astrologer Signups', or default to the first tab
+    let sheet = doc.sheetsByTitle['Astrologer Signups'];
     if (!sheet) {
-      console.error('[Google Sheets Sync Error] Worksheet not found.');
+      sheet = doc.sheetsByIndex[0];
+    }
+
+    if (!sheet) {
+      console.error('[Google Sheets Sync Error] Target worksheet not found.');
       return;
     }
 
+    // Append row matching exact Google Sheet column headers
     await sheet.addRow({
-      Timestamp: new Date().toISOString(),
-      Name: data.name || '',
-      Email: data.email || '',
-      Phone: data.phone || '',
-      Languages: Array.isArray(data.languages) ? data.languages.join(', ') : (data.languages || ''),
-      Experience: data.experience || 0,
-      Specialty: Array.isArray(data.specialties) ? data.specialties.join(', ') : (data.specialties || ''),
-      Bio: data.bio || '',
-      'Certificate URL': data.certificateUrl || 'N/A'
+      'Timestamp': new Date().toISOString(),
+      'Name': String(data.name || ''),
+      'Email': String(data.email || ''),
+      'Phone': String(data.phone || ''),
+      'Languages': Array.isArray(data.languages) ? data.languages.join(', ') : String(data.languages || ''),
+      'Experience': String(data.experience || 0),
+      'Specialty': Array.isArray(data.specialties) ? data.specialties.join(', ') : String(data.specialties || ''),
+      'Bio': String(data.bio || ''),
+      'Certificate URL': String(data.certificateUrl || 'N/A')
     });
 
-    console.log('[Google Sheets Sync Success] Recorded signup row for:', data.name);
+    console.log('[Google Sheets Sync Success] Appended row for:', data.name);
   } catch (err) {
-    console.error('[Google Sheets Sync Error]', err.message);
+    console.error('[Google Sheets Sync Error]', err);
   }
 }
 
@@ -132,6 +137,8 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
       return res.status(400).json({ success: false, message: 'Email address is required.' });
     }
 
+    const cleanEmail = email.toLowerCase().trim();
+
     // Convert comma-separated string inputs into arrays
     const parsedSpecialties = typeof specialty === 'string' 
       ? specialty.split(',').map(s => s.trim()) 
@@ -145,7 +152,7 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
 
     const profileData = {
       name,
-      email: email.toLowerCase().trim(),
+      email: cleanEmail,
       phone,
       specialties: parsedSpecialties,
       languages: parsedLanguages,
@@ -172,7 +179,7 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
     } else {
       // 2. Unauthenticated public submission (upsert based on email)
       profile = await Astrologer.findOneAndUpdate(
-        { email: email.toLowerCase().trim() },
+        { email: cleanEmail },
         profileData,
         { new: true, upsert: true, runValidators: true }
       );
@@ -181,7 +188,7 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
     // Asynchronously log application entry to Google Sheet
     appendToGoogleSheet({
       name,
-      email: email.toLowerCase().trim(),
+      email: cleanEmail,
       phone,
       languages: parsedLanguages,
       experience,
@@ -196,7 +203,6 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
       profile
     });
   } catch (error) {
-    // Handle duplicate key error gracefully
     if (error.code === 11000) {
       return res.status(400).json({
         success: false,

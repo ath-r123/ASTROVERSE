@@ -346,3 +346,13 @@
         box-shadow: 0 0 0 0 rgba(22, 163, 74, 0);
     }
 }
+
+/* Force high contrast dark color for astrologer names */
+.astro-name, 
+.astro-profile-card h2.astro-name {
+    color: #1e293b !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    margin: 6px 0 !important;
+    opacity: 1 !important;
+}

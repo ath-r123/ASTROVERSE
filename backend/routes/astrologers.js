@@ -100,6 +100,7 @@ const upload = multer({
 });
 
 // GET /api/astrologers - Fetch approved astrologers with query filters
+// GET /api/astrologers - Fetch approved astrologers with query filters
 router.get('/', async (req, res, next) => {
   try {
     const { search, specialty, language, sort = 'popular' } = req.query;
@@ -116,11 +117,12 @@ router.get('/', async (req, res, next) => {
 
     let astrologers = await Astrologer.find(filter).populate('user', 'name').sort(sortBy);
 
+    // Fallback to profile 'name' if 'user.name' is not populated
     if (search) {
       astrologers = astrologers.filter((item) => {
-        const userName = item.user?.name || '';
+        const astroName = item.user?.name || item.name || '';
         const specs = Array.isArray(item.specialties) ? item.specialties.join(' ') : '';
-        return `${userName} ${specs}`.toLowerCase().includes(search.toLowerCase());
+        return `${astroName} ${specs}`.toLowerCase().includes(search.toLowerCase());
       });
     }
 

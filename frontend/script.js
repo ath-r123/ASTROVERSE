@@ -1837,23 +1837,65 @@ function initializeHomepageReviews() {
 /* =================================================================
    SECTION 16 — ASTROLOGER SEARCH & FILTER (astrologers.html)
    ================================================================= */
+   function renderAstrologerCards(astrologers) {
+    // 1. Target the grid container directly by ID or class
+    var container = document.getElementById('astrologer-cards-container') || 
+                    document.querySelector('.astro-cards-grid') || 
+                    (document.querySelector('.astro-profile-card') && document.querySelector('.astro-profile-card').parentElement);
 
-function renderAstrologerCards(astrologers) {
-    var existingCard = document.querySelector('.astro-profile-card');
-    var container = existingCard && existingCard.parentElement;
     if (!container) return;
+
     container.innerHTML = '';
+
+    if (!astrologers || astrologers.length === 0) {
+        container.innerHTML = '<p class="no-astrologers-msg">No verified astrologers currently available.</p>';
+        return;
+    }
+
     astrologers.forEach(function (astrologer) {
         var card = document.createElement('article');
         card.className = 'astro-profile-card';
-        var name = escapeHTML(astrologer.user && astrologer.user.name || 'Astrologer');
-        var specialties = escapeHTML((astrologer.specialties || []).join(', '));
-        var languages = escapeHTML((astrologer.languages || []).join(', '));
-        card.innerHTML = '<div class="card-status-header"><span class="status-badge status-' + astrologer.status + '">' + astrologer.status + '</span><span class="experience-tag">' + astrologer.experience + ' Yrs Exp</span></div>' +
-            '<div class="astro-card-body"><div class="astro-meta-info"><h2 class="astro-name">' + name + '</h2><p class="astro-specialties">' + specialties + '</p><p class="astro-languages">' + languages + '</p></div></div>' +
-            '<div class="astro-card-footer"><div class="price-block"><strong class="current-price">₹' + astrologer.pricePerMinute + '/min</strong></div><div class="action-buttons-group"><button class="cta-btn btn-chat">Chat</button><button class="cta-btn btn-call">Call</button></div></div>';
-        card.querySelector('.btn-chat').addEventListener('click', function () { startSession('chat', astrologer._id); });
-        card.querySelector('.btn-call').addEventListener('click', function () { startSession('call', astrologer._id); });
+
+        // 2. Fall back to root profile name if user reference is missing
+        var rawName = astrologer.name || (astrologer.user && astrologer.user.name) || 'Astrologer';
+        var name = escapeHTML(rawName);
+
+        var specialties = escapeHTML(Array.isArray(astrologer.specialties) ? astrologer.specialties.join(', ') : (astrologer.specialties || ''));
+        var languages = escapeHTML(Array.isArray(astrologer.languages) ? astrologer.languages.join(', ') : (astrologer.languages || ''));
+        var status = escapeHTML(astrologer.status || 'online');
+        var exp = astrologer.experience || 0;
+        var price = astrologer.pricePerMinute || 0;
+
+        card.innerHTML = 
+            '<div class="card-status-header">' +
+                '<span class="status-badge status-' + status + '">' + status + '</span>' +
+                '<span class="experience-tag">' + exp + ' Yrs Exp</span>' +
+            '</div>' +
+            '<div class="astro-card-body">' +
+                '<div class="astro-meta-info">' +
+                    '<h2 class="astro-name">' + name + '</h2>' +
+                    '<p class="astro-specialties">' + specialties + '</p>' +
+                    '<p class="astro-languages">' + languages + '</p>' +
+                '</div>' +
+            '</div>' +
+            '<div class="astro-card-footer">' +
+                '<div class="price-block">' +
+                    '<strong class="current-price">₹' + price + '/min</strong>' +
+                '</div>' +
+                '<div class="action-buttons-group">' +
+                    '<button class="cta-btn btn-chat">Chat</button>' +
+                    '<button class="cta-btn btn-call">Call</button>' +
+                '</div>' +
+            '</div>';
+
+        card.querySelector('.btn-chat').addEventListener('click', function () { 
+            startSession('chat', astrologer._id); 
+        });
+
+        card.querySelector('.btn-call').addEventListener('click', function () { 
+            startSession('call', astrologer._id); 
+        });
+
         container.appendChild(card);
     });
 }

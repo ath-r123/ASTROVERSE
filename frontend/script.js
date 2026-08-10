@@ -3528,3 +3528,40 @@ function renderNorthIndianChart(ascendantRashiIndex, planets, containerId = 'kun
   
     container.innerHTML = svgHTML;
   }
+
+  function generatePlanetsTableHTML(planets) {
+    if (!planets || !planets.length) return '';
+  
+    const rowsHTML = planets.map(p => `
+      <tr style="border-bottom: 1px solid rgba(244, 208, 104, 0.15);">
+        <td style="padding: 10px; font-weight: bold; color: #f4d068;">${p.name}</td>
+        <td style="padding: 10px;">${p.rashi}</td>
+        <td style="padding: 10px;">${p.degree}°</td>
+        <td style="padding: 10px;">${p.nakshatra}</td>
+        <td style="padding: 10px; color: ${p.retrograde ? '#f87171' : '#4ade80'};">
+          ${p.retrograde ? 'Retrograde (®)' : 'Direct'}
+        </td>
+        <td style="padding: 10px;">${p.totalDegree}°</td>
+      </tr>
+    `).join('');
+  
+    return `
+      <div style="overflow-x: auto; margin-top: 20px;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; color: #ffffff;">
+          <thead>
+            <tr style="background-color: #1a103c; color: #f4d068; border-bottom: 2px solid #f4d068;">
+              <th style="padding: 12px;">Planet</th>
+              <th style="padding: 12px;">Sign (Rashi)</th>
+              <th style="padding: 12px;">Degree</th>
+              <th style="padding: 12px;">Nakshatra</th>
+              <th style="padding: 12px;">Motion</th>
+              <th style="padding: 12px;">Total Longitude</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHTML}
+          </tbody>
+        </table>
+      </div>
+    `;
+  }

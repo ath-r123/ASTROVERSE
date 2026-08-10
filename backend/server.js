@@ -6,6 +6,7 @@ const { Server } = require('socket.io');
 const cors = require('cors');
 const connectDatabase = require('./config/db');
 const { notFound, handleError } = require('./middleware/errors');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
@@ -47,6 +48,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Express Body Parsers & Routes
 app.use(express.json({ limit: '1mb' }));
 app.use('/api/wallet', require('./routes/wallet'));

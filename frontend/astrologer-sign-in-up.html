@@ -113,7 +113,7 @@
                     <p>Complete the profile verification form below. Our vetting team will review your application within 48 hours.</p>
                 </div>
 
-                <form id="astro-signup-form" class="astro-auth-form" onsubmit="handleAstroSignup(event)">
+                <form id="astro-signup-form" class="astro-auth-form" enctype="multipart/form-data" onsubmit="handleAstroSignup(event)">
 
                     <!-- Primary Information Group -->
                     <fieldset class="form-step-section">
@@ -172,7 +172,7 @@
                         <legend>3. Verification & Certifications</legend>
                         <div class="astro-input-group">
                             <label for="astro_cert">Upload Astrology Certificate / ID Proof <span class="required-tag">*</span></label>
-                            <input type="file" id="astro_cert" name="astro_cert" accept=".pdf,.jpg,.jpeg,.png">
+                            <input type="file" id="astro_certificate" name="certificate" accept=".pdf,.jpg,.jpeg,.png" required>
                             <small class="file-hint">Accepted formats: PDF, JPG, PNG (Max 5MB)</small>
                         </div>
                     </fieldset>

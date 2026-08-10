@@ -2274,6 +2274,27 @@ async function handleUserLogin(event) {
     const specialty = document.getElementById('astro_primary_skill')?.value;
     const bio = document.getElementById('astro_bio')?.value.trim();
   
+    // Get file input element
+    const certFileInput = document.getElementById('astro_certificate') || document.querySelector('input[type="file"]');
+    const certFile = certFileInput?.files[0];
+  
+    // Form validation
+    if (!certFile) {
+      alert('Please choose a certificate/ID proof file to upload.');
+      return;
+    }
+  
+    // Construct FormData payload
+    const formData = new FormData();
+    formData.append('name', name);
+    formData.append('email', email);
+    formData.append('phone', phone);
+    formData.append('languages', languages);
+    formData.append('experience', experience);
+    formData.append('specialty', specialty);
+    formData.append('bio', bio);
+    formData.append('certificate', certFile); // The key 'certificate' matches multer single('certificate')
+  
     const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:5000/api'
       : 'https://astroverse-q5hk.onrender.com/api';
@@ -2281,8 +2302,9 @@ async function handleUserLogin(event) {
     try {
       const response = await fetch(`${API_BASE_URL}/astrologers/register`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, phone, languages, experience, specialty, bio })
+        // DO NOT set 'Content-Type' header here! 
+        // The browser automatically sets standard multipart boundary headers.
+        body: formData
       });
   
       const data = await response.json();
@@ -3325,7 +3347,7 @@ function setupCityAutocomplete() {
       }
     }
 
-    
+
     } catch (err) {
       alert(`Kundali Error: ${err.message}`);
     }

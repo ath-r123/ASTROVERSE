@@ -15,7 +15,7 @@ async function appendToGoogleSheet(data) {
     const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
     const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
     
-    // Properly format the private key string for environments like Render/Heroku
+    // Format the private key string for deployment environments
     const rawPrivateKey = process.env.GOOGLE_PRIVATE_KEY;
     const privateKey = rawPrivateKey ? rawPrivateKey.replace(/\\n/g, '\n') : null;
 
@@ -128,6 +128,10 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
   try {
     const { name, email, phone, languages, experience, specialty, bio, pricePerMinute } = req.body;
 
+    if (!email) {
+      return res.status(400).json({ success: false, message: 'Email address is required.' });
+    }
+
     // Convert comma-separated string inputs into arrays
     const parsedSpecialties = typeof specialty === 'string' 
       ? specialty.split(',').map(s => s.trim()) 
@@ -139,32 +143,45 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
 
     const certificateUrl = req.file ? `/uploads/${req.file.filename}` : null;
 
-    // Create or update registration entry
     const profileData = {
+      name,
+      email: email.toLowerCase().trim(),
+      phone,
       specialties: parsedSpecialties,
       languages: parsedLanguages,
       experience: Number(experience) || 0,
       bio,
       pricePerMinute: Number(pricePerMinute) || 0,
-      certificateUrl,
       approved: false
     };
 
+    if (certificateUrl) {
+      profileData.certificateUrl = certificateUrl;
+    }
+
     let profile;
-    if (req.user) {
+
+    // 1. Authenticated submission
+    if (req.user && req.user._id) {
+      profileData.user = req.user._id;
       profile = await Astrologer.findOneAndUpdate(
         { user: req.user._id },
         profileData,
         { new: true, upsert: true, runValidators: true }
       );
     } else {
-      profile = await Astrologer.create(profileData);
+      // 2. Unauthenticated public submission (upsert based on email)
+      profile = await Astrologer.findOneAndUpdate(
+        { email: email.toLowerCase().trim() },
+        profileData,
+        { new: true, upsert: true, runValidators: true }
+      );
     }
 
     // Asynchronously log application entry to Google Sheet
     appendToGoogleSheet({
       name,
-      email,
+      email: email.toLowerCase().trim(),
       phone,
       languages: parsedLanguages,
       experience,
@@ -179,6 +196,13 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
       profile
     });
   } catch (error) {
+    // Handle duplicate key error gracefully
+    if (error.code === 11000) {
+      return res.status(400).json({
+        success: false,
+        message: 'An application with this email or user profile already exists.'
+      });
+    }
     next(error);
   }
 });

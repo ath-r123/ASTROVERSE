@@ -3422,18 +3422,35 @@ function initPlaceAutocomplete() {
   // ============================================================
 // NORTH INDIAN KUNDALI SVG GENERATOR
 // ============================================================
+// ============================================================
+// NORTH INDIAN KUNDALI SVG GENERATOR (STACKED & COLOR-CODED)
+// ============================================================
 function renderNorthIndianChart(ascendantRashiIndex, planets, containerId = 'kundali-chart-svg') {
     const container = document.getElementById(containerId);
     if (!container) return;
   
-    // Map planets to their respective house (1 through 12) relative to Lagna
+    // Planet color mapping similar to Astrotalk
+    const planetColors = {
+      'Sun': '#d97706',     // Orange
+      'Moon': '#2563eb',    // Blue
+      'Mars': '#dc2626',    // Red
+      'Mercury': '#16a34a', // Green
+      'Jupiter': '#b45309', // Dark Golden
+      'Venus': '#ec4899',   // Pink
+      'Saturn': '#4b5563',  // Dark Gray
+      'Rahu': '#4f46e5',    // Indigo
+      'Ketu': '#7c3aed',    // Purple
+      'Ascendant': '#78350f'// Brown
+    };
+  
+    // Group planets by house (1 through 12) relative to Lagna
     const housePlanets = Array.from({ length: 13 }, () => []);
   
     planets.forEach(p => {
-      // House = ((Planet Rashi - Lagna Rashi + 12) % 12) + 1
       let houseNum = ((p.rashiIndex - ascendantRashiIndex + 12) % 12) + 1;
       let label = `${p.name.substring(0, 2)}-${p.degree}°${p.retrograde ? '®' : ''}`;
-      housePlanets[houseNum].push(label);
+      let color = planetColors[p.name] || '#003366';
+      housePlanets[houseNum].push({ label, color });
     });
   
     // Calculate Rashi numbers for houses 1 to 12
@@ -3442,56 +3459,70 @@ function renderNorthIndianChart(ascendantRashiIndex, planets, containerId = 'kun
       houseRashis[i] = ((ascendantRashiIndex + i - 2) % 12) + 1;
     }
   
-    // SVG North Indian Diamond Grid Template
+    // Coordinates for placing house content (Center X, Center Y, Start Y offset for stacking)
+    const houseCoords = {
+      1:  { x: 250, y: 120 },
+      2:  { x: 140, y: 55 },
+      3:  { x: 55,  y: 140 },
+      4:  { x: 130, y: 250 },
+      5:  { x: 55,  y: 350 },
+      6:  { x: 140, y: 435 },
+      7:  { x: 250, y: 360 },
+      8:  { x: 360, y: 435 },
+      9:  { x: 440, y: 350 },
+      10: { x: 370, y: 250 },
+      11: { x: 440, y: 140 },
+      12: { x: 360, y: 55 }
+    };
+  
+    // Helper to generate multi-line stacked <tspan> elements
+    function generateStackedText(houseNum) {
+      const items = housePlanets[houseNum];
+      if (!items || items.length === 0) return '';
+  
+      const pos = houseCoords[houseNum];
+      const lineHeight = 15;
+      // Center vertically based on planet count
+      const startY = pos.y - ((items.length - 1) * lineHeight) / 2;
+  
+      return items.map((item, index) => {
+        const currentY = startY + (index * lineHeight);
+        return `<tspan x="${pos.x}" y="${currentY}" fill="${item.color}">${item.label}</tspan>`;
+      }).join('');
+    }
+  
+    // Generate SVG North Indian Diamond Grid
     const svgHTML = `
-      <svg viewBox="0 0 500 500" width="100%" max-width="500px" style="background: #fffdf5; border: 3px solid #b37d14; border-radius: 8px; font-family: sans-serif;">
-        <!-- Outer Square & Inner Cross Lines -->
-        <rect x="10" y="10" width="480" height="480" fill="none" stroke="#b37d14" stroke-width="3"/>
-        <line x1="10" y1="10" x2="490" y2="490" stroke="#b37d14" stroke-width="2"/>
-        <line x1="490" y1="10" x2="10" y2="490" stroke="#b37d14" stroke-width="2"/>
+      <svg viewBox="0 0 500 500" width="100%" style="background: #fffdf5; border: 3px solid #b37d14; border-radius: 10px; font-family: 'Segoe UI', Arial, sans-serif; box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+        <!-- Outer Double Border -->
+        <rect x="8" y="8" width="484" height="484" fill="none" stroke="#b37d14" stroke-width="3"/>
+        <rect x="14" y="14" width="472" height="472" fill="none" stroke="#b37d14" stroke-width="1"/>
         
-        <!-- Inner Diamond -->
-        <polygon points="250,10 490,250 250,490 10,250" fill="none" stroke="#b37d14" stroke-width="2"/>
+        <!-- Inner Diagonal Cross & Diamond -->
+        <line x1="14" y1="14" x2="486" y2="486" stroke="#b37d14" stroke-width="2"/>
+        <line x1="486" y1="14" x2="14" y2="486" stroke="#b37d14" stroke-width="2"/>
+        <polygon points="250,14 486,250 250,486 14,250" fill="none" stroke="#b37d14" stroke-width="2"/>
   
-        <!-- RASHI NUMBERS (12 Houses) -->
-        <text x="250" y="235" font-size="16" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[1]}</text>
-        <text x="130" y="115" font-size="14" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[2]}</text>
-        <text x="115" y="130" font-size="14" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[3]}</text>
-        <text x="235" y="250" font-size="16" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[4]}</text>
-        <text x="115" y="370" font-size="14" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[5]}</text>
-        <text x="130" y="385" font-size="14" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[6]}</text>
-        <text x="250" y="265" font-size="16" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[7]}</text>
-        <text x="370" y="385" font-size="14" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[8]}</text>
-        <text x="385" y="370" font-size="14" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[9]}</text>
-        <text x="265" y="250" font-size="16" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[10]}</text>
-        <text x="385" y="130" font-size="14" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[11]}</text>
-        <text x="370" y="115" font-size="14" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[12]}</text>
+        <!-- RASHI NUMBERS (Fixed positions near house intersections) -->
+        <text x="250" y="232" font-size="15" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[1]}</text>
+        <text x="125" y="108" font-size="13" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[2]}</text>
+        <text x="108" y="125" font-size="13" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[3]}</text>
+        <text x="232" y="250" font-size="15" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[4]}</text>
+        <text x="108" y="375" font-size="13" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[5]}</text>
+        <text x="125" y="392" font-size="13" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[6]}</text>
+        <text x="250" y="268" font-size="15" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[7]}</text>
+        <text x="375" y="392" font-size="13" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[8]}</text>
+        <text x="392" y="375" font-size="13" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[9]}</text>
+        <text x="268" y="250" font-size="15" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[10]}</text>
+        <text x="392" y="125" font-size="13" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[11]}</text>
+        <text x="375" y="108" font-size="13" font-weight="bold" fill="#7a5200" text-anchor="middle">${houseRashis[12]}</text>
   
-        <!-- HOUSE PLANET LABELS -->
-        <!-- House 1 (Top Center) -->
-        <text x="250" y="130" font-size="13" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[1].join('  ')}</text>
-        <!-- House 2 (Top Left Upper) -->
-        <text x="160" y="60" font-size="12" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[2].join(' ')}</text>
-        <!-- House 3 (Top Left Lower) -->
-        <text x="60" y="160" font-size="12" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[3].join(' ')}</text>
-        <!-- House 4 (Center Left) -->
-        <text x="130" y="250" font-size="13" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[4].join('  ')}</text>
-        <!-- House 5 (Bottom Left Upper) -->
-        <text x="60" y="340" font-size="12" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[5].join(' ')}</text>
-        <!-- House 6 (Bottom Left Lower) -->
-        <text x="160" y="440" font-size="12" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[6].join(' ')}</text>
-        <!-- House 7 (Bottom Center) -->
-        <text x="250" y="370" font-size="13" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[7].join('  ')}</text>
-        <!-- House 8 (Bottom Right Lower) -->
-        <text x="340" y="440" font-size="12" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[8].join(' ')}</text>
-        <!-- House 9 (Bottom Right Upper) -->
-        <text x="440" y="340" font-size="12" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[9].join(' ')}</text>
-        <!-- House 10 (Center Right) -->
-        <text x="370" y="250" font-size="13" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[10].join('  ')}</text>
-        <!-- House 11 (Top Right Lower) -->
-        <text x="440" y="160" font-size="12" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[11].join(' ')}</text>
-        <!-- House 12 (Top Right Upper) -->
-        <text x="340" y="60" font-size="12" font-weight="bold" fill="#003366" text-anchor="middle">${housePlanets[12].join(' ')}</text>
+        <!-- STACKED PLANET TEXT BLOCKS -->
+        ${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(hNum => `
+          <text font-size="12" font-weight="bold" text-anchor="middle">
+            ${generateStackedText(hNum)}
+          </text>
+        `).join('')}
       </svg>
     `;
   

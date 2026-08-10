@@ -1868,8 +1868,7 @@ function renderAstrologerCards(astrologers) {
   }
 
   if (!astrologers || astrologers.length === 0) {
-    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem;"><h3>No verified astrologers available yet.</h3></div>';
-    return;
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #4c1d95;"><h3 style="color: #4c1d95;">No verified astrologers available yet.</h3></div>';    return;
   }
 
   container.innerHTML = astrologers.map(function (astro) {

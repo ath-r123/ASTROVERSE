@@ -1,5 +1,5 @@
 /* ==========================================================================
-   ASTROVERSE - Astrologers Directory Stylesheet
+   ASTROVERSE - Astrologers Directory Stylesheet (High Contrast Theme)
    ========================================================================== */
 
 /* Main Container */
@@ -8,26 +8,29 @@
     max-width: 1200px;
     margin: 40px auto;
     padding: 0 20px;
-    color: #2c3e50;
+    color: #1e293b;
 }
 
 /* Filter Search Banner Hero Card */
 .directory-filter-hero {
-    background-color: #fcf8f2;
-    border: 1px solid #faebd7;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
     padding: 35px 30px;
     border-radius: 12px;
     margin-bottom: 40px;
 }
 
-.directory-filter-hero h1 {
-    font-size: 2.2rem;
-    color: #6c3ea3;
-    margin: 0 0 8px 0;
+.directory-filter-hero h1,
+.directory-filter-hero h1 * {
+    font-size: 2.2rem !important;
+    color: #4c1d95 !important; /* Deep, readable purple */
+    font-weight: 800 !important;
+    margin: 0 0 8px 0 !important;
+    opacity: 1 !important;
 }
 
 .directory-filter-hero p {
-    color: #64748b;
+    color: #475569 !important;
     font-size: 1.05rem;
     margin: 0 0 25px 0;
 }
@@ -54,14 +57,14 @@
     border-radius: 8px;
     font-size: 0.95rem;
     background-color: #ffffff;
-    color: #334155;
+    color: #0f172a;
     box-sizing: border-box;
     transition: border-color 0.15s ease;
 }
 
 .filter-field input:focus,
 .filter-field select:focus {
-    border-color: #6c3ea3;
+    border-color: #4c1d95;
     outline: none;
 }
 
@@ -91,15 +94,15 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
     transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     box-sizing: border-box;
 }
 
 .astro-profile-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 25px rgba(108, 62, 163, 0.08);
-    border-color: #dcd0eb;
+    box-shadow: 0 10px 25px rgba(76, 29, 149, 0.1);
+    border-color: #c4b5fd;
 }
 
 /* Card Top Status Metrics Header */
@@ -120,13 +123,13 @@
 }
 
 .status-online {
-    background-color: #ecfdf5;
-    color: #059669;
+    background-color: #d1fae5;
+    color: #047857;
 }
 
 .status-busy {
-    background-color: #fff7ed;
-    color: #ea580c;
+    background-color: #ffedd5;
+    color: #c2410c;
 }
 
 .status-offline {
@@ -137,7 +140,7 @@
 .experience-tag {
     font-size: 0.8rem;
     font-weight: 600;
-    color: #475569;
+    color: #334155;
     background-color: #f8fafc;
     padding: 4px 8px;
     border-radius: 6px;
@@ -170,8 +173,8 @@
     width: 65px;
     height: 65px;
     border-radius: 50%;
-    background-color: #eadaf7;
-    color: #6c3ea3;
+    background-color: #f3e8ff;
+    color: #6b21a8;
     font-weight: 700;
     font-size: 1.3rem;
     display: flex;
@@ -186,17 +189,22 @@
     flex: 1;
 }
 
-.astro-name {
-    margin: 0 0 5px 0;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #1e293b;
+/* High Contrast Astrologer Name Formatting */
+.astro-name, 
+.astro-profile-card h2.astro-name,
+.astro-profile-card .astro-name {
+    color: #0f172a !important; /* High contrast dark charcoal */
+    font-size: 1.3rem !important;
+    font-weight: 700 !important;
+    margin: 6px 0 !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
 }
 
 .astro-specialties {
     margin: 0 0 4px 0;
     font-size: 0.88rem;
-    color: #475569;
+    color: #334155 !important;
     line-height: 1.4;
     text-transform: capitalize;
 }
@@ -204,10 +212,10 @@
 .astro-languages {
     margin: 0 0 8px 0;
     font-size: 0.82rem;
-    color: #64748b;
+    color: #475569 !important;
 }
 
-/* Rating Matrix Parameters */
+/* Rating Index Matrix Parameters */
 .astro-rating-row {
     display: flex;
     align-items: center;
@@ -216,17 +224,17 @@
 }
 
 .star-rating {
-    background-color: #fef08a;
-    color: #854d0e;
+    background-color: #fef3c7; /* High contrast amber pill */
+    color: #b45309;
     font-weight: 700;
     font-size: 0.8rem;
-    padding: 2px 6px;
+    padding: 2px 8px;
     border-radius: 4px;
 }
 
 .total-orders {
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: #64748b;
 }
 
 /* Card Action Footer Row */
@@ -253,12 +261,12 @@
 
 .current-price {
     font-size: 1.15rem;
-    color: #1e293b;
+    color: #0f172a !important;
     font-weight: 700;
 }
 
 .promo-free {
-    color: #16a34a;
+    color: #16a34a !important;
 }
 
 /* CTA Action Buttons System */
@@ -327,7 +335,7 @@
 /* Promotional Pulsing Animation */
 .promotional-pulse {
     background-color: #16a34a !important;
-    color: white !important;
+    color: #ffffff !important;
     animation: pulseButton 2s infinite;
 }
 
@@ -347,12 +355,29 @@
     }
 }
 
-/* Force high contrast dark color for astrologer names */
-.astro-name, 
-.astro-profile-card h2.astro-name {
-    color: #1e293b !important;
-    font-size: 1.25rem !important;
+/* ==========================================================================
+   Global High-Contrast Color Overrides (Removes All Golden/Yellow Text)
+   ========================================================================== */
+
+/* Hero Title Header */
+.directory-filter-hero h1,
+.directory-filter-hero h1 *,
+main h1, 
+main h1 * {
+    color: #4c1d95 !important; /* Deep readable indigo */
+    text-shadow: none !important;
+}
+
+/* Loading Message & Empty State Texts */
+#astrologer-cards-container h3,
+.astro-cards-grid h3,
+.no-data-msg {
+    color: #4c1d95 !important;
     font-weight: 700 !important;
-    margin: 6px 0 !important;
-    opacity: 1 !important;
+}
+
+/* Astrologer Names on Cards */
+.astro-name,
+.astro-profile-card h2.astro-name {
+    color: #0f172a !important; /* High contrast dark charcoal */
 }

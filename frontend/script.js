@@ -3286,40 +3286,46 @@ function setupCityAutocomplete() {
       console.log('Kundali Chart Data:', result.data);
   
       // Render formatted output into container
-      const container = document.getElementById('kundali-result-container');
-      if (container) {
-        // 1. Inject DOM elements (including the chart wrapper)
-        container.innerHTML = `
-          <div style="background: #120c26; border: 1px solid #f4d068; border-radius: 12px; padding: 25px; color: #fff; margin-top: 30px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
-            <h2 style="color: #f4d068; margin-top: 0; text-align: center; font-size: 1.6rem;">Vedic Kundali Result (${name || 'User'})</h2>
-            
-            <div style="text-align: center; margin-bottom: 20px; font-size: 0.95rem; color: #ddd;">
-              <p style="margin: 4px 0;"><strong>Location Used:</strong> ${result.locationUsed?.displayName || pob}</p>
-              <p style="margin: 4px 0;"><strong>Ascendant (Lagna):</strong> ${result.data?.ascendant?.rashi} (${result.data?.ascendant?.degree}°)</p>
-              <p style="margin: 4px 0;"><strong>Ayanamsa (Lahiri):</strong> ${result.data?.ayanamsa}°</p>
-            </div>
-  
-            <!-- Chart Container -->
-            <div style="text-align: center; margin: 25px 0;">
-              <h3 style="color: #f4d068; margin-bottom: 15px;">Lagna Chart (D1)</h3>
-              <div id="kundali-chart-svg" style="max-width: 480px; margin: 0 auto;"></div>
-            </div>
-  
-            <h4 style="color: #f4d068; border-bottom: 1px solid rgba(244,208,104,0.3); padding-bottom: 8px;">Planetary Positions Data:</h4>
-            <pre style="color:#f4d068; background:#080417; padding:15px; border-radius:8px; overflow-x:auto; border: 1px solid rgba(244,208,104,0.2); font-size: 0.85rem;">${JSON.stringify(result.data?.planets, null, 2)}</pre>
+     // Render formatted output into container
+    const container = document.getElementById('kundali-result-container');
+    if (container) {
+      // Build planet table HTML using our helper function
+      const tableHTML = generatePlanetsTableHTML(result.data?.planets);
+
+      container.innerHTML = `
+        <div style="background: #120c26; border: 1px solid #f4d068; border-radius: 12px; padding: 25px; color: #fff; margin-top: 30px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+          <h2 style="color: #f4d068; margin-top: 0; text-align: center; font-size: 1.6rem;">Vedic Kundali Result (${name || 'User'})</h2>
+          
+          <div style="text-align: center; margin-bottom: 20px; font-size: 0.95rem; color: #ddd;">
+            <p style="margin: 4px 0;"><strong>Location Used:</strong> ${result.locationUsed?.displayName || pob}</p>
+            <p style="margin: 4px 0;"><strong>Ascendant (Lagna):</strong> ${result.data?.ascendant?.rashi} (${result.data?.ascendant?.degree}°)</p>
+            <p style="margin: 4px 0;"><strong>Ayanamsa (Lahiri):</strong> ${result.data?.ayanamsa}°</p>
           </div>
-        `;
-  
-        // 2. Render the SVG chart into the newly created element
-        if (result.data?.ascendant?.rashiIndex && result.data?.planets) {
-          renderNorthIndianChart(
-            result.data.ascendant.rashiIndex, 
-            result.data.planets, 
-            'kundali-chart-svg'
-          );
-        }
+
+          <!-- Chart Container -->
+          <div style="text-align: center; margin: 25px 0;">
+            <h3 style="color: #f4d068; margin-bottom: 15px;">Lagna Chart (D1)</h3>
+            <div id="kundali-chart-svg" style="max-width: 480px; margin: 0 auto;"></div>
+          </div>
+
+          <h4 style="color: #f4d068; border-bottom: 1px solid rgba(244,208,104,0.3); padding-bottom: 8px; margin-top: 30px;">Planetary Positions Details:</h4>
+          
+          <!-- Injected Table Here -->
+          ${tableHTML}
+        </div>
+      `;
+
+      // Render the SVG chart
+      if (result.data?.ascendant?.rashiIndex && result.data?.planets) {
+        renderNorthIndianChart(
+          result.data.ascendant.rashiIndex, 
+          result.data.planets, 
+          'kundali-chart-svg'
+        );
       }
-  
+    }
+
+    
     } catch (err) {
       alert(`Kundali Error: ${err.message}`);
     }
@@ -3535,19 +3541,19 @@ function renderNorthIndianChart(ascendantRashiIndex, planets, containerId = 'kun
     const rowsHTML = planets.map(p => `
       <tr style="border-bottom: 1px solid rgba(244, 208, 104, 0.15);">
         <td style="padding: 10px; font-weight: bold; color: #f4d068;">${p.name}</td>
-        <td style="padding: 10px;">${p.rashi}</td>
-        <td style="padding: 10px;">${p.degree}°</td>
-        <td style="padding: 10px;">${p.nakshatra}</td>
-        <td style="padding: 10px; color: ${p.retrograde ? '#f87171' : '#4ade80'};">
+        <td style="padding: 10px; color: #fff;">${p.rashi}</td>
+        <td style="padding: 10px; color: #fff;">${p.degree}°</td>
+        <td style="padding: 10px; color: #fff;">${p.nakshatra}</td>
+        <td style="padding: 10px; color: ${p.retrograde ? '#f87171' : '#4ade80'}; font-weight: 600;">
           ${p.retrograde ? 'Retrograde (®)' : 'Direct'}
         </td>
-        <td style="padding: 10px;">${p.totalDegree}°</td>
+        <td style="padding: 10px; color: #aaa;">${p.totalDegree}°</td>
       </tr>
     `).join('');
   
     return `
-      <div style="overflow-x: auto; margin-top: 20px;">
-        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; color: #ffffff;">
+      <div style="overflow-x: auto; margin-top: 15px;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem; background: #080417; border-radius: 8px; border: 1px solid rgba(244,208,104,0.2);">
           <thead>
             <tr style="background-color: #1a103c; color: #f4d068; border-bottom: 2px solid #f4d068;">
               <th style="padding: 12px;">Planet</th>

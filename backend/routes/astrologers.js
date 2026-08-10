@@ -2,9 +2,61 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { GoogleSpreadsheet } = require('google-spreadsheet');
+const { JWT } = require('google-auth-library');
 const Astrologer = require('../models/Astrologer');
 const { requireAuth, allowRoles } = require('../middleware/auth');
+
 const router = express.Router();
+
+// Helper Function: Append Row to Google Sheet
+async function appendToGoogleSheet(data) {
+  try {
+    const spreadsheetId = process.env.GOOGLE_SPREADSHEET_ID;
+    const clientEmail = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
+    
+    // Properly format the private key string for environments like Render/Heroku
+    const rawPrivateKey = process.env.GOOGLE_PRIVATE_KEY;
+    const privateKey = rawPrivateKey ? rawPrivateKey.replace(/\\n/g, '\n') : null;
+
+    if (!spreadsheetId || !clientEmail || !privateKey) {
+      console.warn('[Google Sheets Sync] Missing environment variables. Skipping sheet update.');
+      return;
+    }
+
+    const serviceAccountAuth = new JWT({
+      email: clientEmail,
+      key: privateKey,
+      scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+    });
+
+    const doc = new GoogleSpreadsheet(spreadsheetId, serviceAccountAuth);
+    await doc.loadInfo();
+
+    // Target sheet tab name
+    const sheet = doc.sheetsByTitle['Astrologer Signups'] || doc.sheetsByIndex[0];
+    if (!sheet) {
+      console.error('[Google Sheets Sync Error] Worksheet not found.');
+      return;
+    }
+
+    await sheet.addRow({
+      Timestamp: new Date().toISOString(),
+      Name: data.name || '',
+      Email: data.email || '',
+      Phone: data.phone || '',
+      Languages: Array.isArray(data.languages) ? data.languages.join(', ') : (data.languages || ''),
+      Experience: data.experience || 0,
+      Specialty: Array.isArray(data.specialties) ? data.specialties.join(', ') : (data.specialties || ''),
+      Bio: data.bio || '',
+      'Certificate URL': data.certificateUrl || 'N/A'
+    });
+
+    console.log('[Google Sheets Sync Success] Recorded signup row for:', data.name);
+  } catch (err) {
+    console.error('[Google Sheets Sync Error]', err.message);
+  }
+}
 
 // Ensure 'uploads' directory exists
 const uploadDir = path.join(__dirname, '../uploads');
@@ -76,7 +128,7 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
   try {
     const { name, email, phone, languages, experience, specialty, bio, pricePerMinute } = req.body;
 
-    // Convert comma-separated string inputs into arrays if necessary
+    // Convert comma-separated string inputs into arrays
     const parsedSpecialties = typeof specialty === 'string' 
       ? specialty.split(',').map(s => s.trim()) 
       : (specialty || []);
@@ -108,6 +160,18 @@ router.post('/register', upload.single('certificate'), async (req, res, next) =>
     } else {
       profile = await Astrologer.create(profileData);
     }
+
+    // Asynchronously log application entry to Google Sheet
+    appendToGoogleSheet({
+      name,
+      email,
+      phone,
+      languages: parsedLanguages,
+      experience,
+      specialties: parsedSpecialties,
+      bio,
+      certificateUrl
+    });
 
     res.status(201).json({
       success: true,
@@ -168,7 +232,6 @@ router.patch('/:id/approval', requireAuth, allowRoles('admin'), async (req, res,
     next(error);
   }
 });
-
 
 // GET /api/astrologers/pending - Fetch all unapproved astrologer applications for Admin verification
 router.get('/pending', requireAuth, allowRoles('admin'), async (req, res, next) => {
